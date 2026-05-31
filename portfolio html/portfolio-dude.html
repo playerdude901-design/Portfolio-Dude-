@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dude - Portfolio de Contenido</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1b1b1b;
+            --accent: #48ADAD;
+            --text-light: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ==================== FONDO GENERAL ==================== */
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: -2;
+        }
+
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+
+        /* ==================== SECCIÓN 1: VIDEO PRESENTACIÓN ==================== */
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: absolute;
+            z-index: 3;
+            text-align: center;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+            letter-spacing: -2px;
+        }
+
+        .hero-content h1 span {
+            color: var(--accent);
+        }
+
+        .hero-content p {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .audio-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--text-light);
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .audio-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Indicador de scroll */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator svg {
+            width: 30px;
+            height: 30px;
+            stroke: white;
+            stroke-width: 2;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* ==================== SECCIÓN 2: PANELES ==================== */
+        .portfolio-section {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            padding: 80px 30px;
+            z-index: 10;
+        }
+
+        .portfolio-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .portfolio-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .portfolio-header h2 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .portfolio-header p {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Grid de paneles */
+        .panels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .panel {
+            position: relative;
+            height: 300px;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .panel:hover {
+            transform: scale(1.05);
+        }
+
+        /* Imagen del panel */
+        .panel-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.5s ease;
+        }
+
+        .panel:hover .panel-image {
+            transform: scale(1.1);
+        }
+
+        /* Blur overlay - se quita en hover */
+        .panel-blur {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.4);
+            transition: all 0.5s ease;
+            z-index: 2;
+        }
+
+        .panel:hover .panel-blur {
+            backdrop-filter: blur(0px);
+            background-color: rgba(0, 0, 0, 0);
+        }
+
+        /* Contenido del panel */
+        .panel-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .panel:hover .panel-content {
+            opacity: 0;
+        }
+
+        .panel-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .panel-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-align: center;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Contenido oculto - aparece en hover */
+        .panel-hover-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .panel:hover .panel-hover-content {
+            opacity: 1;
+        }
+
+        .panel-hover-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .panel-hover-content p {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Botones del panel */
+        .panel-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid white;
+            color: var(--text-light);
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .panel-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .discord-button {
+            background-color: #5865F2 !important;
+            border-color: #5865F2 !important;
+        }
+
+        .discord-button:hover {
+            background-color: #4752C4 !important;
+        }
+
+        /* Borde del panel en hover */
+        .panel-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 4;
+        }
+
+        .panel:hover .panel-border {
+            opacity: 1;
+        }
+
+        /* ==================== SECCIÓN 3: FOOTER ==================== */
+        .footer {
+            background-color: var(--primary);
+            border-top: 2px solid var(--accent);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .footer p.accent {
+            color: var(--accent);
+            margin-top: 10px;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .panels-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+
+            .panel {
+                height: 250px;
+            }
+
+            .portfolio-section {
+                padding: 60px 20px;
+            }
+
+            .hero-content {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .panels-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .panel {
+                height: 280px;
+            }
+
+            .portfolio-section {
+                padding: 40px 15px;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-content p {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo con imagen -->
+    <div class="background-container" id="bgContainer"></div>
+    <div class="background-overlay"></div>
+
+    <!-- ==================== SECCIÓN 1: PRESENTACIÓN ==================== -->
+    <section class="hero-section">
+        <div class="video-container">
+            <!-- 
+                ╔═══════════════════════════════════════════════════════════╗
+                ║ 🎥 VIDEO DE PRESENTACIÓN                                 ║
+                ║                                                           ║
+                ║ INSTRUCCIONES:                                            ║
+                ║ 1. Copia tu archivo video.mp4 a la carpeta "assets"     ║
+                ║ 2. Reemplaza "video.mp4" con el nombre de tu archivo    ║
+                ║                                                           ║
+                ║ Ejemplos:                                                ║
+                ║ ./assets/video.mp4                                       ║
+                ║ ./assets/mi-video.mp4                                    ║
+                ║ ./assets/presentacion.mp4                                ║
+                ╚═══════════════════════════════════════════════════════════╝
+            -->
+            <video autoplay muted loop playsinline>
+                <source src="assets\video\final_video_correct.mp4" type="video/mp4">
+                Tu navegador no soporta videos HTML5
+            </video>
+        </div>
+        <div class="video-overlay"></div>
+
+        <!-- Contenido de presentación -->
+        <div class="hero-content">
+            <h1>Soy <span>Dude !</span></h1>
+            <p>y este es mi trabajo...</p>
+            <button class="audio-button" id="audioBtn">
+                <span id="audioIcon">🔇</span>
+                <span id="audioText">Sin audio</span>
+            </button>
+        </div>
+
+        <!-- Indicador de scroll -->
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M12 5v14M5 12l7 7 7-7"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- ==================== SECCIÓN 2: PANELES ==================== -->
+    <section class="portfolio-section">
+        <div class="portfolio-container">
+            <div class="portfolio-header">
+                <h2>Mi Portafolio</h2>
+                <p>Pasa el cursor sobre cada panel para ver más</p>
+            </div>
+
+            <div class="panels-grid" id="panelsContainer">
+                <!-- Los paneles se generarán automáticamente con JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SECCIÓN 3: FOOTER ==================== -->
+    <footer class="footer">
+        <p>© 2024 Dude Studios. Todos los derechos reservados.</p>
+        <p class="accent">Diseño personalizado para creadores de contenido</p>
+    </footer>
+
+    <script>
+        // ╔═══════════════════════════════════════════════════════════════╗
+        // ║ 📝 CONFIGURACIÓN - EDITA AQUÍ LAS RUTAS DE TUS ARCHIVOS      ║
+        // ║                                                               ║
+        // ║ ESTRUCTURA DE CARPETA RECOMENDADA:                           ║
+        // ║ mi-portfolio/                                                 ║
+        // ║ ├── portfolio-dude.html (este archivo)                       ║
+        // ║ └── assets/                                                   ║
+        // ║     ├── video.mp4 (tu video de presentación)                 ║
+        // ║     ├── miku.jpg (fondo)                                     ║
+        // ║     ├── trolleo.jpg                                          ║
+        // ║     ├── irl.jpg                                              ║
+        // ║     ├── minecraft.jpg                                        ║
+        // ║     ├── gaming.jpg                                           ║
+        // ║     ├── entretenimiento.jpg                                  ║
+        // ║     ├── cliente.jpg                                          ║
+        // ║     └── contacto.jpg                                         ║
+        // ╚═══════════════════════════════════════════════════════════════╝
+
+        const CONFIG = {
+            // 📸 Imagen de fondo principal
+            // Reemplaza "miku.jpg" con el nombre de tu archivo
+            backgroundImage: 'assets\hatsune-miku-5120x2880-25942.jpg',
+            
+            // 🎨 Paneles - Edita aquí
+            panels: [
+                {
+                    id: 'trolleo',
+                    title: 'Trolleo',
+                    icon: '😂',
+                    // 📸 Reemplaza "trolleo.jpg" con tu archivo
+                    image: './assets/trolleo.jpg',
+                    description: 'Contenido de humor y bromas',
+                    buttonText: 'Ver más',
+                    buttonLink: '#',
+                    isDiscord: false
+                },
+                {
+                    id: 'irl',
+                    title: 'IRL',
+                    icon: '🌍',
+                    // 📸 Reemplaza "irl.jpg" con tu archivo
+                    image: './assets/irl.jpg',
+                    description: 'Contenido en vivo y experimentos',
+                    buttonText: 'Ver más',
+                    buttonLink: '#',
+                    isDiscord: false
+                },
+                {
+                    id: 'minecraft',
+                    title: 'Minecraft 3D',
+                    icon: '⛏️',
+                    // 📸 Reemplaza "minecraft.jpg" con tu archivo
+                    image: './assets/minecraft.jpg',
+                    description: 'Builds épicos en Minecraft',
+                    buttonText: 'Ver más',
+                    buttonLink: '#',
+                    isDiscord: false
+                },
+                {
+                    id: 'gaming',
+                    title: 'Gaming',
+                    icon: '🎮',
+                    // 📸 Reemplaza "gaming.jpg" con tu archivo
+                    image: './assets/gaming.jpg',
+                    description: 'Gameplay y reviews',
+                    buttonText: 'Ver más',
+                    buttonLink: '#',
+                    isDiscord: false
+                },
+                {
+                    id: 'entretenimiento',
+                    title: 'Entretenimiento',
+                    icon: '🎬',
+                    // 📸 Reemplaza "entretenimiento.jpg" con tu archivo
+                    image: './assets/entretenimiento.jpg',
+                    description: 'Contenido entretenido',
+                    buttonText: 'Ver más',
+                    buttonLink: '#',
+                    isDiscord: false
+                },
+                {
+                    id: 'cliente',
+                    title: 'Trabajo de Cliente',
+                    icon: '💼',
+                    // 📸 Reemplaza "cliente.jpg" con tu archivo
+                    image: './assets/cliente.jpg',
+                    description: 'Proyectos profesionales',
+                    buttonText: 'Ver más',
+                    buttonLink: '#',
+                    isDiscord: false
+                },
+                {
+                    id: 'contacto',
+                    title: 'Contacto',
+                    icon: '💬',
+                    // 📸 Reemplaza "contacto.jpg" con tu archivo
+                    image: './assets/contacto.jpg',
+                    description: 'Únete a mi servidor',
+                    buttonText: '🔗 Únete al servidor',
+                    // 🔗 CAMBIA ESTO: Tu link de Discord
+                    buttonLink: 'https://discord.gg/tuservidordiscord',
+                    isDiscord: true
+                }
+            ]
+        };
+
+        // ==================== FUNCIONES ==================== 
+
+        // Establecer imagen de fondo
+        document.getElementById('bgContainer').style.backgroundImage = `url('${CONFIG.backgroundImage}')`;
+
+        // Generar paneles dinámicamente
+        function generatePanels() {
+            const container = document.getElementById('panelsContainer');
+            container.innerHTML = '';
+
+            CONFIG.panels.forEach(panel => {
+                const panelElement = document.createElement('div');
+                panelElement.className = 'panel';
+                panelElement.innerHTML = `
+                    <div class="panel-image" style="background-image: url('${panel.image}')"></div>
+                    <div class="panel-blur"></div>
+                    
+                    <!-- Contenido normal (antes del hover) -->
+                    <div class="panel-content">
+                        <div class="panel-icon">${panel.icon}</div>
+                        <div class="panel-title">${panel.title}</div>
+                    </div>
+                    
+                    <!-- Contenido en hover -->
+                    <div class="panel-hover-content">
+                        <h3>${panel.title}</h3>
+                        <p>${panel.description}</p>
+                        <${panel.isDiscord ? 'a' : 'button'} 
+                            class="panel-button ${panel.isDiscord ? 'discord-button' : ''}" 
+                            ${panel.isDiscord ? `href="${panel.buttonLink}" target="_blank" rel="noopener noreferrer"` : `onclick="window.location.href='${panel.buttonLink}'"`}
+                        >
+                            ${panel.buttonText}
+                        </${panel.isDiscord ? 'a' : 'button'}>
+                    </div>
+                    
+                    <div class="panel-border"></div>
+                `;
+                container.appendChild(panelElement);
+            });
+        }
+
+        // Control de audio del video
+        const audioBtn = document.getElementById('audioBtn');
+        const audioIcon = document.getElementById('audioIcon');
+        const audioText = document.getElementById('audioText');
+        const video = document.querySelector('video');
+
+        audioBtn.addEventListener('click', () => {
+            video.muted = !video.muted;
+            if (video.muted) {
+                audioIcon.textContent = '🔇';
+                audioText.textContent = 'Sin audio';
+            } else {
+                audioIcon.textContent = '🔊';
+                audioText.textContent = 'Con audio';
+            }
+        });
+
+        // Inicializar
+        generatePanels();
+    </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+/* CSS Variables for easy maintenance */
+:root {
+    --primary-color: #2cbab2; /* Teal accent */
+    --bg-dark: #1a1a1a; /* Header & Card background */
+    --text-white: #ffffff;
+    --text-gray: #a0a0a0;
+    --font-heading: 'Bebas Neue', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: #000;
+    color: var(--text-white);
+    min-height: 100vh;
+    /* Use the hero background as a fixed full-page background as well */
+    background-image: url('assets/hero_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* Overlay to darken the background slightly so content pops */
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: -1;
+}
+
+/* Main Container */
+.site-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding-top: 2rem;
+    padding-bottom: 5rem;
+}
+
+/* Header Styles */
+.site-header {
+    background-color: var(--bg-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    border-bottom: 5px solid var(--primary-color);
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-item {
+    font-family: var(--font-heading);
+    color: var(--text-white);
+    text-decoration: none;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+}
+
+.nav-item:hover {
+    color: var(--primary-color);
+}
+
+.nav-item.active {
+    /* If active item should have different style, e.g. white or primary */
+    color: var(--text-white);
+}
+
+.social-link a {
+    font-family: var(--font-heading);
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    transition: opacity 0.3s ease;
+}
+
+.social-link a:hover {
+    opacity: 0.8;
+}
+
+/* Hero Section */
+.hero-banner {
+    position: relative;
+    height: 350px;
+    background-image: url('assets/hero_bg.png');
+    background-size: cover;
+    background-position: center 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Darken hero image slightly for text readability */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title {
+    font-family: var(--font-heading);
+    color: var(--primary-color);
+    font-size: 5rem;
+    letter-spacing: 3px;
+    margin-bottom: -10px;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}
+
+.hero-subtitle {
+    font-family: var(--font-heading);
+    color: var(--text-white);
+    font-size: 2rem;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}
+
+/* Content Grid */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 500px;
+}
+
+.grid-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar-wrapper {
+    background-color: #f0f0f0; /* Light background for the B&W avatar */
+    overflow: hidden;
+}
+
+.avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.info-wrapper {
+    background-color: var(--bg-dark);
+    flex-direction: column;
+}
+
+.info-content {
+    text-align: center;
+}
+
+.info-title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    color: var(--text-white);
+    letter-spacing: 2px;
+}
+
+.info-counter {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--text-gray);
+    margin-top: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .site-header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    .avatar-wrapper {
+        height: 400px;
+    }
+    .info-wrapper {
+        padding: 4rem 2rem;
+    }
+    .hero-title {
+        font-size: 3.5rem;
+    }
+    .hero-subtitle {
+        font-size: 1.5rem;
+    }
+}
