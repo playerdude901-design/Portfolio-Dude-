@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio de Dude 3D - Miniaturas y Diseños para YouTube">
+    <title>Dude 3D | Portfolio</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================================
+           VARIABLES
+        ============================================================ */
+        :root {
+            --teal:    #2cbab2;
+            --teal-dim:#1d8580;
+            --dark:    #0d0d0d;
+            --card-bg: #1a1a1a;
+            --gray:    #888;
+            --white:   #ffffff;
+            --bebas:   'Bebas Neue', sans-serif;
+            --inter:   'Inter', sans-serif;
+        }
+
+        /* ============================================================
+           RESET
+        ============================================================ */
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body {
+            font-family: var(--inter);
+            background-color: var(--dark);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        a { text-decoration:none; color:inherit; }
+        img { display:block; max-width:100%; }
+
+        /* ============================================================
+           GLOBAL BACKGROUND (hatsune_miku_fondo.jpg con blur)
+        ============================================================ */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url('assets/hatsune_miku_fondo.jpg') center/cover no-repeat;
+            filter: blur(14px) brightness(0.35);
+            transform: scale(1.05); /* evita bordes blancos del blur */
+            z-index: 0;
+        }
+
+        /* ============================================================
+           SITE WRAPPER
+        ============================================================ */
+        .site-wrapper {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           HEADER
+        ============================================================ */
+        .site-header {
+            background: rgba(10,10,10,0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 3px solid var(--teal);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            padding: 0.85rem 2.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.1rem;
+        }
+
+        .nav-item {
+            font-family: var(--bebas);
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            color: var(--white);
+            padding: 0.3rem 0.55rem;
+            border-radius: 4px;
+            transition: color .22s, background .22s;
+            cursor: pointer;
+        }
+        .nav-item:hover,
+        .nav-item.active {
+            color: var(--teal);
+            background: rgba(44,186,178,0.1);
+        }
+
+        .social-badge {
+            font-family: var(--bebas);
+            font-size: 1.05rem;
+            letter-spacing: 1.5px;
+            color: var(--teal);
+            border: 1.5px solid var(--teal);
+            padding: 0.3rem 0.9rem;
+            border-radius: 4px;
+            white-space: nowrap;
+            transition: background .22s, color .22s;
+        }
+        .social-badge:hover {
+            background: var(--teal);
+            color: var(--dark);
+        }
+
+        /* ============================================================
+           HERO — imagen real con overlay oscuro
+        ============================================================ */
+        .hero {
+            position: relative;
+            height: 52vh;
+            min-height: 300px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Imagen real sin blur (el blur del body::before no afecta aquí) */
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: url('assets/hatsune_miku_fondo.jpg') center/cover no-repeat;
+            z-index: 0;
+        }
+
+        /* Overlay oscuro sobre la imagen del hero */
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.58);
+            z-index: 1;
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-family: var(--bebas);
+            font-size: clamp(3.5rem, 8vw, 7rem);
+            color: var(--teal);
+            letter-spacing: 4px;
+            line-height: 1;
+            text-shadow: 0 0 40px rgba(44,186,178,0.55);
+            animation: fadeUp .8s ease both;
+        }
+
+        .hero-sub {
+            font-family: var(--bebas);
+            font-size: clamp(1.4rem, 3vw, 2.2rem);
+            color: var(--white);
+            letter-spacing: 3px;
+            margin-top: 0.4rem;
+            opacity: .88;
+            animation: fadeUp .8s .18s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(28px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        /* ============================================================
+           ABOUT / AVATAR + CLIENTES
+        ============================================================ */
+        .about-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 400px;
+        }
+
+        .avatar-panel {
+            background: linear-gradient(160deg, #e8e8e8 0%, #c4c4c4 100%);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .avatar-svg {
+            width: 78%;
+            max-width: 320px;
+            margin-bottom: -4px;
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(0 12px 28px rgba(0,0,0,.35));
+        }
+        @keyframes float {
+            0%,100%{ transform:translateY(0); }
+            50%    { transform:translateY(-14px); }
+        }
+
+        .info-panel {
+            background: rgba(20,20,20,0.92);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 3rem 2rem;
+        }
+        .info-label {
+            font-family: var(--bebas);
+            font-size: 2.4rem;
+            letter-spacing: 3px;
+        }
+        .info-count {
+            font-family: var(--bebas);
+            font-size: 1.5rem;
+            color: var(--gray);
+        }
+
+        /* ============================================================
+           PORTFOLIO SECTION
+        ============================================================ */
+        .portfolio-section {
+            padding: 5rem 2.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section-title {
+            font-family: var(--bebas);
+            font-size: 2.8rem;
+            letter-spacing: 3px;
+            color: var(--teal);
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* ---- Card ---- */
+        .portfolio-card {
+            background: rgba(22,22,22,0.88);
+            border: 1px solid rgba(44,186,178,0.18);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform .3s ease, box-shadow .3s ease, border-color .3s;
+        }
+        .portfolio-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 45px rgba(0,0,0,.6), 0 0 0 1px rgba(44,186,178,.45);
+            border-color: rgba(44,186,178,.45);
+        }
+
+        /* Thumbnail: usa la primera imagen de la carpeta como portada */
+        .card-thumb {
+            position: relative;
+            height: 190px;
+            overflow: hidden;
+            background: #111;
+        }
+        .card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .45s ease;
+        }
+        .portfolio-card:hover .card-thumb img {
+            transform: scale(1.06);
+        }
+
+        /* Fallback gradient si la imagen falla */
+        .card-thumb.trolleo-bg   { background: linear-gradient(135deg,#1a1a2e,#e94560); }
+        .card-thumb.irl-bg       { background: linear-gradient(135deg,#0f3460,#533483); }
+        .card-thumb.mc-bg        { background: linear-gradient(135deg,#1b4332,#52b788); }
+        .card-thumb.gaming-bg    { background: linear-gradient(135deg,#240046,#9d4edd); }
+        .card-thumb.entertain-bg { background: linear-gradient(135deg,#7b2d00,#f4a261); }
+        .card-thumb.discord-bg   { background: linear-gradient(135deg,#23272a,#5865f2); }
+
+        .card-thumb-label {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 0.5rem 0.8rem;
+            font-family: var(--bebas);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,.75);
+            background: linear-gradient(transparent, rgba(0,0,0,.65));
+        }
+
+        .card-body {
+            padding: 0.9rem 1.1rem 1.2rem;
+        }
+        .card-category {
+            font-family: var(--bebas);
+            font-size: 0.8rem;
+            color: var(--teal);
+            letter-spacing: 2px;
+            margin-bottom: 0.2rem;
+        }
+        .card-title {
+            font-weight: 700;
+            font-size: 0.92rem;
+            line-height: 1.4;
+        }
+        .card-count {
+            margin-top: 0.6rem;
+            font-size: 0.78rem;
+            color: var(--gray);
+        }
+
+        /* ============================================================
+           LIGHTBOX / GALERÍA MODAL
+        ============================================================ */
+        .lightbox-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+        .lightbox-overlay.open { display: flex; }
+
+        .lightbox-header {
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .lightbox-title {
+            font-family: var(--bebas);
+            font-size: 1.8rem;
+            letter-spacing: 3px;
+            color: var(--teal);
+        }
+        .lightbox-close {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 2.2rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: color .2s;
+        }
+        .lightbox-close:hover { color: var(--teal); }
+
+        /* Main viewer */
+        .lightbox-main {
+            position: relative;
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .lightbox-img-wrap {
+            flex: 1;
+            max-height: 65vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid rgba(44,186,178,0.2);
+            background: #111;
+        }
+        .lightbox-img-wrap img {
+            max-height: 65vh;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        .lb-btn {
+            background: rgba(44,186,178,0.15);
+            border: 1.5px solid rgba(44,186,178,0.4);
+            color: var(--white);
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .22s;
+        }
+        .lb-btn:hover { background: rgba(44,186,178,0.35); }
+
+        /* Thumbnail strip */
+        .lightbox-strip {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            width: 100%;
+            max-width: 960px;
+            padding-bottom: 4px;
+        }
+        .lightbox-strip::-webkit-scrollbar { height: 4px; }
+        .lightbox-strip::-webkit-scrollbar-thumb { background: var(--teal); border-radius:2px; }
+
+        .lb-thumb {
+            flex-shrink: 0;
+            width: 80px;
+            height: 55px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: border-color .2s, opacity .2s;
+            opacity: 0.65;
+        }
+        .lb-thumb:hover { opacity: 1; }
+        .lb-thumb.active {
+            border-color: var(--teal);
+            opacity: 1;
+        }
+
+        .lb-counter {
+            font-family: var(--bebas);
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: var(--gray);
+            align-self: flex-end;
+        }
+
+        /* ============================================================
+           CONTACT
+        ============================================================ */
+        .contact-section {
+            background: linear-gradient(135deg, rgba(44,186,178,.1), rgba(44,186,178,.02));
+            border-top: 1px solid rgba(44,186,178,.2);
+            text-align: center;
+            padding: 5rem 2rem;
+        }
+        .contact-section h2 {
+            font-family: var(--bebas);
+            font-size: 2.8rem;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+        }
+        .contact-section p {
+            color: var(--gray);
+            max-width: 400px;
+            margin: 0 auto 2rem;
+        }
+        .btn-cta {
+            display: inline-block;
+            font-family: var(--bebas);
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+            color: var(--dark);
+            background: var(--teal);
+            padding: 0.85rem 3rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(44,186,178,.4);
+        }
+
+        /* ============================================================
+           FOOTER
+        ============================================================ */
+        footer {
+            background: rgba(8,8,8,.96);
+            text-align: center;
+            padding: 1.5rem;
+            font-family: var(--bebas);
+            font-size: 1rem;
+            letter-spacing: 1px;
+            color: var(--gray);
+            border-top: 2px solid var(--teal);
+        }
+        footer span { color: var(--teal); }
+
+        /* ============================================================
+           RESPONSIVE
+        ============================================================ */
+        @media (max-width: 768px) {
+            .site-header { padding: .75rem 1rem; }
+            .about-section { grid-template-columns: 1fr; }
+            .avatar-panel { min-height: 340px; }
+            .portfolio-grid { grid-template-columns: 1fr; }
+            .lb-btn { width:38px; height:38px; font-size:1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ====================================================
+         LIGHTBOX MODAL
+    ==================================================== -->
+    <div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Galería de imágenes">
+        <div class="lightbox-header">
+            <span class="lightbox-title" id="lb-title">CATEGORÍA</span>
+            <button class="lightbox-close" id="lb-close" aria-label="Cerrar galería">✕</button>
+        </div>
+
+        <div class="lightbox-main">
+            <button class="lb-btn" id="lb-prev" aria-label="Anterior">&#8249;</button>
+            <div class="lightbox-img-wrap">
+                <img id="lb-img" src="" alt="Miniatura seleccionada">
+            </div>
+            <button class="lb-btn" id="lb-next" aria-label="Siguiente">&#8250;</button>
+        </div>
+
+        <div style="width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+            <div class="lightbox-strip" id="lb-strip"></div>
+            <span class="lb-counter" id="lb-counter">1 / 1</span>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         SITE WRAPPER
+    ==================================================== -->
+    <div class="site-wrapper">
+
+        <!-- HEADER -->
+        <header class="site-header" id="site-header">
+            <nav class="nav-links" aria-label="Navegación principal">
+                <a href="#inicio"    class="nav-item active" id="nav-home">HOME</a>
+                <a href="#clientes"  class="nav-item" id="nav-clientes">CLIENTES</a>
+                <a href="#portfolio" class="nav-item" id="nav-trolleo">MINIATURAS TROLLEO</a>
+                <a href="#portfolio" class="nav-item" id="nav-irl">MINIATURAS IRL</a>
+                <a href="#portfolio" class="nav-item" id="nav-mc">MINIATURAS MINECRAFT 3D</a>
+                <a href="#portfolio" class="nav-item" id="nav-gaming">MINIATURAS GAMING</a>
+                <a href="#portfolio" class="nav-item" id="nav-entertain">MINIATURAS ENTRETENIMIENTO</a>
+                <a href="#portfolio" class="nav-item" id="nav-discord">MINIATURAS DISCORD</a>
+                <a href="#contacto"  class="nav-item" id="nav-contacto">CONTACTO</a>
+            </nav>
+            <a href="https://youtube.com/@DUDE-3D" target="_blank" rel="noopener" class="social-badge" id="youtube-link">
+                @DUDE-3D EN YOUTUBE
+            </a>
+        </header>
+
+        <!-- HERO -->
+        <section class="hero" id="inicio" aria-label="Presentación">
+            <div class="hero-bg"></div>
+            <div class="hero-overlay"></div>
+            <div class="hero-inner">
+                <h1 class="hero-title">YO SOY DUDE !</h1>
+                <p class="hero-sub">Y A ESTO ME DEDICO...</p>
+            </div>
+        </section>
+
+        <!-- ABOUT -->
+        <section class="about-section" id="clientes" aria-label="Avatar y clientes">
+            <div class="avatar-panel">
+                <svg class="avatar-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" aria-label="Avatar de Dude3D">
+                    <ellipse cx="100" cy="220" rx="60" ry="30" fill="#222"/>
+                    <rect x="60" y="155" width="80" height="75" rx="10" fill="#333"/>
+                    <rect x="88" y="140" width="24" height="20" rx="4" fill="#ddd"/>
+                    <ellipse cx="100" cy="115" rx="52" ry="55" fill="#f0f0f0"/>
+                    <ellipse cx="100" cy="68" rx="52" ry="22" fill="#222"/>
+                    <rect x="48" y="68" width="18" height="40" rx="9" fill="#222"/>
+                    <rect x="134" y="68" width="18" height="40" rx="9" fill="#222"/>
+                    <circle cx="78" cy="118" r="14" fill="white" stroke="#222" stroke-width="2"/>
+                    <circle cx="122" cy="118" r="14" fill="white" stroke="#222" stroke-width="2"/>
+                    <polygon points="78,107 80,114 87,114 81,119 83,126 78,121 73,126 75,119 69,114 76,114" fill="#222"/>
+                    <polygon points="122,107 124,114 131,114 125,119 127,126 122,121 117,126 119,119 113,114 120,114" fill="#222"/>
+                    <ellipse cx="62" cy="130" rx="10" ry="6" fill="rgba(255,150,150,0.35)"/>
+                    <ellipse cx="138" cy="130" rx="10" ry="6" fill="rgba(255,150,150,0.35)"/>
+                    <path d="M85 140 Q100 155 115 140" stroke="#555" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <path d="M48 115 Q50 75 100 72 Q150 75 152 115" stroke="#222" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    <rect x="40" y="108" width="18" height="22" rx="9" fill="#2cbab2"/>
+                    <rect x="142" y="108" width="18" height="22" rx="9" fill="#2cbab2"/>
+                </svg>
+            </div>
+            <div class="info-panel">
+                <p class="info-label">CLIENTES</p>
+                <p class="info-count">20 / 23</p>
+            </div>
+        </section>
+
+        <!-- PORTFOLIO -->
+        <section class="portfolio-section" id="portfolio" aria-label="Trabajos">
+            <h2 class="section-title">MIS TRABAJOS</h2>
+            <div class="portfolio-grid" id="portfolio-grid">
+
+                <!-- Trolleo -->
+                <article class="portfolio-card" tabindex="0"
+                    data-gallery="trolleo"
+                    data-title="MINIATURAS TROLLEO"
+                    data-images='["assets/trolleo/miniatura_variante_1_remake.png","assets/trolleo/miniatura_variante_2.png","assets/trolleo/miniatura_variante_3.png"]'>
+                    <div class="card-thumb trolleo-bg">
+                        <img src="assets/trolleo/miniatura_variante_1_remake.png" alt="Miniatura Trolleo" loading="lazy" onerror="this.style.display='none'">
+                        <span class="card-thumb-label">MINIATURAS TROLLEO</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-category">TROLLEO</p>
+                        <p class="card-title">Diseños épicos para videos de trolleo y humor</p>
+                        <p class="card-count">3 imágenes · Click para ver galería</p>
+                    </div>
+                </article>
+
+                <!-- IRL -->
+                <article class="portfolio-card" tabindex="0"
+                    data-gallery="irl"
+                    data-title="MINIATURAS IRL"
+                    data-images='["assets/irl/thumbnail_1.png","assets/irl/thumbnail_2(1).png","assets/irl/thumbnail_2.png","assets/irl/toros.png"]'>
+                    <div class="card-thumb irl-bg">
+                        <img src="assets/irl/thumbnail_1.png" alt="Miniatura IRL" loading="lazy" onerror="this.style.display='none'">
+                        <span class="card-thumb-label">MINIATURAS IRL</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-category">IRL</p>
+                        <p class="card-title">Thumbnails realistas con fotografía y diseño</p>
+                        <p class="card-count">4 imágenes · Click para ver galería</p>
+                    </div>
+                </article>
+
+                <!-- Minecraft 3D -->
+                <article class="portfolio-card" tabindex="0"
+                    data-gallery="minecraft"
+                    data-title="MINIATURAS MINECRAFT 3D"
+                    data-images='["assets/minecraft/mini_1.png","assets/minecraft/mini_2.png","assets/minecraft/mini_3.png"]'>
+                    <div class="card-thumb mc-bg">
+                        <img src="assets/minecraft/mini_1.png" alt="Miniatura Minecraft" loading="lazy" onerror="this.style.display='none'">
+                        <span class="card-thumb-label">MINIATURAS MINECRAFT 3D</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-category">MINECRAFT 3D</p>
+                        <p class="card-title">Renders 3D del universo Minecraft</p>
+                        <p class="card-count">3 imágenes · Click para ver galería</p>
+                    </div>
+                </article>
+
+                <!-- Gaming -->
+                <article class="portfolio-card" tabindex="0"
+                    data-gallery="gaming"
+                    data-title="MINIATURAS GAMING"
+                    data-images='["assets/gaming/miniatura_1.png","assets/gaming/miniatura_2.png","assets/gaming/miniatura_3.png"]'>
+                    <div class="card-thumb gaming-bg">
+                        <img src="assets/gaming/miniatura_1.png" alt="Miniatura Gaming" loading="lazy" onerror="this.style.display='none'">
+                        <span class="card-thumb-label">MINIATURAS GAMING</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-category">GAMING</p>
+                        <p class="card-title">Thumbnails gaming de alto impacto visual</p>
+                        <p class="card-count">3 imágenes · Click para ver galería</p>
+                    </div>
+                </article>
+
+                <!-- Entretenimiento -->
+                <article class="portfolio-card" tabindex="0"
+                    data-gallery="entretenimiento"
+                    data-title="MINIATURAS ENTRETENIMIENTO"
+                    data-images='["assets/entretenimiento/troll_girls.png","assets/entretenimiento/troll_girls_2.png","assets/entretenimiento/troll_girls_3.png"]'>
+                    <div class="card-thumb entertain-bg">
+                        <img src="assets/entretenimiento/troll_girls.png" alt="Miniatura Entretenimiento" loading="lazy" onerror="this.style.display='none'">
+                        <span class="card-thumb-label">MINIATURAS ENTRETENIMIENTO</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-category">ENTRETENIMIENTO</p>
+                        <p class="card-title">Miniaturas para vlogs y contenido general</p>
+                        <p class="card-count">3 imágenes · Click para ver galería</p>
+                    </div>
+                </article>
+
+                <!-- Discord -->
+                <article class="portfolio-card" tabindex="0"
+                    data-gallery="discord"
+                    data-title="MINIATURAS DISCORD"
+                    data-images='["assets/discord/Miniatura_mabel_1.png","assets/discord/Miniatura_mabel_2.png","assets/discord/thumbnail_1.jpg","assets/discord/thumbnail_2.png"]'>
+                    <div class="card-thumb discord-bg">
+                        <img src="assets/discord/Miniatura_mabel_1.png" alt="Miniatura Discord" loading="lazy" onerror="this.style.display='none'">
+                        <span class="card-thumb-label">MINIATURAS DISCORD</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-category">DISCORD</p>
+                        <p class="card-title">Diseños y banners para servidores de Discord</p>
+                        <p class="card-count">4 imágenes · Click para ver galería</p>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section class="contact-section" id="contacto" aria-label="Contacto">
+            <h2>¿NECESITAS UNA MINIATURA?</h2>
+            <p>Escríbeme y cuéntame tu proyecto. Trabajamos juntos para que tu canal destaque.</p>
+            <a href="#" class="btn-cta" id="contact-btn">CONTÁCTAME</a>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <span>DUDE 3D</span> &nbsp;·&nbsp; Portfolio © 2024 &nbsp;·&nbsp; Todos los derechos reservados
+        </footer>
+
+    </div><!-- /site-wrapper -->
+
+    <!-- ====================================================
+         JAVASCRIPT
+    ==================================================== -->
+    <script>
+        /* ---- NAV: active state on click ---- */
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navItems.forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        /* ---- INTERSECTION OBSERVER for nav highlight ---- */
+        const sectionMap = {
+            'inicio':    'nav-home',
+            'clientes':  'nav-clientes',
+            'portfolio': 'nav-trolleo',
+            'contacto':  'nav-contacto'
+        };
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    navItems.forEach(n => n.classList.remove('active'));
+                    const t = document.getElementById(sectionMap[e.target.id]);
+                    if (t) t.classList.add('active');
+                }
+            });
+        }, { threshold: 0.35 });
+        document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+
+        /* ---- LIGHTBOX ---- */
+        const lb         = document.getElementById('lightbox');
+        const lbImg      = document.getElementById('lb-img');
+        const lbTitle    = document.getElementById('lb-title');
+        const lbStrip    = document.getElementById('lb-strip');
+        const lbCounter  = document.getElementById('lb-counter');
+        const lbClose    = document.getElementById('lb-close');
+        const lbPrev     = document.getElementById('lb-prev');
+        const lbNext     = document.getElementById('lb-next');
+
+        let currentImages = [];
+        let currentIndex  = 0;
+
+        function openLightbox(images, title, startIndex = 0) {
+            currentImages = images;
+            currentIndex  = startIndex;
+            lbTitle.textContent = title;
+            buildStrip();
+            showImage(currentIndex);
+            lb.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            lb.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function showImage(index) {
+            currentIndex = (index + currentImages.length) % currentImages.length;
+            lbImg.src = currentImages[currentIndex];
+            lbCounter.textContent = `${currentIndex + 1} / ${currentImages.length}`;
+            // update strip active
+            document.querySelectorAll('.lb-thumb').forEach((t, i) => {
+                t.classList.toggle('active', i === currentIndex);
+            });
+            // scroll strip to active thumb
+            const activeThumb = lbStrip.children[currentIndex];
+            if (activeThumb) activeThumb.scrollIntoView({ behavior:'smooth', inline:'center' });
+        }
+
+        function buildStrip() {
+            lbStrip.innerHTML = '';
+            currentImages.forEach((src, i) => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = `Imagen ${i + 1}`;
+                img.className = 'lb-thumb' + (i === 0 ? ' active' : '');
+                img.addEventListener('click', () => showImage(i));
+                lbStrip.appendChild(img);
+            });
+        }
+
+        lbClose.addEventListener('click', closeLightbox);
+        lbPrev.addEventListener('click',  () => showImage(currentIndex - 1));
+        lbNext.addEventListener('click',  () => showImage(currentIndex + 1));
+
+        lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+
+        document.addEventListener('keydown', e => {
+            if (!lb.classList.contains('open')) return;
+            if (e.key === 'ArrowRight') showImage(currentIndex + 1);
+            if (e.key === 'ArrowLeft')  showImage(currentIndex - 1);
+            if (e.key === 'Escape')     closeLightbox();
+        });
+
+        /* ---- Wire portfolio cards to lightbox ---- */
+        document.querySelectorAll('.portfolio-card').forEach(card => {
+            const open = () => {
+                const images = JSON.parse(card.dataset.images);
+                const title  = card.dataset.title;
+                openLightbox(images, title, 0);
+            };
+            card.addEventListener('click', open);
+            card.addEventListener('keydown', e => { if (e.key === 'Enter') open(); });
+        });
+    </script>
+</body>
+</html>
