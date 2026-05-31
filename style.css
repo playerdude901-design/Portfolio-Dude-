@@ -147,7 +147,7 @@ img { display:block; }
 .avatar-panel {
     background: linear-gradient(160deg,#e8e8e8,#c4c4c4);
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
     overflow: hidden;
 }

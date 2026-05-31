@@ -177,4 +177,16 @@
         });
     });
 
+    /* ── Clientes Button ── */
+    const btnClientes = document.getElementById('btn-ver-clientes');
+    if (btnClientes) {
+        btnClientes.addEventListener('click', () => {
+            const clientesImages = [
+                './assets/canales/cliente_1.png',
+                './assets/canales/cliente_2.png'
+            ];
+            openLightbox(clientesImages, 'CLIENTES Y CANALES');
+        });
+    }
+
 })();
