@@ -177,16 +177,18 @@
         });
     });
 
-    /* ── Clientes Button ── */
-    const btnClientes = document.getElementById('btn-ver-clientes');
-    if (btnClientes) {
-        btnClientes.addEventListener('click', () => {
+    /* ── Clientes Panel ── */
+    const panelClientes = document.getElementById('panel-clientes-clickable');
+    if (panelClientes) {
+        const openClientes = () => {
             const clientesImages = [
                 './assets/canales/cliente_1.png',
                 './assets/canales/cliente_2.png'
             ];
             openLightbox(clientesImages, 'CLIENTES Y CANALES');
-        });
+        };
+        panelClientes.addEventListener('click', openClientes);
+        panelClientes.addEventListener('keydown', e => { if (e.key === 'Enter') openClientes(); });
     }
 
 })();
