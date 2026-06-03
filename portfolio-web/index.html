@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio de Dude 3D - diseño gráfico, edición de videos y miniaturas para YouTube">
+    <title>Dude 3D | Diseño, edición y miniaturas</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <div id="global-bg"></div>
+
+    <!-- ══════════ LIGHTBOX ══════════ -->
+    <div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Galería de imágenes">
+        <div class="lb-header">
+            <span class="lb-title" id="lb-title">CATEGORÍA</span>
+            <button class="lb-close" id="lb-close" aria-label="Cerrar galería">✕</button>
+        </div>
+        <div class="lb-main">
+            <button class="lb-btn" id="lb-prev" aria-label="Imagen anterior">&#8249;</button>
+            <div class="lb-img-wrap">
+                <img id="lb-img" src="" alt="Miniatura">
+            </div>
+            <button class="lb-btn" id="lb-next" aria-label="Imagen siguiente">&#8250;</button>
+        </div>
+        <div class="lb-footer">
+            <div class="lb-strip" id="lb-strip"></div>
+            <span class="lb-counter" id="lb-counter">1 / 1</span>
+        </div>
+    </div>
+
+    <!-- ══════════ SITE ══════════ -->
+    <div class="site-wrapper">
+
+        <header class="site-header" id="site-header">
+            <nav class="nav-links" aria-label="Navegación principal">
+                <a href="#inicio"    class="nav-item active" id="nav-home">HOME</a>
+                <a href="#clientes"  class="nav-item" id="nav-clientes">CLIENTES</a>
+                <a href="#portfolio" class="nav-item" id="nav-trolleo">MINIATURAS TROLLEO</a>
+                <a href="#portfolio" class="nav-item" id="nav-irl">MINIATURAS IRL</a>
+                <a href="#portfolio" class="nav-item" id="nav-mc">MINIATURAS MINECRAFT 3D</a>
+                <a href="#portfolio" class="nav-item" id="nav-gaming">MINIATURAS GAMING</a>
+                <a href="#portfolio" class="nav-item" id="nav-entertain">MINIATURAS ENTRETENIMIENTO</a>
+                <a href="#portfolio" class="nav-item" id="nav-discord">MINIATURAS DISCORD</a>
+                <a href="#contacto"  class="nav-item" id="nav-contacto">CONTACTO</a>
+            </nav>
+            <a href="https://www.youtube.com/@Dude-10" target="_blank" rel="noopener" class="social-badge" id="youtube-link">
+                @Dude-10 en YouTube
+            </a>
+        </header>
+
+        <section class="hero" id="inicio" aria-label="Presentación">
+            <div class="hero-bg"></div>
+            <div class="hero-overlay"></div>
+            <div class="hero-inner">
+                <h1 class="hero-title">YO SOY DUDE !</h1>
+                <p class="hero-sub">Y A ESTO ME DEDICO...</p>
+            </div>
+        </section>
+
+        <section class="presentation-section" id="presentacion" aria-label="Presentación de Dude">
+            <div class="presentation-copy">
+                <p class="presentation-kicker">DISEÑO GRÁFICO · EDICIÓN · MINIATURAS</p>
+                <h2>Una presentación pensada para que tu contenido se vea más profesional.</h2>
+                <p>
+                    Trabajo creando miniaturas, piezas gráficas y edición de video con una
+                    estética clara, llamativa y enfocada en resultados. Si buscas darle una
+                    identidad más fuerte a tu canal o proyecto, aquí encontrarás un estilo
+                    visual hecho para destacar desde el primer vistazo.
+                </p>
+            </div>
+            <div class="presentation-portrait">
+                <img src="./assets/perfil/imagen_de_perfil.jpeg" alt="Foto de perfil de Dude" loading="lazy">
+            </div>
+        </section>
+
+        <section class="about-section" id="clientes" aria-label="Sobre mí y clientes">
+            <div class="avatar-panel" id="panel-clientes-clickable" tabindex="0" aria-label="Ver clientes">
+                <div class="clientes-bg-grid">
+                    <img src="./assets/canales/cliente_1.png" alt="" loading="lazy">
+                    <img src="./assets/canales/cliente_2.png" alt="" loading="lazy">
+                </div>
+                <div class="clientes-blur-overlay">
+                    <span>VER CLIENTES</span>
+                </div>
+            </div>
+            <div class="info-panel">
+                <p class="info-label">CLIENTES</p>
+                <p class="info-count">20 / 23</p>
+            </div>
+        </section>
+
+        <section class="portfolio-section" id="portfolio" aria-label="Trabajos">
+            <h2 class="section-title">MIS TRABAJOS</h2>
+            <div class="portfolio-grid" id="portfolio-grid"></div>
+        </section>
+
+        <section class="contact-section" id="contacto" aria-label="Contacto">
+            <h2>¿NECESITAS UNA MINIATURA o que te edite un video?</h2>
+            <p>Escríbeme y cuéntame tu proyecto. Trabajamos juntos para que tu canal destaque.</p>
+            <a href="https://discord.gg/cXtvhWhBPt" target="_blank" rel="noopener" class="btn-cta" id="contact-btn">CONTÁCTAME POR DISCORD</a>
+        </section>
+
+        <footer>
+            <span>DUDE 3D</span> &nbsp;·&nbsp; Portfolio © 2024 &nbsp;·&nbsp; Todos los derechos reservados
+        </footer>
+
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
