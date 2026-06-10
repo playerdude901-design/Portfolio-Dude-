@@ -105,7 +105,7 @@ img { display:block; }
     overflow: hidden;
 }
 
-.hero-bg img {
+.hero-bg video {
     flex: 1;
     min-width: 0;
     height: 100%;
