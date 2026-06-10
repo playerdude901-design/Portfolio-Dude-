@@ -100,8 +100,16 @@ img { display:block; }
 .hero-bg {
     position: absolute;
     inset: 0;
-    background: url('./assets/hero_bg.jpg') center/cover no-repeat;
     z-index: 0;
+    display: flex;
+    overflow: hidden;
+}
+
+.hero-bg img {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    object-fit: cover;
 }
 
 .hero-overlay {
