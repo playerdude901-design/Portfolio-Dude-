@@ -453,61 +453,71 @@ img { display:block; }
     opacity: .85;
 }
 
-/* ══════════ PRESETGOLD ══════════ */
-.presetgold-section {
+/* ══════════ PRODUCTOS GOLD ══════════ */
+.gold-section {
     width: 100%;
-    padding: 2.5rem clamp(1.5rem, 4vw, 2.5rem) 5rem;
+    padding: 3rem clamp(1.5rem, 4vw, 2.5rem) 5rem;
     background: linear-gradient(180deg, rgba(8,8,8,.98), rgba(14,14,14,.96));
     border-bottom: 1px solid rgba(44,186,178,.15);
 }
 
-.presetgold-inner {
-    max-width: 1100px;
+.gold-inner {
+    max-width: 1200px;
     margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 1.5rem;
 }
 
-.presetgold-logo {
-    max-width: min(420px, 90vw);
-    height: auto;
-    margin-bottom: -.5rem;
-}
-
-.presetgold-content {
+.gold-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2.5rem;
-    align-items: center;
-    width: 100%;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    align-items: start;
 }
 
-.presetgold-image img {
-    width: 100%;
-    height: auto;
+.gold-card {
+    background: rgba(22,22,22,.88);
+    border: 1px solid rgba(44,186,178,.18);
     border-radius: 10px;
-    border: 1px solid rgba(255,255,255,.08);
-}
-
-.presetgold-text {
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    text-align: left;
+    gap: 1.2rem;
+    transition: transform .3s, box-shadow .3s, border-color .3s;
 }
 
-.presetgold-desc {
+.gold-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,.5);
+    border-color: rgba(44,186,178,.4);
+}
+
+.gold-card-title {
+    max-width: 100%;
+    height: auto;
+}
+
+.gold-card-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.06);
+}
+
+.gold-card-desc {
     color: #d7d7d7;
-    line-height: 1.75;
-    font-size: 1.03rem;
+    line-height: 1.7;
+    font-size: .95rem;
+    flex: 1;
 }
 
-.presetgold-desc strong {
+.gold-card-desc strong {
     color: var(--gold);
     font-weight: 800;
+}
+
+.gold-card .btn-github {
+    align-self: flex-start;
+    font-size: 1rem;
+    padding: .6rem 1.2rem;
 }
 
 .btn-github {
@@ -531,17 +541,11 @@ img { display:block; }
     transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
-    .presetgold-content {
+@media (max-width: 900px) {
+    .gold-grid {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    .presetgold-text {
-        text-align: center;
-        align-items: center;
-    }
-    .btn-github {
-        align-self: center;
+        max-width: 500px;
+        margin: 0 auto;
     }
 }
 
