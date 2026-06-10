@@ -139,17 +139,32 @@ img { display:block; }
 
 /* ══════════ PRESENTATION ══════════ */
 .presentation-section {
-    max-width: none;
-    margin: 0;
     width: 100%;
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
-    gap: 2.5rem;
-    align-items: center;
-    padding: 4.5rem clamp(1rem, 3vw, 2.5rem);
+    padding: 4.5rem clamp(1.5rem, 4vw, 2.5rem);
     background: linear-gradient(135deg, rgba(14,14,14,.96), rgba(18,18,18,.88));
     border-top: 1px solid rgba(44,186,178,.15);
     border-bottom: 1px solid rgba(44,186,178,.15);
+}
+
+.presentation-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+    gap: 3.5rem;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .presentation-inner {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        text-align: center;
+    }
+    .presentation-copy p {
+        margin: 0 auto;
+        text-align: center;
+    }
 }
 
 .presentation-copy {
