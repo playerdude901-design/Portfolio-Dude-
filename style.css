@@ -396,12 +396,18 @@ img { display:block; }
 }
 
 /* Gradient fallback per category */
-.card-thumb.trolleo-bg   { background:linear-gradient(135deg,#1a1a2e,#e94560); }
-.card-thumb.irl-bg       { background:linear-gradient(135deg,#0f3460,#533483); }
-.card-thumb.mc-bg        { background:linear-gradient(135deg,#1b4332,#52b788); }
-.card-thumb.gaming-bg    { background:linear-gradient(135deg,#240046,#9d4edd); }
-.card-thumb.entertain-bg { background:linear-gradient(135deg,#7b2d00,#f4a261); }
-.card-thumb.discord-bg   { background:linear-gradient(135deg,#23272a,#5865f2); }
+.card-thumb.trolleo-bg      { background:linear-gradient(135deg,#1a1a2e,#e94560); }
+.card-thumb.irl-bg          { background:linear-gradient(135deg,#0f3460,#533483); }
+.card-thumb.mc-bg           { background:linear-gradient(135deg,#1b4332,#52b788); }
+.card-thumb.gaming-bg       { background:linear-gradient(135deg,#240046,#9d4edd); }
+.card-thumb.entertain-bg    { background:linear-gradient(135deg,#7b2d00,#f4a261); }
+.card-thumb.discord-bg      { background:linear-gradient(135deg,#23272a,#5865f2); }
+.card-thumb.dag-bg          { background:linear-gradient(135deg,#2c3e50,#34495e); }
+.card-thumb.icarus-bg       { background:linear-gradient(135deg,#1a1a2e,#4a4e69); }
+.card-thumb.albion-bg       { background:linear-gradient(135deg,#2d6a4f,#40916c); }
+.card-thumb.mc-client-bg    { background:linear-gradient(135deg,#1b4332,#2d6a4f); }
+.card-thumb.mc2-bg          { background:linear-gradient(135deg,#3a5a40,#588157); }
+.card-thumb.putin-bg        { background:linear-gradient(135deg,#9b2226,#ae2012); }
 
 .card-cover {
     position: absolute;

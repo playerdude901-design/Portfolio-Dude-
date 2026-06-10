@@ -74,6 +74,74 @@
                 './assets/discord/thumbnail_1.jpg',
                 './assets/discord/thumbnail_2.jpg'
             ]
+        },
+        {
+            key:   'dag-hammarskjold',
+            title: 'MINIATURAS DAG HAMMARSKJÖLD',
+            cls:   'dag-bg',
+            label: 'DAG HAMMARSKJÖLD',
+            desc:  'Miniaturas históricas y educativas',
+            images: [
+                './assets/dag-hammarskjold/variante_1.jpg',
+                './assets/dag-hammarskjold/variante_2.jpg',
+                './assets/dag-hammarskjold/variante_3.jpg'
+            ]
+        },
+        {
+            key:   'icarus',
+            title: 'MINIATURAS ICARUS',
+            cls:   'icarus-bg',
+            label: 'ICARUS',
+            desc:  'Diseños para supervivencia sci-fi',
+            images: [
+                './assets/icarus/variante_1.jpg',
+                './assets/icarus/variante_2.jpg'
+            ]
+        },
+        {
+            key:   'albion',
+            title: 'MINIATURAS ALBION ONLINE',
+            cls:   'albion-bg',
+            label: 'ALBION ONLINE',
+            desc:  'Thumbnails para MMORPG sandbox',
+            images: [
+                './assets/albion/variante_1.jpg',
+                './assets/albion/variante_2.jpg'
+            ]
+        },
+        {
+            key:   'minecraft-client',
+            title: 'MINIATURAS MINECRAFT PERSONALIZADO',
+            cls:   'mc-client-bg',
+            label: 'MINECRAFT CUSTOM',
+            desc:  'Renders 3D personalizados para clientes',
+            images: [
+                './assets/minecraft-client/variante_1.jpg',
+                './assets/minecraft-client/variante_2.jpg'
+            ]
+        },
+        {
+            key:   'minecraft-2',
+            title: 'MINIATURAS MINECRAFT SERIE 2',
+            cls:   'mc2-bg',
+            label: 'MINECRAFT 2',
+            desc:  'Nueva serie de renders Minecraft',
+            images: [
+                './assets/minecraft-2/variante_1.jpg',
+                './assets/minecraft-2/variante_2.jpg'
+            ]
+        },
+        {
+            key:   'putin',
+            title: 'MINIATURAS PUTIN',
+            cls:   'putin-bg',
+            label: 'PUTIN',
+            desc:  'Miniaturas de sátira política',
+            images: [
+                './assets/putin/variante_1.jpg',
+                './assets/putin/variante_2.jpg',
+                './assets/putin/variante_3.jpg'
+            ]
         }
     ];
 
