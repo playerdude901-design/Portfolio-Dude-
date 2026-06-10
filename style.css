@@ -436,6 +436,61 @@ img { display:block; }
 .card-title    { font-weight:700; font-size:.92rem; line-height:1.4; }
 .card-count    { margin-top:.6rem; font-size:.78rem; color:var(--gray); }
 
+/* ══════════ PAGE DIVIDER ══════════ */
+.page-divider {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 1rem 1.5rem;
+    background: rgba(8,8,8,.98);
+}
+
+.page-divider img {
+    max-width: 100%;
+    height: auto;
+    opacity: .85;
+}
+
+/* ══════════ PRESETGOLD ══════════ */
+.presetgold-section {
+    width: 100%;
+    padding: 3rem clamp(1.5rem, 4vw, 2.5rem) 5rem;
+    background: linear-gradient(180deg, rgba(8,8,8,.98), rgba(14,14,14,.96));
+    border-bottom: 1px solid rgba(44,186,178,.15);
+}
+
+.presetgold-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2rem;
+}
+
+.presetgold-logo {
+    max-width: min(420px, 90vw);
+    height: auto;
+}
+
+.presetgold-desc {
+    color: #d7d7d7;
+    line-height: 1.75;
+    font-size: 1.03rem;
+    max-width: 65ch;
+}
+
+.presetgold-desc strong {
+    color: var(--teal);
+    font-weight: 800;
+}
+
+.presetgold-cta {
+    margin-top: .5rem;
+}
+
 /* ══════════ LIGHTBOX ══════════ */
 .lightbox-overlay {
     display: none;
