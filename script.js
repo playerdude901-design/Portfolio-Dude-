@@ -245,47 +245,106 @@
         });
     });
 
-    /* ── Video Preview Modal (Clientes) ── */
-    const videos = [
-        { id: 'JN1Z9Az-mR4',  start: 30,  end: 60,  link: 'https://youtu.be/JN1Z9Az-mR4' },
-        { id: 'AltqrOFb8Mo',  start: 60,  end: 90,  link: 'https://youtu.be/AltqrOFb8Mo' },
-        { id: '_HfdmGOUGI8',  start: 45,  end: 75,  link: 'https://youtu.be/_HfdmGOUGI8' },
-        { id: 'TcJoAk1nBW8',  start: 90,  end: 120, link: 'https://youtu.be/TcJoAk1nBW8' },
-        { id: 'AfgMdjbW0Uk',  start: 30,  end: 60,  link: 'https://youtu.be/AfgMdjbW0Uk' },
-        { id: 'CUAsdgZRwt8',  start: 60,  end: 90,  link: 'https://youtu.be/CUAsdgZRwt8' },
-        { id: '4Eu3R8V768M',  start: 45,  end: 75,  link: 'https://youtu.be/4Eu3R8V768M' },
-        { id: '-5bLMNxq5Q4',  start: 90,  end: 120, link: 'https://youtu.be/-5bLMNxq5Q4' }
-    ];
+    /* ── Gallery Modal (Clientes) ── */
+    const clientes = {
+        galaxito: {
+            name: 'Galaxito',
+            videos: [
+                { id: 'JN1Z9Az-mR4',  img: './assets/clientes/galaxito/Galaxito_1.jpg', start: 30,  end: 60,  link: 'https://youtu.be/JN1Z9Az-mR4' },
+                { id: 'AltqrOFb8Mo',  img: './assets/clientes/galaxito/Galaxito_2.jpg', start: 60,  end: 90,  link: 'https://youtu.be/AltqrOFb8Mo' },
+                { id: '_HfdmGOUGI8',  img: './assets/clientes/galaxito/Galaxito_3.jpg', start: 45,  end: 75,  link: 'https://youtu.be/_HfdmGOUGI8' },
+                { id: 'TcJoAk1nBW8',  img: './assets/clientes/galaxito/Galaxito_4.jpg', start: 90,  end: 120, link: 'https://youtu.be/TcJoAk1nBW8' }
+            ]
+        },
+        playerdude: {
+            name: 'PlayerDude',
+            videos: [
+                { id: 'AfgMdjbW0Uk',  img: './assets/clientes/playerdude/PlayerDude_1.jpg', start: 30,  end: 60,  link: 'https://youtu.be/AfgMdjbW0Uk' },
+                { id: 'CUAsdgZRwt8',  img: './assets/clientes/playerdude/PlayerDude_2.jpg', start: 60,  end: 90,  link: 'https://youtu.be/CUAsdgZRwt8' },
+                { id: '4Eu3R8V768M',  img: './assets/clientes/playerdude/PlayerDude_3.jpg', start: 45,  end: 75,  link: 'https://youtu.be/4Eu3R8V768M' },
+                { id: '-5bLMNxq5Q4',  img: './assets/clientes/playerdude/PlayerDude_4.jpg', start: 90,  end: 120, link: 'https://youtu.be/-5bLMNxq5Q4' }
+            ]
+        }
+    };
 
-    const videoModal  = document.getElementById('video-modal');
-    const videoIframe = document.getElementById('video-iframe');
-    const videoClose  = document.getElementById('video-close');
-    const btnYoutube  = document.getElementById('btn-youtube');
+    const galleryModal = document.getElementById('gallery-modal');
+    const galleryGrid  = document.getElementById('gallery-grid');
+    const galleryTitle = document.getElementById('gallery-title');
+    const galleryClose = document.getElementById('gallery-close');
+    const galleryView  = document.getElementById('gallery-view');
+    const playerView   = document.getElementById('player-view');
+    const playerIframe = document.getElementById('player-iframe');
+    const galleryBack  = document.getElementById('gallery-back');
+    const galleryYt    = document.getElementById('gallery-youtube');
 
-    document.querySelectorAll('.cliente-thumb').forEach(thumb => {
-        thumb.addEventListener('click', () => {
-            const idx = parseInt(thumb.dataset.video);
-            const v = videos[idx];
-            let src = `https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0&showinfo=0`;
-            if (v.start) src += `&start=${v.start}`;
-            if (v.end)   src += `&end=${v.end}`;
-            videoIframe.src = src;
-            btnYoutube.href = v.link;
-            videoModal.classList.add('open');
-            document.body.style.overflow = 'hidden';
+    let currentClient = null;
+    let currentVideos = [];
+
+    function buildGallery(clientKey) {
+        const data = clientes[clientKey];
+        if (!data) return;
+        currentClient = clientKey;
+        currentVideos = data.videos;
+        galleryTitle.textContent = data.name.toUpperCase() + ' · VIDEOS';
+        galleryGrid.innerHTML = '';
+        data.videos.forEach((v, i) => {
+            const div = document.createElement('div');
+            div.className = 'gallery-thumb';
+            div.innerHTML = `
+                <img src="${v.img}" alt="Video ${i + 1}" loading="lazy">
+                <div class="thumb-play"><span>▶</span></div>
+            `;
+            div.addEventListener('click', () => openPlayer(i));
+            galleryGrid.appendChild(div);
         });
-    });
+        showGallery();
+    }
 
-    function closeVideoModal() {
-        videoModal.classList.remove('open');
-        videoIframe.src = '';
+    function openPlayer(idx) {
+        const v = currentVideos[idx];
+        if (!v) return;
+        let src = `https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0&showinfo=0`;
+        if (v.start) src += `&start=${v.start}`;
+        if (v.end)   src += `&end=${v.end}`;
+        playerIframe.src = src;
+        galleryYt.href = v.link;
+        galleryView.style.display = 'none';
+        playerView.style.display = 'block';
+        galleryBack.style.display = 'inline-block';
+        galleryYt.style.display = 'inline-flex';
+    }
+
+    function showGallery() {
+        playerIframe.src = '';
+        playerView.style.display = 'none';
+        galleryView.style.display = 'block';
+        galleryBack.style.display = 'none';
+        galleryYt.style.display = 'none';
+    }
+
+    function openGallery(clientKey) {
+        buildGallery(clientKey);
+        galleryModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeGallery() {
+        galleryModal.classList.remove('open');
+        showGallery();
         document.body.style.overflow = '';
     }
 
-    videoClose.addEventListener('click', closeVideoModal);
-    videoModal.addEventListener('click', e => { if (e.target === videoModal) closeVideoModal(); });
+    document.querySelectorAll('.cliente-panel').forEach(panel => {
+        panel.addEventListener('click', () => openGallery(panel.dataset.client));
+        panel.addEventListener('keydown', e => { if (e.key === 'Enter') openGallery(panel.dataset.client); });
+    });
+
+    galleryClose.addEventListener('click', closeGallery);
+    galleryBack.addEventListener('click', showGallery);
+    galleryModal.addEventListener('click', e => { if (e.target === galleryModal) closeGallery(); });
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && videoModal.classList.contains('open')) closeVideoModal();
+        if (!galleryModal.classList.contains('open')) return;
+        if (e.key === 'Escape') closeGallery();
     });
 
 })();
