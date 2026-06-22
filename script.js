@@ -250,7 +250,11 @@
         { id: 'JN1Z9Az-mR4',  start: 30,  end: 60,  link: 'https://youtu.be/JN1Z9Az-mR4' },
         { id: 'AltqrOFb8Mo',  start: 60,  end: 90,  link: 'https://youtu.be/AltqrOFb8Mo' },
         { id: '_HfdmGOUGI8',  start: 45,  end: 75,  link: 'https://youtu.be/_HfdmGOUGI8' },
-        { id: 'TcJoAk1nBW8',  start: 90,  end: 120, link: 'https://youtu.be/TcJoAk1nBW8' }
+        { id: 'TcJoAk1nBW8',  start: 90,  end: 120, link: 'https://youtu.be/TcJoAk1nBW8' },
+        { id: 'AfgMdjbW0Uk',  start: 30,  end: 60,  link: 'https://youtu.be/AfgMdjbW0Uk' },
+        { id: 'CUAsdgZRwt8',  start: 60,  end: 90,  link: 'https://youtu.be/CUAsdgZRwt8' },
+        { id: '4Eu3R8V768M',  start: 45,  end: 75,  link: 'https://youtu.be/4Eu3R8V768M' },
+        { id: '-5bLMNxq5Q4',  start: 90,  end: 120, link: 'https://youtu.be/-5bLMNxq5Q4' }
     ];
 
     const videoModal  = document.getElementById('video-modal');
