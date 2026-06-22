@@ -245,45 +245,80 @@
         });
     });
 
-    /* ── Video Preview Modal (Clientes) ── */
-    const videoModal  = document.getElementById('video-modal');
-    const videoIframe = document.getElementById('video-iframe');
-    const videoClose  = document.getElementById('video-close');
-    const btnYoutube  = document.getElementById('btn-youtube');
-
-    const videoLinks = [
-        'https://youtu.be/JN1Z9Az-mR4',
-        'https://youtu.be/AltqrOFb8Mo',
-        'https://youtu.be/_HfdmGOUGI8',
-        'https://youtu.be/TcJoAk1nBW8'
+    /* ── Gallery Modal (Clientes) ── */
+    const videos = [
+        { id: 'JN1Z9Az-mR4',  img: './assets/clientes/galaxito/Galaxito_1.jpg', start: 30,  end: 60,  link: 'https://youtu.be/JN1Z9Az-mR4' },
+        { id: 'AltqrOFb8Mo',  img: './assets/clientes/galaxito/Galaxito_2.jpg', start: 60,  end: 90,  link: 'https://youtu.be/AltqrOFb8Mo' },
+        { id: '_HfdmGOUGI8',  img: './assets/clientes/galaxito/Galaxito_3.jpg', start: 45,  end: 75,  link: 'https://youtu.be/_HfdmGOUGI8' },
+        { id: 'TcJoAk1nBW8',  img: './assets/clientes/galaxito/Galaxito_4.jpg', start: 90,  end: 120, link: 'https://youtu.be/TcJoAk1nBW8' }
     ];
 
-    document.querySelectorAll('.cliente-thumb').forEach(thumb => {
-        thumb.addEventListener('click', () => {
-            const videoId   = thumb.dataset.id;
-            const start     = thumb.dataset.start || 0;
-            const end       = thumb.dataset.end;
-            const videoIdx  = parseInt(thumb.dataset.video);
-            let src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&showinfo=0`;
-            if (start) src += `&start=${start}`;
-            if (end)   src += `&end=${end}`;
-            videoIframe.src = src;
-            btnYoutube.href = videoLinks[videoIdx] || '#';
-            videoModal.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        });
-    });
+    const galleryModal = document.getElementById('gallery-modal');
+    const galleryGrid  = document.getElementById('gallery-grid');
+    const galleryClose = document.getElementById('gallery-close');
+    const galleryView  = document.getElementById('gallery-view');
+    const playerView   = document.getElementById('player-view');
+    const playerIframe = document.getElementById('player-iframe');
+    const galleryBack  = document.getElementById('gallery-back');
+    const galleryYt    = document.getElementById('gallery-youtube');
 
-    function closeVideoModal() {
-        videoModal.classList.remove('open');
-        videoIframe.src = '';
+    function buildGallery() {
+        galleryGrid.innerHTML = '';
+        videos.forEach((v, i) => {
+            const div = document.createElement('div');
+            div.className = 'gallery-thumb';
+            div.innerHTML = `
+                <img src="${v.img}" alt="Video ${i + 1}" class="bw-hover" loading="lazy">
+                <div class="thumb-play"><span>▶</span></div>
+            `;
+            div.addEventListener('click', () => openPlayer(i));
+            galleryGrid.appendChild(div);
+        });
+    }
+
+    function openPlayer(idx) {
+        const v = videos[idx];
+        let src = `https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0&showinfo=0`;
+        if (v.start) src += `&start=${v.start}`;
+        if (v.end)   src += `&end=${v.end}`;
+        playerIframe.src = src;
+        galleryYt.href = v.link;
+        galleryView.style.display = 'none';
+        playerView.style.display = 'block';
+        galleryBack.style.display = 'inline-block';
+        galleryYt.style.display = 'inline-flex';
+    }
+
+    function showGallery() {
+        playerIframe.src = '';
+        playerView.style.display = 'none';
+        galleryView.style.display = 'block';
+        galleryBack.style.display = 'none';
+        galleryYt.style.display = 'none';
+    }
+
+    function openGalleryModal() {
+        showGallery();
+        galleryModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeGalleryModal() {
+        galleryModal.classList.remove('open');
+        playerIframe.src = '';
         document.body.style.overflow = '';
     }
 
-    videoClose.addEventListener('click', closeVideoModal);
-    videoModal.addEventListener('click', e => { if (e.target === videoModal) closeVideoModal(); });
+    buildGallery();
+
+    document.getElementById('panel-galaxito').addEventListener('click', openGalleryModal);
+    document.getElementById('panel-galaxito').addEventListener('keydown', e => { if (e.key === 'Enter') openGalleryModal(); });
+    galleryClose.addEventListener('click', closeGalleryModal);
+    galleryBack.addEventListener('click', showGallery);
+    galleryModal.addEventListener('click', e => { if (e.target === galleryModal) closeGalleryModal(); });
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && videoModal.classList.contains('open')) closeVideoModal();
+        if (!galleryModal.classList.contains('open')) return;
+        if (e.key === 'Escape') closeGalleryModal();
     });
 
 })();
