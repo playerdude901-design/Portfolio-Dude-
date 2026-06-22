@@ -245,18 +245,45 @@
         });
     });
 
-    /* ── Clientes Panel ── */
-    const panelClientes = document.getElementById('panel-clientes-clickable');
-    if (panelClientes) {
-        const openClientes = () => {
-            const clientesImages = [
-                './assets/canales/cliente_1.png',
-                './assets/canales/cliente_2.png'
-            ];
-            openLightbox(clientesImages, 'CLIENTES Y CANALES');
-        };
-        panelClientes.addEventListener('click', openClientes);
-        panelClientes.addEventListener('keydown', e => { if (e.key === 'Enter') openClientes(); });
+    /* ── Video Preview Modal (Clientes) ── */
+    const videoModal  = document.getElementById('video-modal');
+    const videoIframe = document.getElementById('video-iframe');
+    const videoClose  = document.getElementById('video-close');
+    const btnYoutube  = document.getElementById('btn-youtube');
+
+    const videoLinks = [
+        'https://youtu.be/JN1Z9Az-mR4',
+        'https://youtu.be/AltqrOFb8Mo',
+        'https://youtu.be/_HfdmGOUGI8',
+        'https://youtu.be/TcJoAk1nBW8'
+    ];
+
+    document.querySelectorAll('.cliente-thumb').forEach(thumb => {
+        thumb.addEventListener('click', () => {
+            const videoId   = thumb.dataset.id;
+            const start     = thumb.dataset.start || 0;
+            const end       = thumb.dataset.end;
+            const videoIdx  = parseInt(thumb.dataset.video);
+            let src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&showinfo=0`;
+            if (start) src += `&start=${start}`;
+            if (end)   src += `&end=${end}`;
+            videoIframe.src = src;
+            btnYoutube.href = videoLinks[videoIdx] || '#';
+            videoModal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    function closeVideoModal() {
+        videoModal.classList.remove('open');
+        videoIframe.src = '';
+        document.body.style.overflow = '';
     }
+
+    videoClose.addEventListener('click', closeVideoModal);
+    videoModal.addEventListener('click', e => { if (e.target === videoModal) closeVideoModal(); });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && videoModal.classList.contains('open')) closeVideoModal();
+    });
 
 })();
