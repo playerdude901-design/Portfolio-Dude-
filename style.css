@@ -300,8 +300,7 @@ img { display:block; }
 .cliente-panel {
     position: relative;
     flex: 1;
-    aspect-ratio: 3 / 5;
-    max-height: 75vh;
+    aspect-ratio: 2 / 3;
     border-radius: 14px;
     overflow: hidden;
     border: 1px solid rgba(44,186,178,.18);
@@ -339,14 +338,13 @@ img { display:block; }
 }
 
 .cliente-panel-overlay {
-    position: relative;
+    position: absolute;
+    inset: 0;
     z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 100%;
     padding: 2rem;
     background: linear-gradient(transparent 20%, rgba(0,0,0,.75));
     text-align: center;
@@ -550,8 +548,7 @@ img { display:block; }
 
 @media (max-width: 640px) {
     .clientes-panels-row { flex-direction: column; }
-    .cliente-panel { aspect-ratio: auto; min-height: 300px; max-height: none; }
-    .cliente-panel-overlay { height: auto; min-height: 300px; }
+    .cliente-panel { aspect-ratio: 4 / 3; }
     .panel-client-name { font-size: 2rem; }
     .gallery-grid { grid-template-columns: repeat(2, 1fr); }
 }
