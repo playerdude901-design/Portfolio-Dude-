@@ -673,7 +673,22 @@ img { display:block; }
     display: block;
     max-width: min(500px, 90vw);
     height: auto;
+    margin: 0 auto 2rem;
+}
+
+.gold-intro {
+    max-width: 720px;
     margin: 0 auto 2.5rem;
+    text-align: center;
+    color: #d7d7d7;
+    font-size: 1rem;
+    line-height: 1.7;
+    padding: 0 1rem;
+}
+
+.gold-intro strong {
+    color: var(--gold);
+    font-weight: 800;
 }
 
 .gold-grid {
@@ -716,7 +731,6 @@ img { display:block; }
     color: #d7d7d7;
     line-height: 1.7;
     font-size: .95rem;
-    flex: 1;
 }
 
 .gold-card-desc strong {
