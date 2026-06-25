@@ -368,15 +368,16 @@ img { display:block; }
 
 .clientes-panels-row {
     display: flex;
-    gap: 1.5rem;
-    max-width: 1200px;
+    gap: .6rem;
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 0 .5rem;
 }
 
 .cliente-panel {
     position: relative;
     flex: 1;
-    aspect-ratio: 2 / 3;
+    aspect-ratio: 3 / 5;
     border-radius: 14px;
     overflow: hidden;
     border: 1px solid rgba(44,186,178,.18);
