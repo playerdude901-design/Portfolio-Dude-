@@ -18,15 +18,26 @@
             align-items: center;
             justify-content: center;
             padding: 2rem 1rem;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url('./assets/contacto/fondo_1.png') center/cover no-repeat;
+            filter: blur(8px) brightness(.3);
+            z-index: -1;
         }
         .contact-page {
             width: 100%;
             max-width: 560px;
-            background: rgba(22,22,22,.92);
-            border: 1px solid rgba(44,186,178,.2);
+            background: rgba(18,18,18,.92);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(44,186,178,.25);
             border-radius: 16px;
             padding: 2.5rem 2rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,.5);
+            box-shadow: 0 8px 40px rgba(0,0,0,.5);
         }
         .contact-page h1 {
             font-family: var(--bebas);
