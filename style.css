@@ -467,30 +467,30 @@ img { display:block; }
     border-color: transparent;
 }
 
-[data-verified="true"]::before {
-    content: '';
+.glow-edge {
     position: absolute;
-    inset: 0;
-    z-index: 5;
-    border-radius: inherit;
+    top: -5px; left: -5px; right: -5px; bottom: -5px;
+    border-radius: 19px;
+    z-index: -1;
     pointer-events: none;
-    padding: 2px;
-    background: conic-gradient(#ff0000, #ff7700, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
     opacity: 0;
     transition: opacity .4s;
 }
 
-[data-verified="true"]:hover::before {
+[data-verified="true"]:hover .glow-edge {
     opacity: 1;
-    animation: spinGlow 2s linear infinite;
+    animation: rainbowGlow 1.2s linear infinite;
 }
 
-@keyframes spinGlow {
-    to { transform: rotate(360deg); }
+@keyframes rainbowGlow {
+    0%   { box-shadow: 0 0 18px 6px #ff0040; }
+    14%  { box-shadow: 0 0 18px 6px #ff8800; }
+    28%  { box-shadow: 0 0 18px 6px #88ff00; }
+    42%  { box-shadow: 0 0 18px 6px #00ff88; }
+    57%  { box-shadow: 0 0 18px 6px #00aaff; }
+    71%  { box-shadow: 0 0 18px 6px #6644ff; }
+    85%  { box-shadow: 0 0 18px 6px #ff00aa; }
+    100% { box-shadow: 0 0 18px 6px #ff0040; }
 }
 
 /* ── Gallery Modal ── */

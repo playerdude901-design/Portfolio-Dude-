@@ -391,6 +391,11 @@
     document.querySelectorAll('.cliente-panel').forEach(panel => {
         panel.addEventListener('click', () => openGallery(panel.dataset.client));
         panel.addEventListener('keydown', e => { if (e.key === 'Enter') openGallery(panel.dataset.client); });
+        if (panel.dataset.verified === 'true') {
+            const glow = document.createElement('div');
+            glow.className = 'glow-edge';
+            panel.insertBefore(glow, panel.firstChild);
+        }
     });
 
     galleryClose.addEventListener('click', closeGallery);
