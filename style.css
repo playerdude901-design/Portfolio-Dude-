@@ -369,15 +369,15 @@ img { display:block; }
 .clientes-panels-row {
     display: flex;
     gap: .6rem;
-    max-width: 1400px;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 0 .5rem;
+    padding: 0 1rem;
 }
 
 .cliente-panel {
     position: relative;
     flex: 1;
-    aspect-ratio: 3 / 5;
+    min-height: 480px;
     border-radius: 14px;
     overflow: hidden;
     border: 1px solid rgba(44,186,178,.18);
@@ -625,7 +625,7 @@ img { display:block; }
 
 @media (max-width: 640px) {
     .clientes-panels-row { flex-direction: column; }
-    .cliente-panel { aspect-ratio: 4 / 3; }
+    .cliente-panel { min-height: 280px; }
     .panel-client-name { font-size: 2rem; }
     .gallery-grid { grid-template-columns: repeat(2, 1fr); }
 }
