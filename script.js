@@ -310,6 +310,14 @@
             videos: [
                 { id: 'lLNxqnnoQNY',  img: './assets/clientes/maog/Maog_1.jpg', start: 1,  end: 30,  link: 'https://youtu.be/lLNxqnnoQNY' }
             ]
+        },
+        strike: {
+            name: 'ElStrike',
+            videos: [
+                { id: 'AXGRtZ2Fg-w',  img: './assets/clientes/strike/Strike_1.jpg', start: 1,  end: 30,  link: 'https://www.youtube.com/shorts/AXGRtZ2Fg-w' },
+                { id: 'Sl6Y1KfInkA',  img: './assets/clientes/strike/Strike_2.jpg', start: 1,  end: 30,  link: 'https://www.youtube.com/shorts/Sl6Y1KfInkA' },
+                { id: 'rZdb8zQMidE',  img: './assets/clientes/strike/Strike_3.jpg', start: 1,  end: 30,  link: 'https://www.youtube.com/shorts/rZdb8zQMidE' }
+            ]
         }
     };
 
