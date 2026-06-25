@@ -28,8 +28,8 @@ img { display:block; }
     position: fixed;
     inset: 0;
     z-index: 0;
-    background: url('./assets/hero_bg.jpg') center/cover no-repeat;
-    filter: blur(16px) brightness(0.28);
+    background: url('./assets/contacto/fondo_1.png') center/cover no-repeat;
+    filter: brightness(.35) sepia(.4) hue-rotate(160deg) saturate(1.8) blur(4px);
     transform: scale(1.06);
 }
 
@@ -645,25 +645,8 @@ img { display:block; }
 }
 
 .portfolio-section {
-    position: relative;
     padding: 5rem 2.5rem;
     width: 100%;
-    overflow: hidden;
-    isolation: isolate;
-}
-
-.portfolio-section::before {
-    content: '';
-    position: absolute;
-    inset: -2rem;
-    background: url('./assets/contacto/fondo_1.png') center/cover no-repeat fixed;
-    filter: brightness(.35) sepia(.4) hue-rotate(160deg) saturate(1.8) blur(3px);
-    z-index: -1;
-}
-
-.portfolio-section > * {
-    position: relative;
-    z-index: 1;
 }
 
 .portfolio-section .section-title {
