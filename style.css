@@ -55,20 +55,20 @@ img { display:block; }
 .nav-pill {
     display: flex;
     align-items: center;
-    gap: .25rem;
+    gap: .6rem;
     background: rgba(12,12,12,.92);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.1);
     border-radius: 100px;
-    padding: .4rem .4rem .4rem .5rem;
+    padding: .5rem .6rem .5rem .5rem;
     pointer-events: auto;
     box-shadow: 0 8px 32px rgba(0,0,0,.5);
 }
 
 .nav-logo {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
@@ -76,7 +76,7 @@ img { display:block; }
     align-items: center;
     justify-content: center;
     transition: transform .2s;
-    margin-right: .2rem;
+    margin-right: .4rem;
 }
 
 .nav-logo:hover {
@@ -91,15 +91,15 @@ img { display:block; }
 
 .nav-links {
     display: flex;
-    gap: .1rem;
+    gap: .25rem;
 }
 
 .nav-item {
     font-family: var(--bebas);
-    font-size: .85rem;
+    font-size: 1rem;
     letter-spacing: 1.5px;
     color: var(--white);
-    padding: .35rem .65rem;
+    padding: .45rem .9rem;
     border-radius: 50px;
     transition: color .25s, background .25s;
     white-space: nowrap;
@@ -113,8 +113,12 @@ img { display:block; }
 
 /* ── SuiteGold shine effect ── */
 .nav-gold {
-    color: var(--gold);
-    background: linear-gradient(90deg, var(--gold) 0%, #f5d060 40%, var(--gold) 60%, #f5d060 100%);
+    padding: .45rem .9rem;
+}
+
+.gold-shine {
+    display: inline-block;
+    background: linear-gradient(90deg, #e8b830 0%, #f5d060 30%, #fff5b0 50%, #f5d060 70%, #e8b830 100%);
     background-size: 300% 100%;
     -webkit-background-clip: text;
     background-clip: text;
@@ -123,13 +127,11 @@ img { display:block; }
 }
 
 .nav-gold:hover {
-    background: linear-gradient(90deg, var(--gold) 0%, #f5d060 40%, var(--gold) 60%, #f5d060 100%);
-    background-size: 300% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: goldShine 1.5s ease-in-out infinite;
-    background-color: rgba(232,184,48,.1);
+    background: rgba(232,184,48,.12);
+}
+
+.nav-gold:hover .gold-shine {
+    animation-duration: 1s;
 }
 
 @keyframes goldShine {
@@ -140,20 +142,22 @@ img { display:block; }
 
 .nav-cta {
     font-family: var(--bebas);
-    font-size: .85rem;
+    font-size: .95rem;
     letter-spacing: 1.5px;
-    color: var(--dark);
-    background: var(--teal);
-    padding: .45rem 1rem;
+    color: #fff;
+    background: #2563eb;
+    padding: .5rem 1.3rem;
     border-radius: 50px;
     white-space: nowrap;
-    transition: transform .2s, box-shadow .2s;
-    margin-left: .4rem;
+    transition: transform .2s, box-shadow .2s, background .2s;
+    margin-left: .5rem;
+    box-shadow: 0 0 20px rgba(37,99,235,.35);
 }
 
 .nav-cta:hover {
     transform: scale(1.04);
-    box-shadow: 0 4px 20px rgba(44,186,178,.4);
+    background: #3b82f6;
+    box-shadow: 0 0 30px rgba(37,99,235,.6);
 }
 
 /* ══════════ HERO ══════════ */
@@ -958,16 +962,15 @@ footer span { color:var(--teal); }
     .site-header { top: .5rem; padding: 0 .5rem; }
     .nav-pill {
         width: 100%;
-        max-width: 100%;
-        gap: .15rem;
-        padding: .35rem .35rem .35rem .4rem;
+        gap: .3rem;
+        padding: .4rem .4rem .4rem .4rem;
     }
-    .nav-logo { width: 32px; height: 32px; margin-right: 0; }
-    .nav-links { gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .nav-logo { width: 34px; height: 34px; margin-right: .15rem; }
+    .nav-links { gap: .1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     .nav-links::-webkit-scrollbar { display: none; }
-    .nav-item { font-size: .75rem; padding: .3rem .45rem; flex-shrink: 0; }
-    .nav-gold { font-size: .75rem; }
-    .nav-cta { font-size: .75rem; padding: .35rem .7rem; margin-left: .2rem; flex-shrink: 0; }
+    .nav-item { font-size: .8rem; padding: .35rem .55rem; flex-shrink: 0; }
+    .nav-gold { padding: .35rem .55rem; }
+    .nav-cta { font-size: .8rem; padding: .38rem .85rem; margin-left: .2rem; flex-shrink: 0; }
     .presentation-section {
         grid-template-columns: 1fr;
         gap: 1.75rem;
