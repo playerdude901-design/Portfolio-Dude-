@@ -44,7 +44,7 @@ img { display:block; }
 /* ══════════ HEADER ══════════ */
 .site-header {
     position: sticky;
-    top: 1rem;
+    top: 1.2rem;
     z-index: 200;
     display: flex;
     justify-content: center;
@@ -55,20 +55,20 @@ img { display:block; }
 .nav-pill {
     display: flex;
     align-items: center;
-    gap: .6rem;
-    background: rgba(12,12,12,.92);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255,255,255,.1);
+    gap: 1.2rem;
+    background: rgba(8,8,8,.85);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255,255,255,.12);
     border-radius: 100px;
-    padding: .5rem .6rem .5rem .5rem;
+    padding: .55rem .8rem .55rem .6rem;
     pointer-events: auto;
-    box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    box-shadow: 0 8px 40px rgba(0,0,0,.6);
 }
 
 .nav-logo {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
@@ -76,7 +76,7 @@ img { display:block; }
     align-items: center;
     justify-content: center;
     transition: transform .2s;
-    margin-right: .4rem;
+    margin-right: .6rem;
 }
 
 .nav-logo:hover {
@@ -91,15 +91,16 @@ img { display:block; }
 
 .nav-links {
     display: flex;
-    gap: .25rem;
+    align-items: center;
+    gap: .4rem;
 }
 
 .nav-item {
     font-family: var(--bebas);
-    font-size: 1rem;
+    font-size: 1.1rem;
     letter-spacing: 1.5px;
     color: var(--white);
-    padding: .45rem .9rem;
+    padding: .5rem 1rem;
     border-radius: 50px;
     transition: color .25s, background .25s;
     white-space: nowrap;
@@ -113,7 +114,7 @@ img { display:block; }
 
 /* ── SuiteGold shine effect ── */
 .nav-gold {
-    padding: .45rem .9rem;
+    padding: .5rem 1rem;
 }
 
 .gold-shine {
@@ -142,15 +143,15 @@ img { display:block; }
 
 .nav-cta {
     font-family: var(--bebas);
-    font-size: .95rem;
+    font-size: 1rem;
     letter-spacing: 1.5px;
     color: #fff;
     background: #2563eb;
-    padding: .5rem 1.3rem;
+    padding: .55rem 1.4rem;
     border-radius: 50px;
     white-space: nowrap;
     transition: transform .2s, box-shadow .2s, background .2s;
-    margin-left: .5rem;
+    margin-left: .6rem;
     box-shadow: 0 0 20px rgba(37,99,235,.35);
 }
 
