@@ -28,9 +28,7 @@ img { display:block; }
     position: fixed;
     inset: 0;
     z-index: 0;
-    background: url('./assets/contacto/fondo_1.png') center/cover no-repeat;
-    filter: brightness(.4) sepia(1) hue-rotate(200deg) saturate(3) blur(4px);
-    transform: scale(1.06);
+    background: #0d0d0d;
 }
 
 .site-wrapper {
@@ -177,15 +175,7 @@ img { display:block; }
     position: absolute;
     inset: 0;
     z-index: 0;
-    display: flex;
-    overflow: hidden;
-}
-
-.hero-bg video {
-    flex: 1;
-    min-width: 0;
-    height: 100%;
-    object-fit: cover;
+    background: url('./assets/cuadricula_azul.png') center/cover no-repeat;
 }
 
 .hero-overlay {
@@ -1012,9 +1002,3 @@ footer span { color:var(--teal); }
     .lb-btn { width:38px; height:38px; font-size:1.4rem; }
 }
 
-/* ── Hide video controls overlay on mobile ── */
-.hero-bg video::-webkit-media-controls { display: none !important; }
-.hero-bg video::-webkit-media-controls-start-playback-button { display: none !important; }
-.hero-bg video::-webkit-media-controls-play-button { display: none !important; }
-.hero-bg video::-webkit-media-controls-enclosure { display: none !important; }
-.hero-bg video::-moz-media-controls { display: none !important; }

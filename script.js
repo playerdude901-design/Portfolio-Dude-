@@ -245,34 +245,6 @@
         });
     });
 
-    /* ── Hero Random Videos ── */
-    const heroVideos = [
-        './assets/videos/dude_AlertFaintTarsierPanicVis-CgTX6DdOYFee3hdD.mp4',
-        './assets/videos/dude_AliveWealthyScallionBabyRage-C1oBNFVZ1yxYUnu3.mp4',
-        './assets/videos/dude_CaringHealthyAntWholeWheat-HzyNqpOMPIpdBMsf.mp4',
-        './assets/videos/dude_PoisedFunnyRabbitBIRB-kDUDNok6vV5L7h5n.mp4',
-        './assets/videos/dude_RacyWiseHorseradishPJSugar-KhyMoQsfQMFtXiFe.mp4',
-        './assets/videos/dude_ShakingLightGiraffeHotPokket-QE5OQ05yV5O.mp4'
-    ];
-
-    function pickRandomVideo(exclude) {
-        const pool = heroVideos.filter(v => v !== exclude);
-        return pool[Math.floor(Math.random() * pool.length)];
-    }
-
-    function setRandomVideo(videoEl) {
-        const current = videoEl.getAttribute('src');
-        const next = pickRandomVideo(current);
-        videoEl.setAttribute('src', next);
-        videoEl.load();
-        videoEl.play();
-    }
-
-    document.querySelectorAll('.hero-video').forEach(video => {
-        setRandomVideo(video);
-        video.addEventListener('ended', () => setRandomVideo(video));
-    });
-
     /* ── Gallery Modal (Clientes) ── */
     const clientes = {
         galaxito: {
