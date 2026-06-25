@@ -29,7 +29,7 @@ img { display:block; }
     inset: 0;
     z-index: 0;
     background: url('./assets/contacto/fondo_1.png') center/cover no-repeat;
-    filter: brightness(.35) sepia(.4) hue-rotate(160deg) saturate(1.8) blur(4px);
+    filter: brightness(.4) sepia(1) hue-rotate(200deg) saturate(3) blur(4px);
     transform: scale(1.06);
 }
 
@@ -379,7 +379,6 @@ img { display:block; }
     flex: 1;
     min-height: 650px;
     border-radius: 14px;
-    overflow: hidden;
     border: 1px solid rgba(44,186,178,.18);
     box-shadow: 0 18px 40px rgba(0,0,0,.25);
     cursor: pointer;
@@ -399,6 +398,8 @@ img { display:block; }
     inset: 0;
     z-index: 0;
     pointer-events: none;
+    overflow: hidden;
+    border-radius: inherit;
 }
 
 .cliente-panel-bg img {
@@ -421,8 +422,9 @@ img { display:block; }
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
     padding: 2rem;
+    padding-bottom: 1.8rem;
     background: linear-gradient(transparent 20%, rgba(0,0,0,.75));
     text-align: center;
 }
@@ -434,6 +436,14 @@ img { display:block; }
     color: var(--white);
     text-shadow: 0 4px 20px rgba(0,0,0,0.95);
     margin-bottom: .5rem;
+}
+
+[data-verified="true"] .panel-client-name::after {
+    content: ' \2714';
+    color: #1d9bf0;
+    font-size: 1.1em;
+    text-shadow: 0 0 12px rgba(29,155,240,.6);
+    display: inline-block;
 }
 
 .panel-client-cta {
@@ -449,6 +459,26 @@ img { display:block; }
 .cliente-panel:hover .panel-client-cta {
     opacity: 1;
     transform: translateY(0);
+}
+
+[data-verified="true"]::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    border-radius: 16px;
+    background: conic-gradient(#ff0000, #ff7700, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+    opacity: 0;
+    transition: opacity .4s;
+}
+
+[data-verified="true"]:hover::before {
+    opacity: 1;
+    animation: spinGlow 2s linear infinite;
+}
+
+@keyframes spinGlow {
+    to { transform: rotate(360deg); }
 }
 
 /* ── Gallery Modal ── */
