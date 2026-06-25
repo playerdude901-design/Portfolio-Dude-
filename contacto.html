@@ -153,7 +153,20 @@
         }
         .form-wrap { display: block; }
         .success-msg.show { display: block; }
-        .success-msg.show + .form-wrap { display: none; }
+        .form-wrap.hidden { display: none; }
+        .error-msg {
+            display: none;
+            color: #ef4444;
+            font-size: .9rem;
+            text-align: center;
+            margin-top: .8rem;
+            padding: .6rem;
+            border: 1px solid rgba(239,68,68,.3);
+            border-radius: 8px;
+            background: rgba(239,68,68,.08);
+        }
+        .error-msg.show { display: block; }
+        .form-submit.loading { pointer-events: none; opacity: .6; }
     </style>
 </head>
 <body>
@@ -169,10 +182,7 @@
         </div>
 
         <div class="form-wrap" id="form-wrap">
-            <form action="https://formsubmit.co/playerdude901@gmail.com" method="POST">
-                <input type="hidden" name="_next" value="./contacto.html?enviado=ok">
-                <input type="hidden" name="_subject" value="Nuevo mensaje desde el Portfolio!">
-                <input type="text" name="_honey" style="display:none">
+            <form id="contact-form">
                 <div class="form-group">
                     <label for="nombre">Nombre</label>
                     <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
@@ -196,7 +206,8 @@
                     <label for="mensaje">Mensaje</label>
                     <textarea id="mensaje" name="mensaje" required placeholder="Describe tu proyecto..."></textarea>
                 </div>
-                <button type="submit" class="form-submit">ENVIAR MENSAJE</button>
+                <div class="error-msg" id="error-msg"></div>
+                <button type="submit" class="form-submit" id="submit-btn">ENVIAR MENSAJE</button>
             </form>
         </div>
 
@@ -204,11 +215,42 @@
     </div>
 
     <script>
-        if (window.location.search.includes('enviado=ok')) {
-            document.getElementById('success-msg').classList.add('show');
-            document.getElementById('form-wrap').style.display = 'none';
-            document.getElementById('back-link').style.display = 'none';
-        }
+        /* ── CAMBIA ESTA URL por la de tu Google Apps Script desplegado ── */
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLQh4AxX78pllKyYzF8diVolsbEjpYARnTqm-XokBWcfMkpder2xkhUZj7HFOn5Vwn_Q/exec';
+
+        const form = document.getElementById('contact-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const formWrap = document.getElementById('form-wrap');
+        const successMsg = document.getElementById('success-msg');
+        const errorMsg = document.getElementById('error-msg');
+        const backLink = document.getElementById('back-link');
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            errorMsg.classList.remove('show');
+            submitBtn.classList.add('loading');
+            submitBtn.textContent = 'ENVIANDO...';
+
+            const fd = new URLSearchParams(new FormData(form));
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: fd });
+                const json = await res.json();
+
+                if (json.success) {
+                    formWrap.classList.add('hidden');
+                    successMsg.classList.add('show');
+                    backLink.style.display = 'none';
+                } else {
+                    throw new Error(json.error || 'Error al enviar');
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Hubo un error al enviar. Intenta de nuevo o escríbeme directamente a playerdude901@gmail.com';
+                errorMsg.classList.add('show');
+                submitBtn.classList.remove('loading');
+                submitBtn.textContent = 'ENVIAR MENSAJE';
+            }
+        });
     </script>
 </body>
 </html>
