@@ -292,6 +292,12 @@
                 { id: '4Eu3R8V768M',  img: './assets/clientes/playerdude/PlayerDude_3.jpg', start: 45,  end: 75,  link: 'https://youtu.be/4Eu3R8V768M' },
                 { id: '-5bLMNxq5Q4',  img: './assets/clientes/playerdude/PlayerDude_4.jpg', start: 90,  end: 120, link: 'https://youtu.be/-5bLMNxq5Q4' }
             ]
+        },
+        masfax: {
+            name: 'MasFax',
+            videos: [
+                { id: 'UyJcdiXQcF8',  img: './assets/clientes/masfax/MasFax_1.jpg', start: 0,  end: 0,  link: 'https://youtu.be/UyJcdiXQcF8' }
+            ]
         }
     };
 
