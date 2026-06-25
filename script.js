@@ -298,6 +298,12 @@
             videos: [
                 { id: 'UyJcdiXQcF8',  img: './assets/clientes/masfax/MasFax_1.jpg', start: 1,  end: 30,  link: 'https://youtu.be/UyJcdiXQcF8' }
             ]
+        },
+        megazote: {
+            name: 'Megazote',
+            videos: [
+                { id: 'IMTOh9M_Tso',  img: './assets/clientes/megazote/Megazote_1.jpg', start: 1,  end: 30,  link: 'https://youtu.be/IMTOh9M_Tso' }
+            ]
         }
     };
 
