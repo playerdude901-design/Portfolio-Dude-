@@ -635,13 +635,6 @@ img { display:block; }
 }
 
 /* ══════════ PORTFOLIO ══════════ */
-.portfolio-section {
-    padding: 5rem 2.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-}
-
 .section-title {
     font-family: var(--bebas);
     font-size: 2.8rem;
@@ -651,7 +644,36 @@ img { display:block; }
     text-align: center;
 }
 
+.portfolio-section {
+    position: relative;
+    padding: 5rem 2.5rem;
+    width: 100%;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.portfolio-section::before {
+    content: '';
+    position: absolute;
+    inset: -2rem;
+    background: url('./assets/contacto/fondo_1.png') center/cover no-repeat fixed;
+    filter: brightness(.35) sepia(.4) hue-rotate(160deg) saturate(1.8) blur(3px);
+    z-index: -1;
+}
+
+.portfolio-section > * {
+    position: relative;
+    z-index: 1;
+}
+
+.portfolio-section .section-title {
+    max-width: 1200px;
+    margin: 0 auto 2.5rem;
+}
+
 .portfolio-grid {
+    max-width: 1200px;
+    margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px,1fr));
     gap: 1.5rem;
