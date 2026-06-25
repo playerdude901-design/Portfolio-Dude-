@@ -127,6 +127,33 @@
         .back-link:hover {
             color: var(--teal);
         }
+        .success-msg {
+            display: none;
+            text-align: center;
+            padding: 1.5rem 0;
+        }
+        .success-msg .check {
+            font-size: 3rem;
+            color: var(--teal);
+            margin-bottom: .5rem;
+        }
+        .success-msg h2 {
+            font-family: var(--bebas);
+            font-size: 2rem;
+            letter-spacing: 2px;
+            color: var(--white);
+            margin-bottom: .3rem;
+        }
+        .success-msg p {
+            color: var(--gray);
+            font-size: .95rem;
+        }
+        .success-msg .back-link {
+            margin-top: 1.2rem;
+        }
+        .form-wrap { display: block; }
+        .success-msg.show { display: block; }
+        .success-msg.show + .form-wrap { display: none; }
     </style>
 </head>
 <body>
@@ -134,34 +161,54 @@
         <h1>TRABAJEMOS!</h1>
         <p class="sub">Cuéntame tu proyecto y te responderé a la brevedad</p>
 
-        <form action="https://formsubmit.co/tucorreo@ejemplo.com" method="POST" target="_blank">
-            <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
-            </div>
-            <div class="form-group">
-                <label for="email">Correo electrónico</label>
-                <input type="email" id="email" name="email" required placeholder="tu@correo.com">
-            </div>
-            <div class="form-group">
-                <label for="servicio">Servicio que necesitas</label>
-                <select id="servicio" name="servicio">
-                    <option value="">Selecciona una opción</option>
-                    <option value="Miniatura">Miniatura / Thumbnail</option>
-                    <option value="Edicion de video">Edición de video</option>
-                    <option value="Identidad visual">Identidad visual / Branding</option>
-                    <option value="Plugin PresetGold">Plugin PresetGold</option>
-                    <option value="Otro">Otro</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="mensaje">Mensaje</label>
-                <textarea id="mensaje" name="mensaje" required placeholder="Describe tu proyecto..."></textarea>
-            </div>
-            <button type="submit" class="form-submit">ENVIAR MENSAJE</button>
-        </form>
+        <div class="success-msg" id="success-msg">
+            <div class="check">✓</div>
+            <h2>Mensaje enviado</h2>
+            <p>Gracias por contactarme. Te responderé lo antes posible.</p>
+            <a href="index.html" class="back-link">← Volver al portfolio</a>
+        </div>
 
-        <a href="index.html" class="back-link">← Volver al portfolio</a>
+        <div class="form-wrap" id="form-wrap">
+            <form action="https://formsubmit.co/playerdude901@gmail.com" method="POST">
+                <input type="hidden" name="_next" value="./contacto.html?enviado=ok">
+                <input type="hidden" name="_subject" value="Nuevo mensaje desde el Portfolio!">
+                <input type="text" name="_honey" style="display:none">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
+                </div>
+                <div class="form-group">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" name="email" required placeholder="tu@correo.com">
+                </div>
+                <div class="form-group">
+                    <label for="servicio">Servicio que necesitas</label>
+                    <select id="servicio" name="servicio">
+                        <option value="">Selecciona una opción</option>
+                        <option value="Miniatura">Miniatura / Thumbnail</option>
+                        <option value="Edicion de video">Edición de video</option>
+                        <option value="Identidad visual">Identidad visual / Branding</option>
+                        <option value="Plugin PresetGold">Plugin PresetGold</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="mensaje">Mensaje</label>
+                    <textarea id="mensaje" name="mensaje" required placeholder="Describe tu proyecto..."></textarea>
+                </div>
+                <button type="submit" class="form-submit">ENVIAR MENSAJE</button>
+            </form>
+        </div>
+
+        <a href="index.html" class="back-link" id="back-link">← Volver al portfolio</a>
     </div>
+
+    <script>
+        if (window.location.search.includes('enviado=ok')) {
+            document.getElementById('success-msg').classList.add('show');
+            document.getElementById('form-wrap').style.display = 'none';
+            document.getElementById('back-link').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
