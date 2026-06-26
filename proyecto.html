@@ -213,6 +213,36 @@
         .plan-card.applied { border-color:rgba(34,197,94,.2); box-shadow:inset 0 0 0 1px rgba(34,197,94,.15); }
         .plan-card.applied .p-btn { background:rgba(34,197,94,.12); color:#22c55e; cursor:default; }
 
+        .plan-card .p-price-row { display:flex; align-items:baseline; justify-content:center; gap:.5rem; flex-wrap:wrap; margin:.15rem 0; }
+        .plan-card .p-old-price { font-size:.85rem; color:#6b7a8e; text-decoration:line-through; }
+        .plan-card .p-savings {
+            display:inline-block; font-size:.62rem; font-weight:700;
+            background:rgba(34,197,94,.12); color:#22c55e;
+            padding:.1rem .45rem; border-radius:20px; white-space:nowrap;
+        }
+        .plan-card .p-perunit { font-size:.68rem; color:#5a6a7e; margin:.1rem 0 .4rem; }
+        .plan-card .p-perunit span { color:#8a9aae; }
+        .plan-card .p-compare {
+            font-size:.65rem; color:#4a5a6e; margin-top:.6rem; padding:.35rem .5rem;
+            background:rgba(59,130,246,.06); border-radius:8px; line-height:1.4;
+        }
+        .plan-card .p-compare strong { color:var(--blue); }
+
+        .svc-loss-frame {
+            font-size:.73rem; color:#5a6a7e; line-height:1.5; margin:0 0 -.4rem; padding:.65rem .75rem;
+            background:linear-gradient(135deg,rgba(34,197,94,.04),rgba(59,130,246,.04));
+            border-radius:10px; border:1px solid rgba(148,163,184,.06);
+        }
+        .svc-loss-frame strong { color:#b0baca; }
+        .svc-loss-frame .lf-green { color:#22c55e; font-weight:600; }
+        .svc-hint {
+            font-size:.72rem; color:#5a6a7e; margin:.5rem 0 .2rem; padding:.5rem .65rem;
+            background:rgba(251,191,36,.06); border:1px solid rgba(251,191,36,.1);
+            border-radius:8px; line-height:1.5; display:none;
+        }
+        .svc-hint.visible { display:block; }
+        .svc-hint strong { color:#f59e0b; }
+
         /* ── TERMS ── */
         .terms-section { margin-top:1.5rem; border-top:1px solid rgba(148,163,184,.06); padding-top:1rem; }
         .terms-section .t-title {
@@ -566,6 +596,8 @@
                 <div class="plans-grid" id="plans-grid"></div>
             </div>
             <div class="sg-title">Servicios Individuales</div>
+            <div class="svc-hint" id="svc-hint"></div>
+            <div class="svc-loss-frame" id="svc-loss-frame"></div>
             <div class="service-grid" id="service-grid"></div>
             <div class="terms-section" id="terms-section">
                 <div class="t-title" onclick="this.classList.toggle('open');document.getElementById('terms-body').classList.toggle('open')">
@@ -676,12 +708,12 @@
             { id:'growth', name:'Growth Pack', label:'Consistent Growth', badge:'Most Popular', price:250,
               features:['6–8 Edited Videos','6–8 Custom Thumbnails','Shorts Repurposing','Priority Workflow','Unlimited Revisions','Direct Communication'],
               services:[
-                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
                 {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
                 {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
@@ -797,6 +829,8 @@
         const wNext=document.getElementById('w-next');
         const wSkip=document.getElementById('w-skip');
         const svcGrid=document.getElementById('service-grid');
+        const svcHint=document.getElementById('svc-hint');
+        const svcLoss=document.getElementById('svc-loss-frame');
         const plansGridEl=document.getElementById('plans-grid');
         const pBody=document.getElementById('proposal-body');
         const pEmpty=document.getElementById('p-empty');
@@ -969,20 +1003,99 @@
             renderPlanCards();
         }
 
-        // ── PLANS ──
+        // ── PLAN PRICES ──
+
+        function priceForService(svcId, opts) {
+            const s = getSvc(svcId);
+            if (!s) return 0;
+            let price = s.basePrice;
+            const o = { ...opts };
+            s.options.forEach(opt => {
+                if (!o[opt.key] && !opt.depends && opt.choices.length) o[opt.key] = opt.choices[0].v;
+            });
+            s.options.forEach(opt => {
+                if (!o[opt.key] && opt.depends && o[opt.depends.key]===opt.depends.val && opt.choices.length) o[opt.key] = opt.choices[0].v;
+            });
+            s.options.forEach(opt => {
+                const val = o[opt.key];
+                if (!val) return;
+                const c = opt.choices.find(ch => ch.v === val);
+                if (!c) return;
+                if (opt.key==='delivery') { if (val==='priority') price = Math.round(price * 1.5); return; }
+                if (c.p !== null && c.p !== undefined) price += c.p;
+            });
+            return price;
+        }
+
+        function calcPlanPrices(plan) {
+            const details = plan.services.map(s => ({ id: s.id, indPrice: priceForService(s.id, s.opts), opts: s.opts }));
+            const individualTotal = details.reduce((sum, d) => sum + d.indPrice, 0);
+            const planPrice = plan.price;
+            const savings = individualTotal - planPrice;
+            const savingsPct = individualTotal > 0 ? Math.round((savings / individualTotal) * 100) : 0;
+
+            const groups = {};
+            details.forEach(d => {
+                if (!groups[d.id]) groups[d.id] = { count: 0, totalInd: 0 };
+                groups[d.id].count++;
+                groups[d.id].totalInd += d.indPrice;
+            });
+
+            const perUnitTexts = [];
+            for (const [id, g] of Object.entries(groups)) {
+                const svc = getSvc(id);
+                if (!svc) continue;
+                const ratio = individualTotal > 0 ? g.totalInd / individualTotal : 1 / Object.keys(groups).length;
+                const allocated = Math.round(planPrice * ratio);
+                const perUnitCost = Math.round(allocated / g.count);
+                const perUnitInd = Math.round(g.totalInd / g.count);
+                const shortName = id==='gaming-editing'||id==='video-editing' ? 'video' :
+                                  id==='thumbnail-design' ? 'miniatura' :
+                                  id==='shorts-editing' ? 'short' : svc.name;
+                perUnitTexts.push({ label: shortName, planCost: perUnitCost, indCost: perUnitInd });
+            }
+
+            return { individualTotal, planPrice, savings, savingsPct, perUnitTexts };
+        }
+
+        // ── PLAN CARDS ──
         function renderPlanCards() {
             plansGridEl.innerHTML = PLANS.map(p => {
+                const prices = calcPlanPrices(p);
                 const isApp = appliedPlan===p.id;
                 const isRec = !appliedPlan && p.id==='growth';
                 const badgeText = isRec ? 'Recomendado' : (p.badge || '');
+                const puHtml = prices.perUnitTexts.length
+                    ? prices.perUnitTexts.map(u =>
+                        `<span>≈ $${u.planCost}/${u.label} (vs $${u.indCost} c/u)</span>`
+                      ).join(' · ')
+                    : '';
+                const compareHtml = isRec && PLANS.length > 1
+                    ? (() => {
+                        const starter = PLANS.find(x => x.id === 'starter');
+                        const pro = PLANS.find(x => x.id === 'pro');
+                        let txt = '';
+                        if (starter) txt += `vs Starter: <strong>+$${p.price - starter.price}/mes</strong> por `;
+                        const extraFeatures = p.features.filter(f => !starter.features.includes(f));
+                        if (extraFeatures.length) txt += extraFeatures.slice(0, 2).join(', ') + ' y más';
+                        if (pro) txt += `  ·  vs Pro: ahorras <strong>$${pro.price - p.price}/mes</strong>`;
+                        return txt;
+                      })()
+                    : '';
                 return `<div class="plan-card${isRec?' popular':''}${isApp?' applied':''}" onclick="applyPlan('${p.id}')">
                     ${badgeText?`<div class="p-badge">${badgeText}</div>`:''}
                     <div class="p-label">${p.label}</div>
                     <div class="p-name">${p.name}</div>
-                    <div class="p-price">$${p.price} <span>/month</span></div>
+                    <div class="p-price-row">
+                        ${prices.individualTotal > prices.planPrice ? `<span class="p-old-price">$${prices.individualTotal}</span>` : ''}
+                        <span class="p-price">$${p.price} <span>/month</span></span>
+                        ${prices.savings > 0 ? `<span class="p-savings">Ahorras $${prices.savings} (${prices.savingsPct}%)</span>` : ''}
+                    </div>
+                    <div class="p-perunit">${puHtml}</div>
                     <div class="p-divider"></div>
                     <ul class="p-features">${p.features.map(f=>`<li>${f}</li>`).join('')}</ul>
-                    <div class="p-btn">${isApp?'Applied':p.btn}</div>
+                    <div class="p-btn">${isApp?'Aplicado':p.btn}</div>
+                    ${compareHtml ? `<div class="p-compare">${compareHtml}</div>` : ''}
                 </div>`;
             }).join('');
         }
@@ -1025,6 +1138,44 @@
                         ${added?'disabled':''}>${added?'Agregado':'Agregar al Proyecto'}</button>
                 </div>`;
             }).join('');
+
+            // Loss-framing text
+            const total = calcTotal();
+            if (total.total > 0) {
+                svcLoss.innerHTML = `Comprando estos servicios por separado pagarías <strong>$${total.total} USD</strong>. `;
+                let cheapest = null;
+                PLANS.forEach(p => {
+                    const pp = calcPlanPrices(p);
+                    if (pp.planPrice < total.total && (!cheapest || pp.planPrice < cheapest.pp)) cheapest = { p, pp: pp.planPrice };
+                });
+                if (cheapest) {
+                    const saving = total.total - cheapest.pp;
+                    svcLoss.innerHTML += `Con el plan <strong>${cheapest.p.name}</strong> ahorrarías <span class="lf-green">$${saving} USD/mes</span>.`;
+                }
+                svcLoss.style.display = 'block';
+            } else {
+                svcLoss.style.display = 'none';
+            }
+
+            // Contextual hint
+            if (!appliedPlan && total.total > 0) {
+                let bestPlan = null, bestSavings = 0;
+                PLANS.forEach(p => {
+                    const pp = calcPlanPrices(p);
+                    if (total.total > pp.planPrice) {
+                        const s = total.total - pp.planPrice;
+                        if (s > bestSavings) { bestSavings = s; bestPlan = p; }
+                    }
+                });
+                if (bestPlan) {
+                    svcHint.innerHTML = `Esta combinación te saldría más barata como <strong>${bestPlan.name}</strong> — ahorrarías <strong>$${bestSavings} USD/mes</strong>.`;
+                    svcHint.classList.add('visible');
+                } else {
+                    svcHint.classList.remove('visible');
+                }
+            } else {
+                svcHint.classList.remove('visible');
+            }
         }
 
         window.addService = function(svcId) {
