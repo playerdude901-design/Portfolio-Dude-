@@ -261,6 +261,7 @@
         }
         .svc-loss-frame strong { color:#b0baca; }
         .svc-loss-frame .lf-green { color:#22c55e; font-weight:600; }
+        .savings-badge { display:inline-block; background:#22c55e; color:#0a0a0f; font-size:.65rem; font-weight:700; padding:.1rem .35rem; border-radius:4px; margin-left:.25rem; vertical-align:middle; }
         .svc-hint {
             font-size:.72rem; color:#5a6a7e; margin:.5rem 0 .2rem; padding:.5rem .65rem;
             background:rgba(251,191,36,.06); border:1px solid rgba(251,191,36,.1);
@@ -498,6 +499,7 @@
         .p-item-main .pi-name { font-weight:600; font-size:.78rem; }
         .p-item-main .pi-config { font-size:.66rem; color:#5a6a7e; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .p-item-main .pi-price { font-size:.78rem; font-weight:600; color:var(--blue); white-space:nowrap; }
+        .p-item-main .pi-price.pi-included { color:#22c55e; font-size:.7rem; font-weight:500; }
         .p-item-main .pi-toggle { font-size:.6rem; color:#5a6a7e; transition:transform .25s; }
         .p-item-main .pi-toggle.open { transform:rotate(180deg); }
 
@@ -1807,6 +1809,24 @@
         }
 
         function calcTotal() {
+            if (appliedPlan) {
+                const p = PLANS.find(x => x.id === appliedPlan);
+                if (p) {
+                    const prices = calcPlanPrices(p);
+                    return {
+                        total: prices.planPrice,
+                        maxTime: 0,
+                        allItems: p.services.map(s => {
+                            const sv = getSvc(s.id);
+                            return { icon: sv ? getIcon(sv.icon) : '', name: sv ? sv.name : s.id, details: [], price: 0, accent: sv ? sv.accent : '#666' };
+                        }),
+                        planPrice: prices.planPrice,
+                        individualTotal: prices.individualTotal,
+                        isPlan: true,
+                        planName: p.name
+                    };
+                }
+            }
             let total=0, maxTime=0, allItems=[];
             project.forEach((e,i)=>{
                 const r = calcItem(i);
@@ -1848,11 +1868,15 @@
             }
             pEmpty.style.display='none'; pFooter.style.display='block'; pReset.classList.add('visible');
 
+            const total = calcTotal();
             pBody.innerHTML = project.map((e,idx)=>{
                 const s = getSvc(e.serviceId);
                 if (!s) return '';
                 const r = calcItem(idx);
                 const configStr = r.items.slice(0,2).join(' · ');
+                const priceHtml = total.isPlan
+                    ? '<div class="pi-price pi-included">Incluido</div>'
+                    : `<div class="pi-price">$${r.price}</div>`;
                 return `<div class="p-item" data-idx="${idx}" style="--p-accent:${s.accent}">
                     <div class="p-item-main" onclick="this.parentElement.querySelector('.p-item-options').classList.toggle('open');this.querySelector('.pi-toggle').classList.toggle('open')">
                         <div class="pi-preview" style="background:linear-gradient(135deg,${s.accent}22,${s.accent}44);color:${s.accent}">
@@ -1862,25 +1886,28 @@
                             <div class="pi-name">${s.name}</div>
                             ${configStr?`<div class="pi-config">${configStr}</div>`:''}
                         </div>
-                        <div class="pi-price">$${r.price}</div>
+                        ${priceHtml}
                         <div class="pi-toggle">▾</div>
                     </div>
                     <div class="p-item-options">
                         <div class="po-actions">
                             <button class="po-move" onclick="event.stopPropagation();moveService(${idx},-1)" ${idx===0?'disabled':''}>↑</button>
                             <button class="po-move" onclick="event.stopPropagation();moveService(${idx},1)" ${idx===project.length-1?'disabled':''}>↓</button>
-                            <button onclick="event.stopPropagation();removeService(${idx})" class="po-del">Eliminar</button>
+                            ${total.isPlan?'':`<button onclick="event.stopPropagation();removeService(${idx})" class="po-del">Eliminar</button>`}
                         </div>
-                        ${renderPOpts(s, e.opts, idx)}
+                        ${total.isPlan?'':renderPOpts(s, e.opts, idx)}
                     </div>
                 </div>`;
             }).join('');
 
-            const total = calcTotal();
             animateCountUp(pTotal, total.total);
-            pDelivery.innerHTML = total.maxTime
-                ? `Entrega estimada para tu proyecto: <strong>${total.maxTime} día${total.maxTime!==1?'s':''} hábiles</strong>`
-                : 'Entrega estimada: <strong>&mdash;</strong>';
+            if (total.isPlan) {
+                pDelivery.innerHTML = `Plan <strong>${total.planName}</strong> &middot; <span style="color:#94a3b8;text-decoration:line-through">$${total.individualTotal} USD</span> <strong style="color:var(--blue)">$${total.total} USD/mes</strong> <span class="savings-badge">-$${total.individualTotal - total.total} USD</span>`;
+            } else {
+                pDelivery.innerHTML = total.maxTime
+                    ? `Entrega estimada para tu proyecto: <strong>${total.maxTime} día${total.maxTime!==1?'s':''} hábiles</strong>`
+                    : 'Entrega estimada: <strong>&mdash;</strong>';
+            }
             // Calendar row — hide for plans, show for individual services
             const calRow = document.querySelector('.p-cal-row');
             if (calRow) calRow.style.display = appliedPlan ? 'none' : 'flex';
@@ -1909,20 +1936,35 @@
             let lines = ['Hola Christian,',''];
             lines.push('Me interesa cotizar el siguiente proyecto:');
             lines.push(`"${projName}"`); lines.push('');
-            project.forEach((e,i)=>{
-                const s = getSvc(e.serviceId);
-                if (!s) return;
-                const r = calcItem(i);
-                lines.push(`• ${s.name}`);
-                r.items.forEach(d => lines.push(`  · ${d}`));
+
+            if (total.isPlan) {
+                lines.push(`Plan: ${total.planName} — $${total.total} USD/mes`);
+                lines.push(''); lines.push('Incluye:'); lines.push('');
+                project.forEach((e,i)=>{
+                    const s = getSvc(e.serviceId);
+                    if (!s) return;
+                    const r = calcItem(i);
+                    lines.push(`• ${s.name}`);
+                    r.items.forEach(d => lines.push(`  · ${d}`));
+                });
                 lines.push('');
-            });
-            lines.push('Precio total estimado:'); lines.push(`$${total.total} USD`); lines.push('');
-            if (total.maxTime) { lines.push(`Entrega estimada: ${total.maxTime} día${total.maxTime!==1?'s':''} hábiles`); lines.push(''); }
-            if (window.selectedDeliveryDate) {
-                const dateObj = new Date(window.selectedDeliveryDate + 'T12:00:00');
-                const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
-                lines.push(`Fecha de entrega seleccionada: ${dateObj.toLocaleDateString('es-ES', opts)}`); lines.push('');
+                lines.push(`Ahorro: $${total.individualTotal - total.total} USD/mes (comprando por separado: $${total.individualTotal} USD)`); lines.push('');
+            } else {
+                project.forEach((e,i)=>{
+                    const s = getSvc(e.serviceId);
+                    if (!s) return;
+                    const r = calcItem(i);
+                    lines.push(`• ${s.name}`);
+                    r.items.forEach(d => lines.push(`  · ${d}`));
+                    lines.push('');
+                });
+                lines.push('Precio total estimado:'); lines.push(`$${total.total} USD`); lines.push('');
+                if (total.maxTime) { lines.push(`Entrega estimada: ${total.maxTime} día${total.maxTime!==1?'s':''} hábiles`); lines.push(''); }
+                if (window.selectedDeliveryDate) {
+                    const dateObj = new Date(window.selectedDeliveryDate + 'T12:00:00');
+                    const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
+                    lines.push(`Fecha de entrega seleccionada: ${dateObj.toLocaleDateString('es-ES', opts)}`); lines.push('');
+                }
             }
             const notes = pNotes.value.trim();
             if (notes) { lines.push(`Notas adicionales: ${notes}`); lines.push(''); }
