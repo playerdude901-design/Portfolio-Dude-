@@ -1181,7 +1181,8 @@
         function calcHoursNeeded(services) {
             let total = 0;
             services.forEach(e => {
-                const h = SERVICE_HOURS[e.serviceId] || SERVICE_HOURS[getSvc(e.serviceId)?.id] || 2;
+                const sid = e.serviceId || e.id;
+                const h = SERVICE_HOURS[sid] || SERVICE_HOURS[getSvc(sid)?.id] || 2;
                 total += h;
             });
             return Math.round(total * 100) / 100;
@@ -1881,7 +1882,7 @@
         // ── CALCULATE ──
         // ── PRICE CALCULATORS ──
         function calcServicePrice(entry) {
-            const s = getSvc(entry.serviceId);
+            const s = getSvc(entry.serviceId || entry.id);
             if (!s) return { price:0, time:0 };
             let price = s.basePrice, time = 0, priority = false;
             s.options.forEach(o => {
