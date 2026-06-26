@@ -159,6 +159,37 @@ img { display:block; }
     box-shadow: 0 0 30px rgba(37,99,235,.6);
 }
 
+.nav-proyecto {
+    font-family: var(--bebas);
+    font-size: .85rem;
+    letter-spacing: 1.5px;
+    color: #fff;
+    background: rgba(10,10,10,.6);
+    padding: .5rem 1.2rem;
+    border-radius: 50px;
+    white-space: nowrap;
+    text-decoration: none;
+    margin-left: .4rem;
+    border: 1.5px solid transparent;
+    animation: proyectoGlow 2s linear infinite;
+    transition: transform .2s;
+}
+
+.nav-proyecto:hover {
+    transform: scale(1.04);
+}
+
+@keyframes proyectoGlow {
+    0%   { border-color: #ff0040; box-shadow: 0 0 12px 2px #ff0040, inset 0 0 12px 0 rgba(255,0,64,.08); }
+    14%  { border-color: #ff8800; box-shadow: 0 0 12px 2px #ff8800, inset 0 0 12px 0 rgba(255,136,0,.08); }
+    28%  { border-color: #88ff00; box-shadow: 0 0 12px 2px #88ff00, inset 0 0 12px 0 rgba(136,255,0,.08); }
+    42%  { border-color: #00ff88; box-shadow: 0 0 12px 2px #00ff88, inset 0 0 12px 0 rgba(0,255,136,.08); }
+    57%  { border-color: #00aaff; box-shadow: 0 0 12px 2px #00aaff, inset 0 0 12px 0 rgba(0,170,255,.08); }
+    71%  { border-color: #6644ff; box-shadow: 0 0 12px 2px #6644ff, inset 0 0 12px 0 rgba(102,68,255,.08); }
+    85%  { border-color: #ff00aa; box-shadow: 0 0 12px 2px #ff00aa, inset 0 0 12px 0 rgba(255,0,170,.08); }
+    100% { border-color: #ff0040; box-shadow: 0 0 12px 2px #ff0040, inset 0 0 12px 0 rgba(255,0,64,.08); }
+}
+
 /* ══════════ HERO ══════════ */
 .hero {
     position: relative;

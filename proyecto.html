@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Crea tu proyecto - Dude 3D">
+    <title>Project Pipeline · Dude 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: #0B1324;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        .canvas-header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: rgba(11,19,36,.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(148,163,184,.08);
+        }
+        .canvas-header h1 {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: -.02em;
+            color: #fff;
+        }
+        .canvas-header h1 span { color: #3B82F6; }
+        .canvas-header .sub {
+            font-size: .75rem;
+            color: #6b7a8e;
+            font-weight: 400;
+        }
+        .header-actions { display: flex; gap: .75rem; align-items: center; }
+        .header-actions .reset-btn {
+            background: rgba(148,163,184,.08);
+            border: 1px solid rgba(148,163,184,.12);
+            color: #b0baca;
+            padding: .45rem 1rem;
+            border-radius: 8px;
+            font-size: .8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background .2s, color .2s;
+            font-family: inherit;
+        }
+        .header-actions .reset-btn:hover { background: rgba(148,163,184,.15); color: #fff; }
+        .header-actions .close-btn {
+            background: none;
+            border: none;
+            color: #6b7a8e;
+            font-size: .85rem;
+            cursor: pointer;
+            padding: .45rem;
+            transition: color .2s;
+            font-family: inherit;
+        }
+        .header-actions .close-btn:hover { color: #fff; }
+
+        .canvas {
+            padding: 6rem 2rem 4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .flow-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 520px;
+        }
+        .flow-svg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .node {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 420px;
+            background: #172033;
+            border: 1px solid rgba(148,163,184,.12);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: .5rem;
+            transition: opacity .3s, transform .3s, border-color .25s, box-shadow .25s;
+            opacity: 0;
+            transform: scale(.95) translateY(10px);
+        }
+        .node.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+        .node:hover {
+            border-color: rgba(59,130,246,.3);
+            box-shadow: 0 0 25px rgba(59,130,246,.06);
+        }
+
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            margin-bottom: .2rem;
+        }
+        .node-header .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .node-header .dot.input { background: #3B82F6; }
+        .node-header .dot.output { background: #10b981; }
+        .node-header .dot.start { background: #f59e0b; }
+        .node-header .dot.summary { background: #3B82F6; box-shadow: 0 0 10px rgba(59,130,246,.4); }
+        .node-header .node-label {
+            font-size: .7rem;
+            font-weight: 500;
+            color: #5a6a7e;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+        .node-body { margin-top: .5rem; }
+        .node-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #fff;
+            letter-spacing: -.01em;
+        }
+        .node-desc {
+            font-size: .82rem;
+            color: #8892a4;
+            margin-top: .2rem;
+            line-height: 1.5;
+        }
+        .node-value {
+            font-size: .9rem;
+            font-weight: 600;
+            color: #60a5fa;
+            margin-top: .25rem;
+        }
+
+        .node-actions {
+            display: flex;
+            gap: .4rem;
+            margin-top: .75rem;
+        }
+        .node-actions button {
+            background: rgba(148,163,184,.06);
+            border: 1px solid rgba(148,163,184,.1);
+            color: #b0baca;
+            padding: .35rem .75rem;
+            border-radius: 6px;
+            font-size: .75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background .2s, color .2s, border-color .2s;
+            font-family: inherit;
+        }
+        .node-actions .edit-btn:hover { background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.25); color: #60a5fa; }
+        .node-actions .del-btn:hover { background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.25); color: #ef4444; }
+
+        .connector-dot {
+            position: absolute;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #3B82F6;
+            opacity: .4;
+            z-index: 3;
+        }
+
+        /* Start Node */
+        .node-start {
+            border-color: rgba(245,158,11,.2);
+            text-align: center;
+            cursor: pointer;
+        }
+        .node-start:hover { border-color: rgba(245,158,11,.4); box-shadow: 0 0 30px rgba(245,158,11,.06); }
+        .node-start .big-icon {
+            font-size: 2.2rem;
+            margin-bottom: .3rem;
+        }
+        .node-start .node-title { font-size: 1.3rem; }
+        .node-start .node-desc { margin-bottom: .8rem; }
+        .start-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #3B82F6, #2563eb);
+            color: #fff;
+            font-weight: 600;
+            font-size: .85rem;
+            padding: .65rem 2rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: transform .2s, box-shadow .2s, filter .2s;
+            box-shadow: 0 4px 20px rgba(59,130,246,.3);
+            font-family: inherit;
+        }
+        .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(59,130,246,.4); filter: brightness(1.1); }
+
+        /* Service Selector */
+        .service-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .5rem;
+            margin-top: .5rem;
+        }
+        .service-opt {
+            background: rgba(148,163,184,.04);
+            border: 1px solid rgba(148,163,184,.1);
+            border-radius: 10px;
+            padding: .75rem .5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: background .2s, border-color .2s, transform .15s;
+        }
+        .service-opt:hover { background: rgba(59,130,246,.08); border-color: rgba(59,130,246,.25); transform: translateY(-1px); }
+        .service-opt .s-icon { font-size: 1.3rem; }
+        .service-opt .s-name { font-size: .78rem; font-weight: 600; color: #e8edf5; margin-top: .2rem; }
+
+        /* Option selector */
+        .opt-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin-top: .6rem;
+        }
+        .opt-btn {
+            background: rgba(148,163,184,.04);
+            border: 1px solid rgba(148,163,184,.1);
+            border-radius: 8px;
+            padding: .45rem .9rem;
+            font-size: .8rem;
+            font-weight: 500;
+            color: #b0baca;
+            cursor: pointer;
+            transition: background .2s, border-color .2s, color .2s;
+            font-family: inherit;
+        }
+        .opt-btn:hover { background: rgba(59,130,246,.08); border-color: rgba(59,130,246,.25); color: #60a5fa; }
+        .opt-btn.selected { background: rgba(59,130,246,.15); border-color: #3B82F6; color: #fff; }
+
+        /* Summary Node */
+        .node-summary {
+            border: 1.5px solid rgba(59,130,246,.3);
+            box-shadow: 0 0 30px rgba(59,130,246,.08);
+            background: linear-gradient(180deg, #172033 0%, #141e31 100%);
+            padding: 1.8rem;
+        }
+        .node-summary:hover { border-color: rgba(59,130,246,.5); box-shadow: 0 0 40px rgba(59,130,246,.12); }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: .4rem 0;
+            border-bottom: 1px solid rgba(148,163,184,.06);
+            font-size: .85rem;
+        }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-row .label { color: #8892a4; }
+        .summary-row .value { color: #e8edf5; font-weight: 500; }
+        .summary-row.total { margin-top: .2rem; padding-top: .6rem; border-top: 1px solid rgba(59,130,246,.15); }
+        .summary-row.total .label { color: #fff; font-weight: 600; font-size: 1rem; }
+        .summary-row.total .value { color: #60a5fa; font-weight: 700; font-size: 1.3rem; }
+        .generate-btn {
+            display: block;
+            width: 100%;
+            margin-top: 1rem;
+            background: linear-gradient(135deg, #3B82F6, #2563eb);
+            color: #fff;
+            font-weight: 600;
+            font-size: .85rem;
+            padding: .7rem 1rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: transform .2s, box-shadow .2s, filter .2s;
+            box-shadow: 0 4px 20px rgba(59,130,246,.3);
+            font-family: inherit;
+        }
+        .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(59,130,246,.4); filter: brightness(1.1); }
+
+        /* Toast / Quote Output */
+        .quote-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.75);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            backdrop-filter: blur(4px);
+        }
+        .quote-overlay.open { display: flex; }
+        .quote-card {
+            background: #172033;
+            border: 1px solid rgba(148,163,184,.12);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 30px 80px rgba(0,0,0,.5);
+        }
+        .quote-card h2 {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: .2rem;
+        }
+        .quote-card .sub {
+            font-size: .82rem;
+            color: #8892a4;
+            margin-bottom: 1rem;
+        }
+        .quote-card pre {
+            background: rgba(11,19,36,.6);
+            border: 1px solid rgba(148,163,184,.08);
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: .82rem;
+            color: #b0baca;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 1rem;
+            user-select: all;
+        }
+        .quote-card .q-actions {
+            display: flex;
+            gap: .5rem;
+        }
+        .quote-card .q-actions button {
+            flex: 1;
+            padding: .6rem 1rem;
+            border-radius: 8px;
+            font-size: .82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background .2s, color .2s;
+            font-family: inherit;
+            border: none;
+        }
+        .quote-card .copy-btn {
+            background: #3B82F6;
+            color: #fff;
+        }
+        .quote-card .copy-btn:hover { background: #2563eb; }
+        .quote-card .close-q-btn {
+            background: rgba(148,163,184,.08);
+            color: #b0baca;
+        }
+        .quote-card .close-q-btn:hover { background: rgba(148,163,184,.15); color: #fff; }
+
+        @media (max-width: 500px) {
+            .canvas { padding: 5rem 1rem 3rem; }
+            .service-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="canvas-header">
+        <div>
+            <h1>Project <span>Pipeline</span></h1>
+            <div class="sub">Design your editing workflow</div>
+        </div>
+        <div class="header-actions">
+            <button class="reset-btn" onclick="resetFlow()">Reset</button>
+            <a href="index.html" class="close-btn">✕</a>
+        </div>
+    </header>
+
+    <div class="canvas">
+        <div class="flow-container" id="flow-container">
+            <svg class="flow-svg" id="flow-svg"></svg>
+        </div>
+    </div>
+
+    <div class="quote-overlay" id="quote-overlay">
+        <div class="quote-card">
+            <h2>Project Summary</h2>
+            <div class="sub">Copia este mensaje y envíamelo para empezar</div>
+            <pre id="quote-text"></pre>
+            <div class="q-actions">
+                <button class="copy-btn" onclick="copyQuote()">Copiar mensaje</button>
+                <button class="close-q-btn" onclick="closeQuote()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FLOW = {
+            services: {
+                'video-editing': {
+                    name: 'Video Editing',
+                    icon: '🎬',
+                    desc: 'Edición profesional para YouTube',
+                    basePrice: 60,
+                    unit: 'video',
+                    priceLabel: 'From $60 USD',
+                    questions: [
+                        { key: 'duration', label: 'Duration', type: 'option', options: [
+                            { label: '5 min', value: 5, price: 0 },
+                            { label: '10 min', value: 10, price: 25 },
+                            { label: '15 min', value: 15, price: 50 },
+                            { label: '20 min', value: 20, price: 75 },
+                            { label: '30 min', value: 30, price: 120 },
+                        ]},
+                        { key: 'thumbnail', label: 'Thumbnail', type: 'option', options: [
+                            { label: 'Included (+$10)', value: 'yes', price: 10 },
+                            { label: 'Not needed', value: 'no', price: 0 },
+                        ]},
+                        { key: 'delivery', label: 'Delivery', type: 'option', options: [
+                            { label: 'Standard (2-3d)', value: 'standard', price: 0 },
+                            { label: 'Priority (+50%)', value: 'priority', price: null },
+                        ]},
+                    ]
+                },
+                'shorts-editing': {
+                    name: 'Shorts Editing',
+                    icon: '📱',
+                    desc: 'Edición dinámica para Shorts / Reels',
+                    basePrice: 10,
+                    unit: 'short',
+                    priceLabel: 'From $10 USD',
+                    questions: [
+                        { key: 'quantity', label: 'Quantity', type: 'option', options: [
+                            { label: '1', value: 1, price: 10 },
+                            { label: '2', value: 2, price: 20 },
+                            { label: '3', value: 3, price: 30 },
+                            { label: '5', value: 5, price: 50 },
+                            { label: '10', value: 10, price: 100 },
+                        ]},
+                        { key: 'thumbnail', label: 'Thumbnail', type: 'option', options: [
+                            { label: 'Included (+$10)', value: 'yes', price: 10 },
+                            { label: 'Not needed', value: 'no', price: 0 },
+                        ]},
+                        { key: 'delivery', label: 'Delivery', type: 'option', options: [
+                            { label: 'Standard (1-2d)', value: 'standard', price: 0 },
+                            { label: 'Priority (+50%)', value: 'priority', price: null },
+                        ]},
+                    ]
+                },
+                'gaming-editing': {
+                    name: 'Gaming Editing',
+                    icon: '🎮',
+                    desc: 'Especializado en contenido gaming',
+                    basePrice: 60,
+                    unit: 'video',
+                    priceLabel: 'From $60 USD',
+                    questions: [
+                        { key: 'duration', label: 'Duration', type: 'option', options: [
+                            { label: '5 min', value: 5, price: 0 },
+                            { label: '10 min', value: 10, price: 25 },
+                            { label: '15 min', value: 15, price: 50 },
+                            { label: '20 min', value: 20, price: 75 },
+                            { label: '30 min', value: 30, price: 120 },
+                        ]},
+                        { key: 'thumbnail', label: 'Thumbnail', type: 'option', options: [
+                            { label: 'Included (+$10)', value: 'yes', price: 10 },
+                            { label: 'Not needed', value: 'no', price: 0 },
+                        ]},
+                        { key: 'delivery', label: 'Delivery', type: 'option', options: [
+                            { label: 'Standard (2-3d)', value: 'standard', price: 0 },
+                            { label: 'Priority (+50%)', value: 'priority', price: null },
+                        ]},
+                    ]
+                },
+                'thumbnail-design': {
+                    name: 'Thumbnail Design',
+                    icon: '🖼️',
+                    desc: 'Miniaturas con alto CTR',
+                    basePrice: 10,
+                    unit: 'thumbnail',
+                    priceLabel: 'From $10 USD',
+                    questions: [
+                        { key: 'quantity', label: 'Quantity', type: 'option', options: [
+                            { label: '1', value: 1, price: 10 },
+                            { label: '2', value: 2, price: 20 },
+                            { label: '3', value: 3, price: 30 },
+                            { label: '5', value: 5, price: 50 },
+                        ]},
+                        { key: 'delivery', label: 'Delivery', type: 'option', options: [
+                            { label: 'Standard (1-2d)', value: 'standard', price: 0 },
+                            { label: 'Priority (+50%)', value: 'priority', price: null },
+                        ]},
+                    ]
+                },
+                'channel-branding': {
+                    name: 'Channel Branding',
+                    icon: '🎨',
+                    desc: 'Identidad visual completa para tu canal',
+                    basePrice: 120,
+                    unit: 'project',
+                    priceLabel: '$120 USD',
+                    questions: [
+                        { key: 'delivery', label: 'Delivery', type: 'option', options: [
+                            { label: 'Standard (3-5d)', value: 'standard', price: 0 },
+                            { label: 'Priority (+50%)', value: 'priority', price: null },
+                        ]},
+                    ]
+                },
+            }
+        };
+
+        let nodes = [];
+        let links = [];
+        let nextId = 1;
+        let flowContainer = document.getElementById('flow-container');
+        let svg = document.getElementById('flow-svg');
+
+        function resetFlow() {
+            nodes = [];
+            links = [];
+            nextId = 1;
+            render();
+            showStartNode();
+        }
+
+        function showStartNode() {
+            const node = {
+                id: nextId++,
+                type: 'start',
+                data: {}
+            };
+            nodes.push(node);
+            render();
+        }
+
+        function addNode(prevId, type, data) {
+            const idx = nodes.findIndex(n => n.id === prevId);
+            const insertAfter = idx >= 0 ? idx + 1 : nodes.length;
+            const node = {
+                id: nextId++,
+                type: type,
+                data: data || {}
+            };
+            nodes.splice(insertAfter, 0, node);
+            links.push({ from: prevId, to: node.id });
+            render();
+        }
+
+        function removeNode(id) {
+            const removeIds = new Set();
+            function collectChildren(nodeId) {
+                removeIds.add(nodeId);
+                links.filter(l => l.from === nodeId).forEach(l => collectChildren(l.to));
+            }
+            collectChildren(id);
+            nodes = nodes.filter(n => !removeIds.has(n.id));
+            links = links.filter(l => !removeIds.has(l.from) && !removeIds.has(l.to));
+            render();
+        }
+
+        function selectService(serviceKey) {
+            const startNode = nodes.find(n => n.type === 'start');
+            if (!startNode) return;
+            const svc = FLOW.services[serviceKey];
+            const data = { serviceKey, serviceName: svc.name, icon: svc.icon, desc: svc.desc, basePrice: svc.basePrice, answers: {} };
+            addNode(startNode.id, 'service', data);
+        }
+
+        function answerOption(nodeId, qKey, label, val, price) {
+            const node = nodes.find(n => n.id === nodeId);
+            if (!node) return;
+            node.data.answers[qKey] = { label, value: val, price };
+
+            // remove children
+            const childLinks = links.filter(l => l.from === nodeId);
+            childLinks.forEach(l => {
+                const removeIds = new Set();
+                function collect(nid) {
+                    removeIds.add(nid);
+                    links.filter(ln => ln.from === nid).forEach(ln => collect(ln.to));
+                }
+                collect(l.to);
+                nodes = nodes.filter(n => !removeIds.has(n.id));
+                links = links.filter(l => !removeIds.has(l.from) && !removeIds.has(l.to));
+            });
+
+            // add next question or summary
+            const svc = FLOW.services[node.data.serviceKey];
+            const qs = svc.questions;
+            const answered = Object.keys(node.data.answers).length;
+            if (answered < qs.length) {
+                addNode(node.id, 'question', { ...node.data, qIndex: answered });
+            } else {
+                addNode(node.id, 'summary', { ...node.data });
+            }
+            render();
+        }
+
+        function editNode(id) {
+            const node = nodes.find(n => n.id === id);
+            if (!node || node.type === 'start' || node.type === 'summary') return;
+            // re-render with edit mode
+            render({ editing: id });
+        }
+
+        function render(state) {
+            const editing = state && state.editing;
+            // Clean flow container (keep svg)
+            const existingSvg = document.getElementById('flow-svg');
+            const children = flowContainer.children;
+            const toRemove = [];
+            for (let i = 0; i < children.length; i++) {
+                if (children[i] !== existingSvg) toRemove.push(children[i]);
+            }
+            toRemove.forEach(el => el.remove());
+
+            if (nodes.length === 0) {
+                showStartNode();
+                return;
+            }
+
+            let prevEl = null;
+            nodes.forEach((node, idx) => {
+                const el = document.createElement('div');
+                el.className = 'node';
+                el.dataset.nodeId = node.id;
+
+                if (node.type === 'start') {
+                    el.classList.add('node-start');
+                    el.innerHTML = `
+                        <div class="big-icon">🚀</div>
+                        <div class="node-title">Start Project</div>
+                        <div class="node-desc">Selecciona el servicio que necesitas</div>
+                        <button class="start-btn" onclick="showServiceSelector(this)">Choose Service</button>
+                        <div class="service-grid" id="svc-grid-${node.id}" style="display:none">
+                            ${Object.entries(FLOW.services).map(([k, s]) => `
+                                <div class="service-opt" onclick="selectService('${k}')">
+                                    <div class="s-icon">${s.icon}</div>
+                                    <div class="s-name">${s.name}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else if (node.type === 'service') {
+                    el.innerHTML = `
+                        <div class="node-header">
+                            <div class="dot output"></div>
+                            <span class="node-label">Service</span>
+                        </div>
+                        <div class="node-body">
+                            <div class="node-title">${node.data.icon} ${node.data.serviceName}</div>
+                            <div class="node-desc">${node.data.desc}</div>
+                            <div class="node-value">${FLOW.services[node.data.serviceKey].priceLabel}</div>
+                        </div>
+                        <div class="node-actions">
+                            <button class="edit-btn" onclick="editNode(${node.id})">Edit</button>
+                            <button class="del-btn" onclick="removeNode(${node.id})">Delete</button>
+                        </div>
+                    `;
+                } else if (node.type === 'question') {
+                    const svc = FLOW.services[node.data.serviceKey];
+                    const qi = node.data.qIndex;
+                    const q = svc.questions[qi];
+                    const answered = node.data.answers[q.key];
+                    el.innerHTML = `
+                        <div class="node-header">
+                            <div class="dot input"></div>
+                            <span class="node-label">${q.label}</span>
+                        </div>
+                        <div class="node-body">
+                            <div class="node-title">${q.label}</div>
+                            ${editing === node.id ? `
+                                <div class="opt-group">
+                                    ${q.options.map(o => `
+                                        <button class="opt-btn ${answered && answered.value === o.value ? 'selected' : ''}" 
+                                            onclick="answerOption(${node.id}, '${q.key}', '${o.label}', '${o.value}', ${o.price === null ? 'null' : o.price})">${o.label}</button>
+                                    `).join('')}
+                                </div>
+                            ` : answered ? `
+                                <div class="node-value">${answered.label}</div>
+                            ` : `
+                                <div class="opt-group">
+                                    ${q.options.map(o => `
+                                        <button class="opt-btn" 
+                                            onclick="answerOption(${node.id}, '${q.key}', '${o.label}', '${o.value}', ${o.price === null ? 'null' : o.price})">${o.label}</button>
+                                    `).join('')}
+                                </div>
+                            `}
+                        </div>
+                        <div class="node-actions">
+                            <button class="edit-btn" onclick="editNode(${node.id})">Edit</button>
+                            <button class="del-btn" onclick="removeNode(${node.id})">Delete</button>
+                        </div>
+                    `;
+                } else if (node.type === 'summary') {
+                    const svc = FLOW.services[node.data.serviceKey];
+                    const answers = node.data.answers;
+                    let total = node.data.basePrice || 0;
+                    const detailLines = [];
+                    detailLines.push(`${node.data.icon} ${node.data.serviceName}`);
+                    Object.entries(answers).forEach(([k, a]) => {
+                        if (a.price !== null && a.price !== undefined) total += a.price;
+                        detailLines.push(`${a.label}`);
+                    });
+                    // priority multiplier
+                    const delivery = answers.delivery;
+                    if (delivery && delivery.value === 'priority') {
+                        total = Math.round(total * 1.5);
+                    }
+
+                    el.classList.add('node-summary');
+                    el.innerHTML = `
+                        <div class="node-header">
+                            <div class="dot summary"></div>
+                            <span class="node-label">Project Summary</span>
+                        </div>
+                        <div class="node-body">
+                            <div class="node-title" style="margin-bottom:.6rem">📋 Resumen del Proyecto</div>
+                            <div class="summary-row"><span class="label">Servicio</span><span class="value">${node.data.icon} ${node.data.serviceName}</span></div>
+                            ${Object.entries(answers).map(([k, a]) => `
+                                <div class="summary-row"><span class="label">${svc.questions.find(q => q.key === k)?.label || k}</span><span class="value">${a.label}</span></div>
+                            `).join('')}
+                            <div class="summary-row total"><span class="label">Precio estimado</span><span class="value">$${total} USD</span></div>
+                        </div>
+                        <button class="generate-btn" onclick='generateQuote(${JSON.stringify({...node.data, total})})'>Generate Quote</button>
+                    `;
+                }
+
+                if (prevEl) {
+                    flowContainer.insertBefore(el, prevEl.nextSibling);
+                } else {
+                    flowContainer.appendChild(el);
+                }
+
+                // trigger animation
+                requestAnimationFrame(() => el.classList.add('visible'));
+                prevEl = el;
+            });
+
+            drawConnections();
+        }
+
+        function showServiceSelector(btn) {
+            const grid = btn.nextElementSibling;
+            grid.style.display = grid.style.display === 'none' ? 'grid' : 'none';
+        }
+
+        function drawConnections() {
+            const container = flowContainer;
+            const containerRect = container.getBoundingClientRect();
+            const nodeEls = container.querySelectorAll('.node');
+            const pairs = [];
+            links.forEach(l => {
+                const fromEl = container.querySelector(`[data-node-id="${l.from}"]`);
+                const toEl = container.querySelector(`[data-node-id="${l.to}"]`);
+                if (fromEl && toEl) pairs.push({ from: fromEl, to: toEl });
+            });
+
+            if (pairs.length === 0) { svg.innerHTML = ''; return; }
+
+            // set svg size
+            const totalHeight = container.scrollHeight;
+            const totalWidth = container.scrollWidth;
+            svg.setAttribute('width', totalWidth);
+            svg.setAttribute('height', totalHeight);
+            svg.style.width = totalWidth + 'px';
+            svg.style.height = totalHeight + 'px';
+
+            let paths = '';
+            pairs.forEach((p, i) => {
+                const fromRect = p.from.getBoundingClientRect();
+                const toRect = p.to.getBoundingClientRect();
+                const cRect = container.getBoundingClientRect();
+                const x1 = fromRect.left - cRect.left + fromRect.width / 2;
+                const y1 = fromRect.bottom - cRect.top;
+                const x2 = toRect.left - cRect.left + toRect.width / 2;
+                const y2 = toRect.top - cRect.top;
+                const cy = (y1 + y2) / 2;
+                paths += `<path d="M${x1},${y1} C${x1},${cy} ${x2},${cy} ${x2},${y2}" 
+                    stroke="rgba(59,130,246,.25)" stroke-width="2" fill="none" stroke-linecap="round"
+                    stroke-dasharray="8 4" opacity="0">
+                    <animate attributeName="opacity" from="0" to="1" dur=".4s" fill="freeze"/>
+                </path>`;
+            });
+            svg.innerHTML = paths;
+        }
+
+        function generateQuote(data) {
+            const lines = [];
+            lines.push('Hola Christian,');
+            lines.push('');
+            lines.push('Me interesa cotizar un proyecto con las siguientes características:');
+            lines.push('');
+            lines.push(`• ${data.icon} ${data.serviceName}`);
+            const svc = FLOW.services[data.serviceKey];
+            if (svc) {
+                Object.entries(data.answers).forEach(([k, a]) => {
+                    const q = svc.questions.find(q => q.key === k);
+                    lines.push(`• ${q ? q.label : k}: ${a.label}`);
+                });
+            }
+            lines.push('');
+            lines.push('Precio estimado:');
+            lines.push(`$${data.total} USD`);
+            lines.push('');
+            lines.push('Quedo atento a tu disponibilidad.');
+
+            document.getElementById('quote-text').textContent = lines.join('\n');
+            document.getElementById('quote-overlay').classList.add('open');
+        }
+
+        function copyQuote() {
+            const text = document.getElementById('quote-text').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = '✓ Copiado';
+                setTimeout(() => btn.textContent = 'Copiar mensaje', 2000);
+            });
+        }
+
+        function closeQuote() {
+            document.getElementById('quote-overlay').classList.remove('open');
+        }
+
+        // Init
+        resetFlow();
+
+        // Redraw connections on resize
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(drawConnections, 200);
+        });
+    </script>
+</body>
+</html>
