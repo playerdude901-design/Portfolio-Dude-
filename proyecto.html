@@ -12,12 +12,14 @@
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             background: #0B1324;
+            background-image: url('./assets/cuadricula_azul.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: #fff;
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
-            background-image: radial-gradient(rgba(59,130,246,.04) 1px, transparent 1px);
-            background-size: 32px 32px;
         }
         :root {
             --blue: #3B82F6;
@@ -195,8 +197,6 @@
         }
         .plan-card:hover { transform:translateY(-4px); border-color:rgba(59,130,246,.15); box-shadow:0 12px 40px rgba(0,0,0,.3); }
         .plan-card.popular {
-            border-color:rgba(59,130,246,.3);
-            box-shadow:0 0 30px rgba(59,130,246,.08), 0 0 60px rgba(59,130,246,.04);
             transform:scale(1.05); z-index:2;
         }
         .plan-card.popular:hover { transform:scale(1.05) translateY(-4px); }
@@ -238,6 +238,55 @@
         .plan-card.popular .p-btn { background:rgba(59,130,246,.15); }
         .plan-card.applied { border-color:rgba(34,197,94,.2); box-shadow:inset 0 0 0 1px rgba(34,197,94,.15); }
         .plan-card.applied .p-btn { background:rgba(34,197,94,.12); color:#22c55e; cursor:default; }
+
+        /* ── Plan glow borders ── */
+        .plan-card[data-plan="starter"] {
+            border-color: rgba(255,255,255,.15);
+            box-shadow: 0 0 18px rgba(255,255,255,.08);
+        }
+        .plan-card[data-plan="starter"]:hover {
+            border-color: rgba(255,255,255,.3);
+            box-shadow: 0 0 30px rgba(255,255,255,.12), 0 12px 40px rgba(0,0,0,.3);
+        }
+        .plan-card[data-plan="starter"].applied {
+            border-color: rgba(255,255,255,.3);
+            box-shadow: 0 0 25px rgba(255,255,255,.15), inset 0 0 0 1px rgba(255,255,255,.12);
+        }
+
+        .plan-card[data-plan="growth"] {
+            border-color: rgba(255,215,0,.2);
+            box-shadow: 0 0 20px rgba(255,215,0,.1), 0 0 40px rgba(255,215,0,.04);
+        }
+        .plan-card[data-plan="growth"]:hover {
+            border-color: rgba(255,215,0,.35);
+            box-shadow: 0 0 35px rgba(255,215,0,.18), 0 0 60px rgba(255,215,0,.08), 0 12px 40px rgba(0,0,0,.3);
+        }
+        .plan-card[data-plan="growth"].applied {
+            border-color: rgba(255,215,0,.4);
+            box-shadow: 0 0 30px rgba(255,215,0,.2), inset 0 0 0 1px rgba(255,215,0,.15);
+        }
+
+        @keyframes proGlow {
+            0%   { border-color: #ff0040; box-shadow: 0 0 20px rgba(255,0,64,.15), 0 0 40px rgba(255,0,64,.06); }
+            14%  { border-color: #ff8800; box-shadow: 0 0 20px rgba(255,136,0,.15), 0 0 40px rgba(255,136,0,.06); }
+            28%  { border-color: #88ff00; box-shadow: 0 0 20px rgba(136,255,0,.15), 0 0 40px rgba(136,255,0,.06); }
+            42%  { border-color: #00ff88; box-shadow: 0 0 20px rgba(0,255,136,.15), 0 0 40px rgba(0,255,136,.06); }
+            57%  { border-color: #00aaff; box-shadow: 0 0 20px rgba(0,170,255,.15), 0 0 40px rgba(0,170,255,.06); }
+            71%  { border-color: #6644ff; box-shadow: 0 0 20px rgba(102,68,255,.15), 0 0 40px rgba(102,68,255,.06); }
+            85%  { border-color: #ff00aa; box-shadow: 0 0 20px rgba(255,0,170,.15), 0 0 40px rgba(255,0,170,.06); }
+            100% { border-color: #ff0040; box-shadow: 0 0 20px rgba(255,0,64,.15), 0 0 40px rgba(255,0,64,.06); }
+        }
+        .plan-card[data-plan="pro"] {
+            border-color: rgba(255,0,64,.15);
+            animation: proGlow 3s linear infinite;
+        }
+        .plan-card[data-plan="pro"]:hover {
+            border-color: rgba(255,0,64,.3);
+            box-shadow: 0 0 30px rgba(255,0,64,.2), 0 12px 40px rgba(0,0,0,.3);
+        }
+        .plan-card[data-plan="pro"].applied {
+            box-shadow: 0 0 25px rgba(255,0,64,.2), inset 0 0 0 1px rgba(255,0,64,.15);
+        }
 
         .plan-card .p-price-row { display:flex; align-items:baseline; justify-content:center; gap:.5rem; flex-wrap:wrap; margin:.15rem 0; }
         .plan-card .p-old-price { font-size:.85rem; color:#6b7a8e; text-decoration:line-through; }
@@ -1613,7 +1662,7 @@
                     }
                 }
 
-                return `<div class="plan-card${isRec?' popular':''}${isApp?' applied':''}" onclick="applyPlan('${p.id}')">
+                return `<div class="plan-card${isRec?' popular':''}${isApp?' applied':''}" data-plan="${p.id}" onclick="applyPlan('${p.id}')">
                     ${badgeText?`<div class="p-badge">${badgeText}</div>`:''}
                     ${isRec?`<div class="p-sub-badge">MEJOR RELACIÓN COSTO-BENEFICIO</div>`:''}
                     <div class="p-label">${p.label}</div>
