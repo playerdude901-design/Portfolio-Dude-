@@ -184,13 +184,29 @@
             transition:all .35s cubic-bezier(.16,1,.3,1);
         }
         .plan-card:hover { transform:translateY(-4px); border-color:rgba(59,130,246,.15); box-shadow:0 12px 40px rgba(0,0,0,.3); }
-        .plan-card.popular { border-color:rgba(59,130,246,.15); box-shadow:0 0 30px rgba(59,130,246,.06); }
+        .plan-card.popular {
+            border-color:rgba(59,130,246,.3);
+            box-shadow:0 0 30px rgba(59,130,246,.08), 0 0 60px rgba(59,130,246,.04);
+            transform:scale(1.05); z-index:2;
+        }
+        .plan-card.popular:hover { transform:scale(1.05) translateY(-4px); }
         .plan-card .p-badge {
             position:absolute; top:-8px; left:50%; transform:translateX(-50%);
             font-size:.58rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
             background:linear-gradient(135deg,var(--blue),#2563eb); color:#fff;
             padding:.15rem .6rem; border-radius:20px; white-space:nowrap;
+            z-index:3;
         }
+        .plan-card .p-sub-badge {
+            font-size:.56rem; font-weight:700; color:#22c55e;
+            background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.15);
+            padding:.08rem .45rem; border-radius:20px; display:inline-block;
+            margin-top:.25rem; letter-spacing:.03em;
+        }
+        .plan-card .p-savings-pct {
+            font-size:.65rem; color:#5a6a7e; margin:.1rem 0 .3rem;
+        }
+        .plan-card .p-savings-pct strong { color:var(--blue); }
         .plan-card .p-label { font-size:.65rem; color:#5a6a7e; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:.35rem; font-weight:500; }
         .plan-card .p-name { font-weight:700; font-size:1.1rem; }
         .plan-card .p-price { font-weight:700; font-size:2rem; color:#fff; margin:.15rem 0; }
@@ -591,7 +607,7 @@
     <div class="builder">
         <div class="services-col">
             <div class="sc-title">Planes Mensuales</div>
-            <div class="sc-sub">Selecciona un plan o arma tu proyecto desde cero</div>
+            <div class="sc-sub">Ahorra más mientras creces</div>
             <div class="plans-section">
                 <div class="plans-grid" id="plans-grid"></div>
             </div>
@@ -695,47 +711,31 @@
 
         // ── PLANS ──
         const PLANS = [
-            { id:'starter', name:'Starter Creator', label:'Getting Started', badge:'', price:150,
-              features:['2–4 Edited Videos','2–4 Custom Thumbnails','48-Hour Delivery','Unlimited Revisions'],
+            { id:'starter', name:'Starter Creator', label:'Getting Started', badge:'', price:169, individualPrice:240,
+              videoCount:4, thumbCount:4, shortCount:0, perUnitCost:42.25,
+              features:['4 Edited Videos','4 Custom Thumbnails','48-Hour Delivery','Unlimited Revisions'],
               services:[
                 {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
                 {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
                 {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-              ], btn:'Get Started' },
-            { id:'growth', name:'Growth Pack', label:'Consistent Growth', badge:'Most Popular', price:250,
-              features:['6–8 Edited Videos','6–8 Custom Thumbnails','Shorts Repurposing','Priority Workflow','Unlimited Revisions','Direct Communication'],
-              services:[
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
               ], btn:'Get Started' },
-            { id:'pro', name:'Creator Partner', label:'Dedicated Partner', badge:'', price:500,
-              features:['10–16 Edited Videos','10–16 Custom Thumbnails','Shorts Repurposing','Highest Priority','Unlimited Revisions','Direct Communication','YouTube Branding Support'],
+            { id:'growth', name:'Growth Pack', label:'Consistent Growth', badge:'RECOMENDADO', price:329, individualPrice:520,
+              videoCount:8, thumbCount:8, shortCount:4, perUnitCost:41.10,
+              features:['8 Edited Videos','8 Custom Thumbnails','4 Shorts Repurposing','Priority Workflow','Direct Communication','Unlimited Revisions'],
               services:[
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
                 {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
                 {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
                 {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
@@ -745,8 +745,55 @@
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'channel-branding',opts:{delivery:'standard'}},
-              ], btn:'Book a Call' },
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+              ], btn:'Get Started' },
+            { id:'pro', name:'Creator Partner', label:'Dedicated Partner', badge:'', price:599, individualPrice:1040,
+              videoCount:16, thumbCount:16, shortCount:8, perUnitCost:37.40,
+              features:['16 Edited Videos','16 Custom Thumbnails','8 Shorts Repurposing','Highest Priority','Direct Communication','Unlimited Revisions','YouTube Branding Support*'],
+              services:[
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+              ], btn:'Get Started' },
         ];
 
         // ── SERVICE DEFINITIONS ──
@@ -1005,57 +1052,17 @@
 
         // ── PLAN PRICES ──
 
-        function priceForService(svcId, opts) {
-            const s = getSvc(svcId);
-            if (!s) return 0;
-            let price = s.basePrice;
-            const o = { ...opts };
-            s.options.forEach(opt => {
-                if (!o[opt.key] && !opt.depends && opt.choices.length) o[opt.key] = opt.choices[0].v;
-            });
-            s.options.forEach(opt => {
-                if (!o[opt.key] && opt.depends && o[opt.depends.key]===opt.depends.val && opt.choices.length) o[opt.key] = opt.choices[0].v;
-            });
-            s.options.forEach(opt => {
-                const val = o[opt.key];
-                if (!val) return;
-                const c = opt.choices.find(ch => ch.v === val);
-                if (!c) return;
-                if (opt.key==='delivery') { if (val==='priority') price = Math.round(price * 1.5); return; }
-                if (c.p !== null && c.p !== undefined) price += c.p;
-            });
-            return price;
+        function calcularAhorro(precioIndividual, precioPaquete) {
+            const ahorro = precioIndividual - precioPaquete;
+            const porcentaje = Math.round((ahorro / precioIndividual) * 100);
+            return { ahorro, porcentaje };
         }
 
         function calcPlanPrices(plan) {
-            const details = plan.services.map(s => ({ id: s.id, indPrice: priceForService(s.id, s.opts), opts: s.opts }));
-            const individualTotal = details.reduce((sum, d) => sum + d.indPrice, 0);
+            const individualTotal = plan.individualPrice;
             const planPrice = plan.price;
-            const savings = individualTotal - planPrice;
-            const savingsPct = individualTotal > 0 ? Math.round((savings / individualTotal) * 100) : 0;
-
-            const groups = {};
-            details.forEach(d => {
-                if (!groups[d.id]) groups[d.id] = { count: 0, totalInd: 0 };
-                groups[d.id].count++;
-                groups[d.id].totalInd += d.indPrice;
-            });
-
-            const perUnitTexts = [];
-            for (const [id, g] of Object.entries(groups)) {
-                const svc = getSvc(id);
-                if (!svc) continue;
-                const ratio = individualTotal > 0 ? g.totalInd / individualTotal : 1 / Object.keys(groups).length;
-                const allocated = Math.round(planPrice * ratio);
-                const perUnitCost = Math.round(allocated / g.count);
-                const perUnitInd = Math.round(g.totalInd / g.count);
-                const shortName = id==='gaming-editing'||id==='video-editing' ? 'video' :
-                                  id==='thumbnail-design' ? 'miniatura' :
-                                  id==='shorts-editing' ? 'short' : svc.name;
-                perUnitTexts.push({ label: shortName, planCost: perUnitCost, indCost: perUnitInd });
-            }
-
-            return { individualTotal, planPrice, savings, savingsPct, perUnitTexts };
+            const { ahorro, porcentaje } = calcularAhorro(individualTotal, planPrice);
+            return { individualTotal, planPrice, ahorro, porcentaje };
         }
 
         // ── PLAN CARDS ──
@@ -1065,37 +1072,39 @@
                 const isApp = appliedPlan===p.id;
                 const isRec = !appliedPlan && p.id==='growth';
                 const badgeText = isRec ? 'Recomendado' : (p.badge || '');
-                const puHtml = prices.perUnitTexts.length
-                    ? prices.perUnitTexts.map(u =>
-                        `<span>≈ $${u.planCost}/${u.label} (vs $${u.indCost} c/u)</span>`
-                      ).join(' · ')
-                    : '';
-                const compareHtml = isRec && PLANS.length > 1
-                    ? (() => {
-                        const starter = PLANS.find(x => x.id === 'starter');
-                        const pro = PLANS.find(x => x.id === 'pro');
-                        let txt = '';
-                        if (starter) txt += `vs Starter: <strong>+$${p.price - starter.price}/mes</strong> por `;
-                        const extraFeatures = p.features.filter(f => !starter.features.includes(f));
-                        if (extraFeatures.length) txt += extraFeatures.slice(0, 2).join(', ') + ' y más';
-                        if (pro) txt += `  ·  vs Pro: ahorras <strong>$${pro.price - p.price}/mes</strong>`;
-                        return txt;
-                      })()
-                    : '';
+                const puHtml = `≈ <strong>$${p.perUnitCost}</strong> por video`;
+                const savingsPctText = `${prices.porcentaje}% de ahorro`;
+
+                let compareHtml = '';
+                if (isRec && PLANS.length > 1) {
+                    const starter = PLANS.find(x => x.id === 'starter');
+                    const pro = PLANS.find(x => x.id === 'pro');
+                    if (starter) {
+                        const diff = p.price - starter.price;
+                        const extraPct = prices.porcentaje - (() => { const s = calcPlanPrices(starter); return s.porcentaje; })();
+                        compareHtml = `Solo <strong>$${diff}/mes</strong> más que Starter, pero el doble de entregables y <strong>${Math.abs(extraPct)} puntos más</strong> de ahorro.`;
+                    }
+                }
+
                 return `<div class="plan-card${isRec?' popular':''}${isApp?' applied':''}" onclick="applyPlan('${p.id}')">
                     ${badgeText?`<div class="p-badge">${badgeText}</div>`:''}
+                    ${isRec?`<div class="p-sub-badge">MEJOR RELACIÓN COSTO-BENEFICIO</div>`:''}
                     <div class="p-label">${p.label}</div>
                     <div class="p-name">${p.name}</div>
                     <div class="p-price-row">
                         ${prices.individualTotal > prices.planPrice ? `<span class="p-old-price">$${prices.individualTotal}</span>` : ''}
                         <span class="p-price">$${p.price} <span>/month</span></span>
-                        ${prices.savings > 0 ? `<span class="p-savings">Ahorras $${prices.savings} (${prices.savingsPct}%)</span>` : ''}
                     </div>
+                    ${prices.ahorro > 0 ? `<span class="p-savings">Ahorras $${prices.ahorro} (${prices.porcentaje}%)</span>` : ''}
+                    <div class="p-savings-pct">${savingsPctText}</div>
                     <div class="p-perunit">${puHtml}</div>
-                    <div class="p-divider"></div>
-                    <ul class="p-features">${p.features.map(f=>`<li>${f}</li>`).join('')}</ul>
-                    <div class="p-btn">${isApp?'Aplicado':p.btn}</div>
                     ${compareHtml ? `<div class="p-compare">${compareHtml}</div>` : ''}
+                    <div class="p-divider"></div>
+                    <ul class="p-features">${p.features.map(f => {
+                        if (f.includes('*')) return `<li>${f.replace('*',' <span style="font-size:.6rem;color:#5a6a7e">(bonus)</span>')}</li>`;
+                        return `<li>${f}</li>`;
+                    }).join('')}</ul>
+                    <div class="p-btn">${isApp?'Aplicado':p.btn}</div>
                 </div>`;
             }).join('');
         }
@@ -1168,7 +1177,8 @@
                     }
                 });
                 if (bestPlan) {
-                    svcHint.innerHTML = `Esta combinación te saldría más barata como <strong>${bestPlan.name}</strong> — ahorrarías <strong>$${bestSavings} USD/mes</strong>.`;
+                    const pp = calcPlanPrices(bestPlan);
+                    svcHint.innerHTML = `Esta combinación te saldría en <strong>$${total.total}</strong> comprándola por separado — el plan <strong>${bestPlan.name}</strong> te daría más por <strong>$${pp.planPrice}/mes</strong>.`;
                     svcHint.classList.add('visible');
                 } else {
                     svcHint.classList.remove('visible');
