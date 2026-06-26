@@ -225,6 +225,14 @@
         const errorMsg = document.getElementById('error-msg');
         const backLink = document.getElementById('back-link');
 
+        /* ── Pre-fill desde Project Pipeline ── */
+        const workflow = localStorage.getItem('dude_workflow');
+        if (workflow) {
+            const msgField = document.getElementById('mensaje');
+            if (msgField) msgField.value = workflow;
+            localStorage.removeItem('dude_workflow');
+        }
+
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
             errorMsg.classList.remove('show');
