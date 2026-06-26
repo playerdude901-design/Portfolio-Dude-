@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="./style.css">
     <style>
         body {
-            background: var(--dark);
+            background: #080b12;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -25,19 +25,12 @@
             position: fixed;
             inset: 0;
             background: url('./assets/Servicios_fondo.png') center/cover no-repeat;
-            filter: blur(4px) brightness(.35);
+            filter: blur(4px) brightness(.25);
             z-index: -1;
         }
         .servicios-page {
             width: 100%;
-            max-width: 1000px;
-            background: rgba(18,18,18,.92);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            border: 1px solid rgba(44,186,178,.25);
-            border-radius: 16px;
-            padding: 2.5rem 2rem;
-            box-shadow: 0 8px 40px rgba(0,0,0,.5);
+            max-width: 1100px;
         }
         .servicios-page h1 {
             font-family: var(--bebas);
@@ -49,170 +42,223 @@
         }
         .servicios-page .sub {
             text-align: center;
-            color: var(--gray);
+            color: #8892a4;
             font-size: .95rem;
             margin-bottom: 2.5rem;
+            font-family: var(--inter);
         }
         .servicios-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
             align-items: start;
         }
         .servicio-card {
-            background: rgba(10,10,10,.8);
-            border: 1px solid rgba(44,186,178,.18);
-            border-radius: 14px;
-            padding: 2rem 1.5rem 1.5rem;
+            background: linear-gradient(180deg, #0e141f 0%, #0a0f18 100%);
+            border: 1px solid rgba(148,163,184,.12);
+            border-radius: 28px;
+            padding: 2.5rem 2rem 2rem;
             text-align: center;
-            transition: border-color .3s, transform .3s, box-shadow .3s;
+            transition: border-color .25s, transform .25s, box-shadow .25s;
             position: relative;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,.35), 0 8px 20px rgba(0,0,0,.2);
         }
         .servicio-card:hover {
-            border-color: var(--teal);
-            transform: translateY(-4px);
-            box-shadow: 0 0 25px rgba(44,186,178,.2);
+            border-color: rgba(59,130,246,.25);
+            transform: translateY(-6px);
+            box-shadow: 0 30px 80px rgba(0,0,0,.45), 0 10px 30px rgba(59,130,246,.08);
         }
         .servicio-card.popular {
-            border-color: #e8b830;
-            box-shadow: 0 0 30px rgba(232,184,48,.15);
+            border-color: rgba(59,130,246,.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,.35), 0 0 40px rgba(59,130,246,.06);
         }
         .servicio-card.popular:hover {
-            border-color: #f5d060;
-            box-shadow: 0 0 35px rgba(232,184,48,.25);
+            border-color: rgba(59,130,246,.35);
+            box-shadow: 0 30px 80px rgba(0,0,0,.45), 0 0 60px rgba(59,130,246,.1);
         }
         .popular-badge {
             position: absolute;
             top: -12px;
             left: 50%;
             transform: translateX(-50%);
-            background: #e8b830;
-            color: #1a1a1a;
-            font-family: var(--bebas);
-            font-size: .85rem;
-            letter-spacing: 1.5px;
-            padding: .25rem 1rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+            font-family: var(--inter);
+            font-weight: 600;
+            font-size: .72rem;
+            letter-spacing: .5px;
+            padding: .3rem 1.1rem;
             border-radius: 50px;
             white-space: nowrap;
+            box-shadow: 0 0 20px rgba(37,99,235,.35);
+        }
+        .servicio-card .card-label {
+            font-family: var(--inter);
+            font-weight: 500;
+            font-size: .75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #5a6a7e;
+            margin-bottom: .6rem;
         }
         .servicio-card h3 {
-            font-family: var(--bebas);
+            font-family: var(--inter);
+            font-weight: 700;
             font-size: 1.5rem;
-            letter-spacing: 2px;
-            color: var(--white);
-            margin-bottom: .2rem;
+            color: #fff;
+            margin-bottom: .15rem;
+            letter-spacing: -.02em;
+        }
+        .servicio-card .price-start {
+            font-family: var(--inter);
+            font-weight: 400;
+            font-size: .8rem;
+            color: #6b7a8e;
+            margin-top: .8rem;
+            margin-bottom: .15rem;
         }
         .servicio-card .price {
-            font-family: var(--bebas);
-            font-size: 2.2rem;
-            letter-spacing: 2px;
-            color: var(--teal);
-            margin-bottom: 1.2rem;
-        }
-        .servicio-card .includes-label {
             font-family: var(--inter);
-            font-size: .8rem;
-            font-weight: 600;
-            color: var(--gray);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: .8rem;
+            font-weight: 700;
+            font-size: 2.6rem;
+            letter-spacing: -.03em;
+            color: #fff;
+            line-height: 1.1;
+        }
+        .servicio-card .price-unit {
+            font-size: .9rem;
+            font-weight: 400;
+            color: #6b7a8e;
+            letter-spacing: 0;
+        }
+        .card-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(148,163,184,.12), transparent);
+            margin: 1.5rem 0;
         }
         .servicio-card ul {
             list-style: none;
             padding: 0;
-            margin: 0 0 1.5rem;
+            margin: 0 0 1.8rem;
             text-align: left;
             flex: 1;
         }
         .servicio-card ul li {
             font-family: var(--inter);
-            font-size: .9rem;
-            color: #ccc;
-            padding: .35rem 0 .35rem 1.4rem;
+            font-weight: 400;
+            font-size: .88rem;
+            color: #b0baca;
+            padding: .3rem 0 .3rem 1.6rem;
             position: relative;
-            line-height: 1.5;
+            line-height: 1.6;
         }
         .servicio-card ul li::before {
             content: '✓';
             position: absolute;
             left: 0;
-            color: var(--teal);
+            color: #3b82f6;
             font-weight: 700;
+            font-size: .8rem;
         }
         .servicio-card .btn-cta {
-            display: inline-block;
-            font-family: var(--bebas);
-            font-size: 1rem;
-            letter-spacing: 1.5px;
+            display: block;
+            width: 100%;
+            font-family: var(--inter);
+            font-weight: 600;
+            font-size: .9rem;
             color: #fff;
-            background: #2563eb;
-            padding: .6rem 1.8rem;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            padding: .75rem 1rem;
             border-radius: 50px;
             text-decoration: none;
-            transition: transform .2s, box-shadow .2s, background .2s;
-            box-shadow: 0 0 20px rgba(37,99,235,.35);
-            margin-top: auto;
+            text-align: center;
+            transition: transform .25s, box-shadow .25s, filter .25s;
+            box-shadow: 0 4px 20px rgba(37,99,235,.3);
+            box-sizing: border-box;
         }
         .servicio-card .btn-cta:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(37,99,235,.5);
+            box-shadow: 0 8px 30px rgba(37,99,235,.45);
+            filter: brightness(1.1);
         }
         .section-divider {
             width: 80px;
             height: 2px;
-            background: var(--teal);
-            margin: 2.5rem auto 2rem;
-            opacity: .4;
+            background: rgba(44,186,178,.3);
+            margin: 3rem auto 2rem;
         }
         .servicios-page .sub-indiv {
             text-align: center;
-            color: var(--gray);
+            color: #8892a4;
             font-size: .95rem;
             margin-bottom: 1.5rem;
+            font-family: var(--inter);
         }
         .servicios-grid-indiv {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
         }
         .servicio-card.indiv {
             padding: 1.5rem 1.2rem 1.2rem;
+            border-radius: 20px;
         }
         .servicio-card.indiv h3 {
-            font-size: 1.2rem;
+            font-size: 1rem;
+        }
+        .servicio-card.indiv .price-start {
+            margin-top: .4rem;
+            font-size: .7rem;
         }
         .servicio-card.indiv .price {
-            font-size: 1.6rem;
-            margin-bottom: .8rem;
+            font-size: 1.5rem;
+        }
+        .servicio-card.indiv ul {
+            margin-bottom: 1.2rem;
         }
         .servicio-card.indiv ul li {
-            font-size: .82rem;
-            padding: .2rem 0 .2rem 1.2rem;
+            font-size: .8rem;
+            padding: .15rem 0 .15rem 1.3rem;
+        }
+        .servicio-card.indiv ul li::before {
+            font-size: .7rem;
         }
         .servicio-card.indiv .btn-cta {
-            font-size: .9rem;
-            padding: .45rem 1.4rem;
+            font-size: .82rem;
+            padding: .55rem 1rem;
+        }
+        .servicio-card.indiv .card-label {
+            font-size: .65rem;
+            margin-bottom: .3rem;
         }
         .back-link {
             display: block;
             text-align: center;
-            margin-top: 1.5rem;
+            margin-top: 2rem;
             font-family: var(--bebas);
             font-size: 1rem;
             letter-spacing: 1.5px;
-            color: var(--gray);
+            color: #5a6a7e;
             transition: color .2s;
         }
         .back-link:hover {
             color: var(--teal);
         }
-        @media (max-width: 700px) {
+        @media (max-width: 900px) {
             .servicios-grid {
                 grid-template-columns: 1fr;
+                max-width: 420px;
+                margin-left: auto;
+                margin-right: auto;
             }
+            .servicios-grid-indiv {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 500px) {
             .servicios-grid-indiv {
                 grid-template-columns: 1fr;
             }
@@ -225,9 +271,11 @@
         <p class="sub">Planes de edición y diseño para tu canal</p>
         <div class="servicios-grid">
             <div class="servicio-card">
+                <p class="card-label">Getting Started</p>
                 <h3>Starter Creator</h3>
-                <div class="price">$60<span style="font-size:1rem;color:var(--gray)">/mo</span></div>
-                <p class="includes-label">Includes</p>
+                <p class="price-start">Starting at</p>
+                <div class="price">$150 <span class="price-unit">/month</span></div>
+                <div class="card-divider"></div>
                 <ul>
                     <li>2–4 Edited Videos</li>
                     <li>2–4 Custom Thumbnails</li>
@@ -237,10 +285,12 @@
                 <a href="contacto.html" target="_blank" rel="noopener" class="btn-cta">Get Started</a>
             </div>
             <div class="servicio-card popular">
-                <span class="popular-badge">⭐ Most Popular</span>
+                <span class="popular-badge">Most Popular</span>
+                <p class="card-label">Consistent Growth</p>
                 <h3>Growth Pack</h3>
-                <div class="price">$250<span style="font-size:1rem;color:var(--gray)">/mo</span></div>
-                <p class="includes-label">Includes</p>
+                <p class="price-start">Starting at</p>
+                <div class="price">$250 <span class="price-unit">/month</span></div>
+                <div class="card-divider"></div>
                 <ul>
                     <li>6–8 Edited Videos</li>
                     <li>6–8 Custom Thumbnails</li>
@@ -252,9 +302,11 @@
                 <a href="contacto.html" target="_blank" rel="noopener" class="btn-cta">Get Started</a>
             </div>
             <div class="servicio-card">
+                <p class="card-label">Dedicated Partner</p>
                 <h3>Creator Partner</h3>
-                <div class="price">$500<span style="font-size:1rem;color:var(--gray)">/mo</span></div>
-                <p class="includes-label">Includes</p>
+                <p class="price-start">Starting at</p>
+                <div class="price">$500 <span class="price-unit">/month</span></div>
+                <div class="card-divider"></div>
                 <ul>
                     <li>10–16 Edited Videos</li>
                     <li>10–16 Custom Thumbnails</li>
@@ -272,8 +324,11 @@
         <p class="sub-indiv">Servicios individuales</p>
         <div class="servicios-grid-indiv">
             <div class="servicio-card indiv">
+                <p class="card-label">Shorts</p>
                 <h3>Edición de Shorts</h3>
-                <div class="price">$10<span style="font-size:.85rem;color:var(--gray)"> USD</span></div>
+                <p class="price-start">From</p>
+                <div class="price">$10 <span class="price-unit">USD</span></div>
+                <div class="card-divider"></div>
                 <ul>
                     <li>Edición dinámica</li>
                     <li>Subtítulos animados</li>
@@ -284,8 +339,11 @@
                 <a href="contacto.html" target="_blank" rel="noopener" class="btn-cta">Contratar</a>
             </div>
             <div class="servicio-card indiv">
+                <p class="card-label">Long-Form</p>
                 <h3>Edición de Videos Largos</h3>
-                <div class="price">$60<span style="font-size:.85rem;color:var(--gray)"> USD</span></div>
+                <p class="price-start">From</p>
+                <div class="price">$60 <span class="price-unit">USD</span></div>
+                <div class="card-divider"></div>
                 <ul>
                     <li>Storytelling</li>
                     <li>Integración de B-Roll</li>
@@ -296,8 +354,11 @@
                 <a href="contacto.html" target="_blank" rel="noopener" class="btn-cta">Contratar</a>
             </div>
             <div class="servicio-card indiv">
+                <p class="card-label">Gaming</p>
                 <h3>Edición para Gaming</h3>
-                <div class="price">$60<span style="font-size:.85rem;color:var(--gray)"> USD</span></div>
+                <p class="price-start">From</p>
+                <div class="price">$60 <span class="price-unit">USD</span></div>
+                <div class="card-divider"></div>
                 <ul>
                     <li>Funny Moments</li>
                     <li>Highlights</li>
@@ -309,8 +370,11 @@
                 <a href="contacto.html" target="_blank" rel="noopener" class="btn-cta">Contratar</a>
             </div>
             <div class="servicio-card indiv">
+                <p class="card-label">Thumbnails</p>
                 <h3>Diseño de Miniaturas</h3>
-                <div class="price">$10<span style="font-size:.85rem;color:var(--gray)"> USD</span></div>
+                <p class="price-start">From</p>
+                <div class="price">$10 <span class="price-unit">USD</span></div>
+                <div class="card-divider"></div>
                 <ul>
                     <li>Diseño personalizado</li>
                     <li>3 variantes de miniatura</li>
@@ -320,8 +384,11 @@
                 <a href="contacto.html" target="_blank" rel="noopener" class="btn-cta">Contratar</a>
             </div>
             <div class="servicio-card indiv">
+                <p class="card-label">Branding</p>
                 <h3>Branding para Canales</h3>
-                <div class="price">$120<span style="font-size:.85rem;color:var(--gray)"> USD</span></div>
+                <p class="price-start">From</p>
+                <div class="price">$120 <span class="price-unit">USD</span></div>
+                <div class="card-divider"></div>
                 <ul>
                     <li>Banner</li>
                     <li>Foto de perfil</li>
