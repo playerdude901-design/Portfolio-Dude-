@@ -281,7 +281,7 @@
         .cal-card {
             background:linear-gradient(145deg,#1a2440,#141d30);
             border:1px solid rgba(148,163,184,.1); border-radius:20px;
-            padding:1.5rem; max-width:520px; width:100%; max-height:90vh;
+            padding:1.5rem; max-width:460px; width:100%; max-height:90vh;
             overflow-y:auto;
         }
         .cal-card .cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
@@ -292,36 +292,7 @@
             display:flex; align-items:center; justify-content:center;
         }
         .cal-card .cal-close:hover { background:rgba(148,163,184,.08); color:#fff; }
-        .cal-card .cal-sub { font-size:.72rem; color:#5a6a7e; margin-bottom:1rem; line-height:1.4; }
-        .cal-card .cal-sub strong { color:#b0baca; }
-        .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
-        .cal-grid .cal-dow { font-size:.6rem; color:#4a5a6e; text-transform:uppercase; text-align:center; padding:.2rem 0; font-weight:600; }
-        .cal-day {
-            aspect-ratio:1; border-radius:10px; display:flex; flex-direction:column;
-            align-items:center; justify-content:center; font-size:.7rem; font-weight:600;
-            transition:all .2s; cursor:default; position:relative; min-height:38px;
-            border:1px solid transparent;
-        }
-        .cal-day .cd-num { line-height:1; }
-        .cal-day .cd-hrs { font-size:.5rem; font-weight:400; color:rgba(255,255,255,.3); margin-top:1px; }
-        .cal-day.available {
-            background:rgba(34,197,94,.1); border-color:rgba(34,197,94,.15); color:#22c55e; cursor:pointer;
-        }
-        .cal-day.available:hover { background:rgba(34,197,94,.18); transform:scale(1.1); }
-        .cal-day.available.selected { background:rgba(59,130,246,.2); border-color:rgba(59,130,246,.3); color:var(--blue); box-shadow:0 0 12px rgba(59,130,246,.1); }
-        .cal-day.full { background:rgba(239,68,68,.08); border-color:rgba(239,68,68,.12); color:#ef4444; }
-        .cal-day.no-fit { background:rgba(251,191,36,.08); border-color:rgba(251,191,36,.12); color:#f59e0b; }
-        .cal-day.past { opacity:.25; }
-        .cal-day.blocked { background:rgba(148,163,184,.04); border-color:rgba(148,163,184,.06); color:#4a5a6e; }
-        .cal-day.future { opacity:.5; color:#4a5a6e; }
-        .cal-legend { display:flex; gap:.6rem; margin-top:.75rem; flex-wrap:wrap; font-size:.6rem; color:#5a6a7e; align-items:center; }
-        .cal-legend span { display:flex; align-items:center; gap:3px; }
-        .cal-legend .leg-swatch { width:8px; height:8px; border-radius:3px; display:inline-block; }
-        .cal-no-days { text-align:center; padding:2rem 0; font-size:.78rem; color:#5a6a7e; }
-        .cal-no-days a { color:var(--blue); }
         .cal-confirm-row { margin-top:1rem; display:flex; gap:.5rem; justify-content:flex-end; align-items:center; }
-        .cal-confirm-row .cal-info { font-size:.68rem; color:#5a6a7e; flex:1; }
-        .cal-confirm-row .cal-info strong { color:#b0baca; }
         .cal-btn {
             padding:.4rem 1rem; border-radius:8px; font-size:.75rem; font-weight:600;
             font-family:inherit; cursor:pointer; border:none; transition:all .2s;
@@ -331,6 +302,29 @@
         .cal-btn.primary:disabled { opacity:.3; cursor:default; filter:none; }
         .cal-btn.secondary { background:rgba(148,163,184,.08); color:#b0baca; }
         .cal-btn.secondary:hover { background:rgba(148,163,184,.14); }
+
+        /* ── TIMELINE ── */
+        .cal-tl-summary { font-size:.78rem; margin-bottom:.8rem; line-height:1.5; }
+        .cal-tl-summary strong { color:var(--blue); }
+        .cal-tl { display:flex; flex-direction:column; gap:3px; }
+        .cal-tl-day {
+            display:flex; align-items:center; gap:.4rem; padding:.35rem .5rem;
+            border-radius:8px; font-size:.72rem; background:rgba(148,163,184,.03);
+        }
+        .cal-tl-day .tl-date { min-width:105px; color:#b0baca; font-weight:500; }
+        .cal-tl-day .tl-bar-wrap { flex:1; height:6px; background:rgba(148,163,184,.06); border-radius:4px; overflow:hidden; }
+        .cal-tl-day .tl-bar { height:100%; border-radius:4px; transition:width .4s; }
+        .cal-tl-day .tl-hours { min-width:48px; text-align:right; color:#5a6a7e; font-size:.65rem; }
+        .cal-tl-day.tl-active { background:rgba(59,130,246,.06); }
+        .cal-tl-day.tl-active .tl-date { color:var(--blue); }
+        .cal-tl-day.tl-done { background:rgba(34,197,94,.04); }
+        .cal-tl-day.tl-done .tl-date { color:#22c55e; }
+        .cal-tl-day.tl-done .tl-bar { background:#22c55e; }
+        .cal-tl-day.tl-last { background:rgba(34,197,94,.08); }
+        .cal-tl-day.tl-last .tl-date { color:#22c55e; font-weight:700; }
+        .cal-tl-day.tl-last .tl-bar { background:linear-gradient(90deg,#22c55e,var(--blue)); }
+        .cal-tl-empty { font-size:.72rem; color:#5a6a7e; text-align:center; padding:1rem 0; line-height:1.5; }
+        .cal-tl-empty a { color:var(--blue); }
 
         /* ── ADMIN PANEL ── */
         .admin-overlay {
@@ -840,26 +834,13 @@
     <div class="cal-overlay" id="cal-overlay">
         <div class="cal-card">
             <div class="cal-header">
-                <div class="cal-title">Selecciona Fecha de Entrega</div>
+                <div class="cal-title">Cronograma de Entrega</div>
                 <button class="cal-close" onclick="closeCalendar()">✕</button>
             </div>
-            <div class="cal-sub" id="cal-sub">
-                Horas requeridas: <strong id="cal-hours-need">0</strong>
-            </div>
-            <div class="cal-grid" id="cal-grid"></div>
-            <div class="cal-no-days" id="cal-no-days" style="display:none">
-                No hay fechas disponibles en este rango — <a href="contacto.html" target="_blank" rel="noopener">contáctame directamente</a> para coordinar.
-            </div>
-            <div class="cal-legend">
-                <span><span class="leg-swatch" style="background:#22c55e"></span> Disponible</span>
-                <span><span class="leg-swatch" style="background:#f59e0b"></span> Horas insuficientes</span>
-                <span><span class="leg-swatch" style="background:#ef4444"></span> Lleno</span>
-                <span><span class="leg-swatch" style="background:#4a5a6e"></span> Bloqueado</span>
-            </div>
+            <div id="cal-body"></div>
             <div class="cal-confirm-row" id="cal-confirm-row" style="display:none">
-                <div class="cal-info" id="cal-info"></div>
                 <button class="cal-btn secondary" onclick="closeCalendar()">Cancelar</button>
-                <button class="cal-btn primary" id="cal-confirm-btn" onclick="confirmCalendarDate()">Elegir Fecha</button>
+                <button class="cal-btn primary" id="cal-confirm-btn" onclick="confirmCalendarDate()">Confirmar Fecha</button>
             </div>
         </div>
     </div>
@@ -1053,8 +1034,6 @@
         };
 
         // ── CALENDAR STATE ──
-        let selectedCalDate = null;
-        let calDaysData = [];
 
         // ── CALENDAR AVAILABILITY ──
         function getWeekday(date) { return date.getDay(); }
@@ -1114,111 +1093,119 @@
             return project;
         }
 
-        // ── RENDER CALENDAR ──
-        async function openCalendar() {
+        // ── DELIVERY DATE CALCULATOR ──
+        async function calculateDeliveryDate() {
             const data = await fetchCalendarData_();
             if (!data) { alert('Error al conectar con la base de datos. Verifica las credenciales de Supabase.'); return; }
 
             const neededHours = calcHoursNeeded(getProjectServices());
-            document.getElementById('cal-hours-need').textContent = neededHours + 'h';
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const cutoffHour = 17;
+            const startDay = now.getHours() >= cutoffHour ? 1 : 0; // start tomorrow if past cutoff
 
-            selectedCalDate = null;
-            document.getElementById('cal-confirm-row').style.display = 'none';
-            document.getElementById('cal-no-days').style.display = 'none';
-            document.getElementById('cal-overlay').classList.add('open');
+            let remaining = neededHours;
+            const days = [];
+            let totalDays = 0;
 
-            calDaysData = [];
-            const dayNames = ['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
-            const today = data.today;
-            const start = new Date(today);
-            const nowDate = new Date();
-            const cutoffHour = 17; // 5 PM — after this, today no longer available
-
-            // Build grid (start from today, up to 28 days)
-            let html = '<div class="cal-dow">Do</div><div class="cal-dow">Lu</div><div class="cal-dow">Ma</div><div class="cal-dow">Mi</div><div class="cal-dow">Ju</div><div class="cal-dow">Vi</div><div class="cal-dow">Sa</div>';
-
-            // Add empty cells for days before start's weekday
-            const startDow = getWeekday(start);
-            for (let i = 0; i < startDow; i++) html += '<div></div>';
-
-            let hasAvailable = false;
-            for (let i = 0; i < 28; i++) {
-                const d = addDays(start, i);
+            for (let i = startDay; i < 60; i++) {
+                const d = addDays(today, i);
                 const dateStr = toDateStr(d);
-                const dow = getWeekday(d);
-
+                const dow = d.getDay();
                 const baseCap = data.overrides[dateStr] !== undefined ? data.overrides[dateStr] : (data.weekly[dow] || 2);
                 const usedHrs = data.bookingsByDate[dateStr] || 0;
-                const remaining = Math.round((baseCap - usedHrs) * 100) / 100;
+                const available = Math.max(0, baseCap - usedHrs);
 
-                let status = '';
-                let statusLabel = '';
-                let clickable = false;
-
-                if (data.overrides[dateStr] === 0) {
-                    status = 'blocked'; statusLabel = 'Bloqueado';
-                } else if (remaining <= 0) {
-                    status = 'full'; statusLabel = 'Lleno';
-                } else if (remaining < neededHours) {
-                    status = 'no-fit'; statusLabel = `${remaining}h disp`;
-                } else {
-                    status = 'available'; statusLabel = `${remaining}h libres`;
-                    clickable = true;
-                    hasAvailable = true;
+                if (available <= 0) {
+                    days.push({ dateStr, dow, available: 0, used: 0, status: 'full' });
+                    continue;
                 }
 
-                const classes = ['cal-day', status];
-                const isPastDate = d.getTime() < today.getTime();
-                const isTodayPast = d.getTime() === today.getTime() && nowDate.getHours() >= cutoffHour;
-                if (isPastDate || isTodayPast) {
-                    classes.push('past');
-                    clickable = false;
-                    if (status === 'available') { status = 'past'; statusLabel = ''; hasAvailable = false; }
-                }
+                const consume = Math.min(remaining, available);
+                remaining -= consume;
+                days.push({ dateStr, dow, available, used: consume, status: 'work' });
+                totalDays++;
 
-                calDaysData.push({ dateStr, status, remaining, neededHours, baseCap, usedHrs });
-
-                html += `<div class="${classes.join(' ')}" data-idx="${i}" onclick="${clickable ? `selectCalDay(${i})` : ''}">
-                    <span class="cd-num">${d.getDate()}</span>
-                    <span class="cd-hrs">${statusLabel}</span>
-                </div>`;
+                if (remaining <= 0) break;
             }
 
-            document.getElementById('cal-grid').innerHTML = html;
-            if (!hasAvailable) document.getElementById('cal-no-days').style.display = 'block';
+            const deliveryDate = days.length > 0 ? days[days.length - 1].dateStr : null;
+            const canDeliver = remaining <= 0 && deliveryDate;
+
+            return { neededHours, days, deliveryDate, canDeliver, today, startDay, totalDays };
+        }
+
+        async function openCalendar() {
+            const result = await calculateDeliveryDate();
+            if (!result) return;
+
+            document.getElementById('cal-overlay').classList.add('open');
+
+            if (!result.canDeliver) {
+                document.getElementById('cal-body').innerHTML = `
+                    <div class="cal-tl-empty">
+                        No hay suficiente capacidad disponible en los próximos 60 días para completar este pedido.<br>
+                        <a href="contacto.html" target="_blank" rel="noopener">Contáctame directamente</a> para coordinar una entrega personalizada.
+                    </div>`;
+                document.getElementById('cal-confirm-row').style.display = 'none';
+                return;
+            }
+
+            const needed = result.neededHours;
+            const totalWorkDays = result.days.filter(d => d.used > 0).length;
+            const dateObj = new Date(result.deliveryDate + 'T12:00:00');
+            const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const formattedDate = dateObj.toLocaleDateString('es-ES', opts);
+
+            // Calculate calendar days elapsed (not just work days)
+            const firstWorkDay = new Date(result.days.find(d => d.used > 0)?.dateStr + 'T12:00:00');
+            const lastWorkDay = new Date(result.deliveryDate + 'T12:00:00');
+            const calendarDays = Math.round((lastWorkDay - firstWorkDay) / (1000 * 60 * 60 * 24)) + 1;
+
+            let tlHtml = `<div class="cal-tl-summary">
+                <strong>${needed}h</strong> de trabajo · <strong>${totalWorkDays} día${totalWorkDays !== 1 ? 's' : ''} laboral${totalWorkDays !== 1 ? 'es' : ''}</strong> · Entrega: <strong>${formattedDate}</strong>
+            </div><div class="cal-tl">`;
+
+            let cumulative = 0;
+            result.days.forEach(d => {
+                if (d.used === 0) return;
+                cumulative += d.used;
+                const pct = Math.min(100, (cumulative / needed) * 100);
+                const dayOpts = { weekday: 'short', day: 'numeric', month: 'short' };
+                const label = new Date(d.dateStr + 'T12:00:00').toLocaleDateString('es-ES', dayOpts);
+                const isLast = cumulative >= needed;
+                const barColor = isLast ? 'linear-gradient(90deg,#22c55e,var(--blue))' : (d.used >= d.available * 0.8 ? '#3B82F6' : '#22c55e');
+                tlHtml += `<div class="cal-tl-day ${isLast ? 'tl-last' : 'tl-active'}">
+                    <span class="tl-date">${label}</span>
+                    <div class="tl-bar-wrap"><div class="tl-bar" style="width:${pct}%;background:${barColor}"></div></div>
+                    <span class="tl-hours">${d.used}h</span>
+                </div>`;
+            });
+
+            tlHtml += '</div>';
+
+            document.getElementById('cal-body').innerHTML = tlHtml;
+            window._pendingDelivery = result.deliveryDate;
+            document.getElementById('cal-confirm-row').style.display = 'flex';
+            document.getElementById('cal-confirm-btn').disabled = false;
         }
 
         window.openCalendar = openCalendar;
-        window.closeCalendar = function() { document.getElementById('cal-overlay').classList.remove('open'); };
-
-        window.selectCalDay = function(idx) {
-            const d = calDaysData[idx];
-            if (!d || d.status !== 'available') return;
-            selectedCalDate = d.dateStr;
-
-            // Update visual
-            document.querySelectorAll('.cal-day.available').forEach(el => el.classList.remove('selected'));
-            const cells = document.querySelectorAll('.cal-day');
-            if (cells[idx]) cells[idx].classList.add('selected');
-
-            const left = d.remaining - d.neededHours;
-            document.getElementById('cal-info').textContent = `Quedarían ${left.toFixed(1)}h libres después de esta reserva.`;
-            document.getElementById('cal-confirm-row').style.display = 'flex';
-            document.getElementById('cal-confirm-btn').disabled = false;
+        window.closeCalendar = function() {
+            document.getElementById('cal-overlay').classList.remove('open');
+            window._pendingDelivery = null;
         };
 
         window.confirmCalendarDate = function() {
-            if (!selectedCalDate) return;
-            // Store selected date in a hidden field for use in proposal
-            window.selectedDeliveryDate = selectedCalDate;
-            const d = calDaysData.find(x => x.dateStr === selectedCalDate);
-            const remainingAfter = d ? (d.remaining - d.neededHours).toFixed(1) : '?';
-            // Show in UI
+            const date = window._pendingDelivery;
+            if (!date) return;
+            window.selectedDeliveryDate = date;
+
             const el = document.getElementById('p-selected-date');
             if (el) {
-                const dateObj = new Date(selectedCalDate + 'T12:00:00');
-                const opts = { weekday:'long', day:'numeric', month:'long' };
-                el.textContent = dateObj.toLocaleDateString('es-ES', opts) + ` (${remainingAfter}h libres restantes)`;
+                const dateObj = new Date(date + 'T12:00:00');
+                const opts = { weekday: 'long', day: 'numeric', month: 'long' };
+                el.textContent = 'Entrega: ' + dateObj.toLocaleDateString('es-ES', opts);
                 el.style.display = 'block';
             }
             closeCalendar();
