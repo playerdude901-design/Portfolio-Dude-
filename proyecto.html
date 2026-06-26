@@ -375,6 +375,7 @@
         .admin-btn.secondary { background:rgba(148,163,184,.08); color:#b0baca; }
         .admin-btn.secondary:hover { background:rgba(148,163,184,.14); }
         .admin-btn:disabled { opacity:.3; cursor:default; }
+        #ad-ov-list > div > div:hover { background:rgba(148,163,184,.08) !important; }
 
         /* ── TERMS ── */
         .terms-section { margin-top:1.5rem; border-top:1px solid rgba(148,163,184,.06); padding-top:1rem; }
@@ -873,10 +874,16 @@
                 <div class="ad-section">
                     <h3>Gestionar Días</h3>
                     <div class="ad-block-row">
-                        <input type="date" id="ad-ov-date"><input type="number" id="ad-ov-hours" placeholder="Horas (0=bloquear)" step="0.5" min="0" style="width:100px"><button class="admin-btn primary" onclick="adminSetOverride()">Aplicar</button>
-                        <select id="ad-ov-preset" onchange="document.getElementById('ad-ov-hours').value=this.value"><option value="">Predefinidos</option><option value="0">Bloquear día</option><option value="2">2h (normal)</option><option value="3">3h (jue/vi)</option><option value="4">4h (día libre)</option><option value="6">6h (+extra)</option></select>
+                        <input type="date" id="ad-ov-date">
+                        <input type="number" id="ad-ov-hours" placeholder="Horas" step="0.5" min="0" style="width:80px">
+                        <button class="admin-btn primary" onclick="adminSetOverride()">Aplicar</button>
+                        <button class="admin-btn secondary" onclick="document.getElementById('ad-ov-hours').value='0';adminSetOverride()">Bloquear día</button>
                     </div>
-                    <div style="font-size:.65rem;color:#5a6a7e;margin-top:.3rem" id="ad-ov-list"></div>
+                    <div style="font-size:.65rem;color:#5a6a7e;margin:.3rem 0" id="ad-ov-status"></div>
+                    <div id="ad-ov-list"></div>
+                    <div style="margin-top:.5rem;display:flex;gap:.4rem;flex-wrap:wrap">
+                        <button class="admin-btn secondary" onclick="adminClearAllOverrides()" id="ad-clear-btn" style="display:none;color:#ef4444;background:rgba(239,68,68,.08)">Limpiar todos los ajustes</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1278,21 +1285,60 @@
             const { data, error } = await _supabase.from('day_overrides').select('*').gte('date', today).lte('date', end).order('date');
             if (error) { console.error(error); return; }
             const el = document.getElementById('ad-ov-list');
-            if (!data || !data.length) { el.textContent = 'Sin overrides activos.'; return; }
-            el.innerHTML = data.map(o =>
-                `<span style="display:inline-block;margin-right:.5rem">${o.date}: <strong>${o.hours}h</strong>${o.reason?` (${o.reason})`:''}</span>`
-            ).join('');
+            const clearBtn = document.getElementById('ad-clear-btn');
+            if (!data || !data.length) {
+                el.innerHTML = '<div style="font-size:.65rem;color:#5a6a7e">Sin ajustes activos.</div>';
+                clearBtn.style.display = 'none';
+                return;
+            }
+            clearBtn.style.display = 'inline-block';
+            el.innerHTML = '<div style="display:flex;flex-direction:column;gap:3px;margin-top:4px">' +
+                data.map(o => {
+                    const isBlocked = o.hours === 0;
+                    return `<div style="display:flex;align-items:center;gap:4px;font-size:.68rem;padding:2px 4px;border-radius:4px;${isBlocked?'background:rgba(239,68,68,.06)':'background:rgba(148,163,184,.04)'}">
+                        <span style="min-width:90px;color:#b0baca">${o.date}</span>
+                        <span style="font-weight:600;${isBlocked?'color:#ef4444':'color:var(--blue)'}">${o.hours}h</span>
+                        ${o.reason?`<span style="color:#5a6a7e;font-size:.6rem">${o.reason}</span>`:''}
+                        <button onclick="adminEditOverride('${o.date}',${o.hours})" style="background:none;border:none;color:#5a6a7e;cursor:pointer;font-size:.6rem;padding:0 2px" title="Editar">✎</button>
+                        <button onclick="adminDeleteOverride(${o.id})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:.6rem;padding:0 2px" title="Eliminar">✕</button>
+                    </div>`;
+                }).join('') + '</div>';
         }
+
+        window.adminEditOverride = function(date, hours) {
+            document.getElementById('ad-ov-date').value = date;
+            document.getElementById('ad-ov-hours').value = hours;
+            document.getElementById('ad-ov-date').focus();
+            document.getElementById('ad-ov-status').textContent = `Editando ${date} — ajusta las horas y presiona "Aplicar".`;
+        };
+
+        window.adminDeleteOverride = async function(id) {
+            if (!confirm('¿Eliminar este ajuste?')) return;
+            const { error } = await _supabase.from('day_overrides').delete().eq('id', id);
+            if (error) { alert('Error: '+error.message); return; }
+            loadAdminOverrides();
+            document.getElementById('ad-ov-status').textContent = 'Ajuste eliminado.';
+        };
+
+        window.adminClearAllOverrides = async function() {
+            if (!confirm('¿Eliminar TODOS los ajustes de días? Esta acción no afecta las reservas.')) return;
+            const { error } = await _supabase.from('day_overrides').delete().gte('date', toDateStr(new Date()));
+            if (error) { alert('Error: '+error.message); return; }
+            loadAdminOverrides();
+            document.getElementById('ad-ov-status').textContent = 'Todos los ajustes fueron eliminados.';
+        };
 
         window.adminSetOverride = async function() {
             const date = document.getElementById('ad-ov-date').value;
             const hours = parseFloat(document.getElementById('ad-ov-hours').value);
-            if (!date || isNaN(hours)) { alert('Selecciona fecha y horas'); return; }
+            if (!date || isNaN(hours)) { alert('Selecciona una fecha y escribe las horas'); return; }
+            const statusEl = document.getElementById('ad-ov-status');
             const { error } = await _supabase.from('day_overrides').upsert(
-                { date, hours, reason: hours === 0 ? 'Bloqueado por admin' : 'Ajuste manual' },
+                { date, hours, reason: hours === 0 ? 'Bloqueado' : 'Ajuste manual' },
                 { onConflict: 'date' }
             );
             if (error) { alert('Error: '+error.message); return; }
+            statusEl.textContent = hours === 0 ? `✅ ${date} bloqueado` : `✅ ${date} → ${hours}h`;
             loadAdminOverrides();
             document.getElementById('ad-ov-date').value = '';
             document.getElementById('ad-ov-hours').value = '';
