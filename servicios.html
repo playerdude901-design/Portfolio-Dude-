@@ -160,6 +160,42 @@
             transform: translateY(-2px);
             box-shadow: 0 0 30px rgba(37,99,235,.5);
         }
+        .section-divider {
+            width: 80px;
+            height: 2px;
+            background: var(--teal);
+            margin: 2.5rem auto 2rem;
+            opacity: .4;
+        }
+        .servicios-page .sub-indiv {
+            text-align: center;
+            color: var(--gray);
+            font-size: .95rem;
+            margin-bottom: 1.5rem;
+        }
+        .servicios-grid-indiv {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+        .servicio-card.indiv {
+            padding: 1.5rem 1.2rem 1.2rem;
+        }
+        .servicio-card.indiv h3 {
+            font-size: 1.2rem;
+        }
+        .servicio-card.indiv .price {
+            font-size: 1.6rem;
+            margin-bottom: .8rem;
+        }
+        .servicio-card.indiv ul li {
+            font-size: .82rem;
+            padding: .2rem 0 .2rem 1.2rem;
+        }
+        .servicio-card.indiv .btn-cta {
+            font-size: .9rem;
+            padding: .45rem 1.4rem;
+        }
         .back-link {
             display: block;
             text-align: center;
@@ -175,6 +211,9 @@
         }
         @media (max-width: 700px) {
             .servicios-grid {
+                grid-template-columns: 1fr;
+            }
+            .servicios-grid-indiv {
                 grid-template-columns: 1fr;
             }
         }
@@ -228,6 +267,71 @@
                 <a href="contacto.html" target="_blank" rel="noopener" class="btn-cta">Book a Call</a>
             </div>
         </div>
+
+        <div class="section-divider"></div>
+        <p class="sub-indiv">Servicios individuales</p>
+        <div class="servicios-grid-indiv">
+            <div class="servicio-card indiv">
+                <h3>Edición de Shorts</h3>
+                <div class="price">$10<span style="font-size:.85rem;color:var(--gray)"> USD</span></div>
+                <ul>
+                    <li>Edición dinámica</li>
+                    <li>Subtítulos animados</li>
+                    <li>Efectos de sonido</li>
+                    <li>Corrección de color</li>
+                    <li>Video listo para publicar</li>
+                </ul>
+                <a href="contacto.html" target="_blank" rel="noopener" class="btn-cta">Contratar</a>
+            </div>
+            <div class="servicio-card indiv">
+                <h3>Edición de Videos Largos</h3>
+                <div class="price">$60<span style="font-size:.85rem;color:var(--gray)"> USD</span></div>
+                <ul>
+                    <li>Storytelling</li>
+                    <li>Integración de B-Roll</li>
+                    <li>Corrección de color</li>
+                    <li>Diseño de sonido</li>
+                    <li>Video listo para publicar</li>
+                </ul>
+                <a href="contacto.html" target="_blank" rel="noopener" class="btn-cta">Contratar</a>
+            </div>
+            <div class="servicio-card indiv">
+                <h3>Edición para Gaming</h3>
+                <div class="price">$60<span style="font-size:.85rem;color:var(--gray)"> USD</span></div>
+                <ul>
+                    <li>Funny Moments</li>
+                    <li>Highlights</li>
+                    <li>Memes y efectos dinámicos</li>
+                    <li>Subtítulos animados</li>
+                    <li>Diseño de sonido</li>
+                    <li>Corrección de color</li>
+                </ul>
+                <a href="contacto.html" target="_blank" rel="noopener" class="btn-cta">Contratar</a>
+            </div>
+            <div class="servicio-card indiv">
+                <h3>Diseño de Miniaturas</h3>
+                <div class="price">$10<span style="font-size:.85rem;color:var(--gray)"> USD</span></div>
+                <ul>
+                    <li>Diseño personalizado</li>
+                    <li>3 variantes de miniatura</li>
+                    <li>Revisiones ilimitadas</li>
+                    <li>Exportación en alta resolución</li>
+                </ul>
+                <a href="contacto.html" target="_blank" rel="noopener" class="btn-cta">Contratar</a>
+            </div>
+            <div class="servicio-card indiv">
+                <h3>Branding para Canales</h3>
+                <div class="price">$120<span style="font-size:.85rem;color:var(--gray)"> USD</span></div>
+                <ul>
+                    <li>Banner</li>
+                    <li>Foto de perfil</li>
+                    <li>Marca de agua</li>
+                    <li>Pantalla final</li>
+                </ul>
+                <a href="contacto.html" target="_blank" rel="noopener" class="btn-cta">Contratar</a>
+            </div>
+        </div>
+
         <a href="index.html" class="back-link">← Volver al portfolio</a>
     </div>
 </body>
