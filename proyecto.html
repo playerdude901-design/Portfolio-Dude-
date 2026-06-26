@@ -174,6 +174,15 @@
         }
         .add-btn:hover { background:rgba(59,130,246,.16); }
         .add-btn.added { background:rgba(34,197,94,.1); border-color:rgba(34,197,94,.2); color:#22c55e; cursor:default; }
+        .svc-qty { display:flex; align-items:center; gap:2px; margin:.35rem 0 .4rem; }
+        .svc-qty button {
+            width:22px; height:22px; border-radius:5px; border:1px solid rgba(148,163,184,.1);
+            background:rgba(148,163,184,.04); color:#b0baca; cursor:pointer;
+            font-size:.75rem; font-family:inherit; display:flex; align-items:center; justify-content:center;
+            transition:all .15s;
+        }
+        .svc-qty button:hover { background:rgba(59,130,246,.1); border-color:rgba(59,130,246,.15); color:var(--blue); }
+        .svc-qty .sq-num { min-width:20px; text-align:center; font-size:.8rem; font-weight:600; color:#fff; }
 
         /* ── MONTHLY PLANS ── */
         .plans-section { margin-bottom:1.5rem; }
@@ -646,7 +655,7 @@
             body { background:#fff !important; color:#000 !important; background-image:none !important; }
             .builder-header, .welcome-overlay, .services-col,
             .q-overlay, .p-item-options, .po-actions, .p-print,
-            .close-btn, .hint, .p-reset-btn, .p-header-actions, .p-cal-btn, .p-selected-date, .cal-overlay, .admin-overlay { display:none !important; }
+            .close-btn, .hint, .p-reset-btn, .p-header-actions, .p-cal-btn, .p-selected-date, .cal-overlay, .admin-overlay, .svc-qty { display:none !important; }
             .builder { display:block !important; min-height:auto !important; }
             .project-col {
                 width:100% !important; min-width:0 !important; position:static !important;
@@ -1122,6 +1131,8 @@
             const dayNames = ['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
             const today = data.today;
             const start = new Date(today);
+            const nowDate = new Date();
+            const cutoffHour = 17; // 5 PM — after this, today no longer available
 
             // Build grid (start from today, up to 28 days)
             let html = '<div class="cal-dow">Do</div><div class="cal-dow">Lu</div><div class="cal-dow">Ma</div><div class="cal-dow">Mi</div><div class="cal-dow">Ju</div><div class="cal-dow">Vi</div><div class="cal-dow">Sa</div>';
@@ -1157,7 +1168,13 @@
                 }
 
                 const classes = ['cal-day', status];
-                if (d.getTime() < today.getTime()) classes.push('past');
+                const isPastDate = d.getTime() < today.getTime();
+                const isTodayPast = d.getTime() === today.getTime() && nowDate.getHours() >= cutoffHour;
+                if (isPastDate || isTodayPast) {
+                    classes.push('past');
+                    clickable = false;
+                    if (status === 'available') { status = 'past'; statusLabel = ''; hasAvailable = false; }
+                }
 
                 calDaysData.push({ dateStr, status, remaining, neededHours, baseCap, usedHrs });
 
@@ -1380,6 +1397,7 @@
         // ── STATE ──
         const project = []; // { serviceId, opts:{} }
         let appliedPlan = null;
+        let serviceQtys = {}; // { serviceId: quantity } for the service grid
         let welcomeDone = false;
         let wAnswers = [];
         const undoStack = [];
@@ -1653,6 +1671,7 @@
         function renderServices() {
             svcGrid.innerHTML = SERVICES.map(s => {
                 const added = project.some(p => p.serviceId === s.id);
+                const qty = serviceQtys[s.id] || 1;
                 return `<div class="svc-card" style="--svc-accent:${s.accent}">
                     <div class="svc-top">
                         <div class="svc-icon">${getIcon(s.icon)}</div>
@@ -1662,7 +1681,12 @@
                         </div>
                     </div>
                     <div class="svc-price">Desde <strong>$${s.basePrice} USD</strong></div>
-                    <button class="add-btn${added?' added':''}" onclick="${added?'':'addService(\''+s.id+'\')'}"
+                    <div class="svc-qty">
+                        <button onclick="event.stopPropagation();adjQty('${s.id}',-1)" ${qty<=1?'disabled':''}>−</button>
+                        <span class="sq-num">${qty}</span>
+                        <button onclick="event.stopPropagation();adjQty('${s.id}',1)">+</button>
+                    </div>
+                    <button class="add-btn${added?' added':''}" onclick="${added?'':'addServiceQty(\''+s.id+'\')'}"
                         ${added?'disabled':''}>${added?'Agregado':'Agregar al Proyecto'}</button>
                 </div>`;
             }).join('');
@@ -1707,19 +1731,29 @@
             }
         }
 
-        window.addService = function(svcId) {
+        window.adjQty = function(svcId, delta) {
+            if (!serviceQtys[svcId]) serviceQtys[svcId] = 1;
+            serviceQtys[svcId] = Math.max(1, serviceQtys[svcId] + delta);
+            renderServices();
+        };
+
+        window.addServiceQty = function(svcId) {
             const s = getSvc(svcId);
             if (!s) return;
+            const qty = serviceQtys[svcId] || 1;
             pushHistory();
             appliedPlan = null;
-            const entry = { serviceId:svcId, opts:{} };
-            s.options.forEach(o => {
-                if (!o.depends && o.choices.length) entry.opts[o.key] = o.choices[0].v;
-            });
-            s.options.forEach(o => {
-                if (o.depends && entry.opts[o.depends.key]===o.depends.val && o.choices.length) entry.opts[o.key] = o.choices[0].v;
-            });
-            project.push(entry);
+            for (let n = 0; n < qty; n++) {
+                const entry = { serviceId:svcId, opts:{} };
+                s.options.forEach(o => {
+                    if (!o.depends && o.choices.length) entry.opts[o.key] = o.choices[0].v;
+                });
+                s.options.forEach(o => {
+                    if (o.depends && entry.opts[o.depends.key]===o.depends.val && o.choices.length) entry.opts[o.key] = o.choices[0].v;
+                });
+                project.push(entry);
+            }
+            serviceQtys[svcId] = 1;
             renderAll();
         };
 
