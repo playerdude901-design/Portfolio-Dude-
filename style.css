@@ -355,66 +355,6 @@ img { display:block; }
     line-height: 1.5;
 }
 
-/* ══════════ SERVICIOS ══════════ */
-.servicios-section {
-    position: relative;
-    width: 100%;
-    padding: 5rem 2.5rem;
-    overflow: hidden;
-}
-
-.servicios-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background: url('./assets/Servicios_fondo.png') center/cover no-repeat;
-    filter: brightness(.5) blur(2px);
-}
-
-.servicios-inner {
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.servicios-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
-}
-
-.servicio-card {
-    background: rgba(18,18,18,.88);
-    border: 1px solid rgba(44,186,178,.18);
-    border-radius: 12px;
-    padding: 2rem 1.5rem;
-    text-align: center;
-    transition: border-color .3s, transform .3s, box-shadow .3s;
-}
-
-.servicio-card:hover {
-    border-color: var(--teal);
-    transform: translateY(-3px);
-    box-shadow: 0 0 25px rgba(44,186,178,.2);
-}
-
-.servicio-card h3 {
-    font-family: var(--bebas);
-    font-size: 1.8rem;
-    letter-spacing: 2px;
-    color: var(--teal);
-    margin-bottom: .5rem;
-}
-
-.servicio-card p {
-    font-family: var(--inter);
-    font-size: .9rem;
-    color: var(--gray);
-    line-height: 1.6;
-}
-
 /* ══════════ CLIENTES ══════════ */
 .clientes-section {
     width: 100%;

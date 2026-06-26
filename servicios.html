@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Servicios - Dude 3D">
+    <title>Servicios · Dude 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        body {
+            background: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url('./assets/Servicios_fondo.png') center/cover no-repeat;
+            filter: blur(4px) brightness(.35);
+            z-index: -1;
+        }
+        .servicios-page {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(18,18,18,.92);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(44,186,178,.25);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 8px 40px rgba(0,0,0,.5);
+        }
+        .servicios-page h1 {
+            font-family: var(--bebas);
+            font-size: 2.8rem;
+            letter-spacing: 3px;
+            color: var(--teal);
+            text-align: center;
+            margin-bottom: .3rem;
+        }
+        .servicios-page .sub {
+            text-align: center;
+            color: var(--gray);
+            font-size: .95rem;
+            margin-bottom: 2rem;
+        }
+        .servicios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.2rem;
+        }
+        .servicio-card {
+            background: rgba(10,10,10,.8);
+            border: 1px solid rgba(44,186,178,.18);
+            border-radius: 12px;
+            padding: 1.8rem 1.5rem;
+            text-align: center;
+            transition: border-color .3s, transform .3s, box-shadow .3s;
+        }
+        .servicio-card:hover {
+            border-color: var(--teal);
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(44,186,178,.2);
+        }
+        .servicio-card h3 {
+            font-family: var(--bebas);
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            color: var(--teal);
+            margin-bottom: .5rem;
+        }
+        .servicio-card p {
+            font-family: var(--inter);
+            font-size: .9rem;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            font-family: var(--bebas);
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+            color: var(--gray);
+            transition: color .2s;
+        }
+        .back-link:hover {
+            color: var(--teal);
+        }
+    </style>
+</head>
+<body>
+    <div class="servicios-page">
+        <h1>SERVICIOS</h1>
+        <p class="sub">Estos son los paquetes que ofrezco</p>
+        <div class="servicios-grid" id="servicios-grid"></div>
+        <a href="index.html" class="back-link">← Volver al portfolio</a>
+    </div>
+</body>
+</html>
