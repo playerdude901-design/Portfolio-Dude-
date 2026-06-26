@@ -15,6 +15,8 @@
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            background-image: radial-gradient(rgba(59,130,246,.04) 1px, transparent 1px);
+            background-size: 32px 32px;
         }
         :root {
             --blue: #3B82F6;
@@ -22,7 +24,6 @@
             --teal: #2cbab2;
             --pink: #EC4899;
             --amber: #F59E0B;
-            --accent: var(--blue);
         }
 
         /* ── HEADER ── */
@@ -56,27 +57,34 @@
         }
         .welcome-overlay.open { opacity:1; pointer-events:auto; }
         .welcome-card {
-            background:#141d30; border:1px solid rgba(148,163,184,.1);
+            background:linear-gradient(145deg,#1a2440,#141d30);
+            border:1px solid rgba(148,163,184,.1);
             border-radius:24px; padding:2.2rem 2.2rem 1.8rem;
             max-width:600px; width:100%; box-shadow:0 40px 100px rgba(0,0,0,.6);
+            position:relative; overflow:hidden;
+        }
+        .welcome-card::before {
+            content:''; position:absolute; top:-60px; right:-60px; width:180px; height:180px;
+            background:radial-gradient(circle,rgba(59,130,246,.08),transparent 70%);
+            pointer-events:none;
         }
         .welcome-card .w-title {
             font-weight:800; font-size:1.15rem; margin-bottom:.15rem;
             display:flex; align-items:center; gap:.35rem;
         }
-        .welcome-card .w-title svg { width:18px; height:18px; }
+        .welcome-card .w-title svg { width:18px; height:18px; color:var(--blue); }
         .welcome-card .w-sub { font-size:.8rem; color:#5a6a7e; margin-bottom:1.2rem; }
         .w-step-indicator { display:flex; gap:.35rem; margin-bottom:1.5rem; align-items:center; }
         .w-step-dot {
             width:7px; height:7px; border-radius:50%;
-            background:rgba(148,163,184,.15); transition:background .3s,width .3s;
+            background:rgba(148,163,184,.15); transition:all .3s;
         }
-        .w-step-dot.active { width:24px; border-radius:4px; background:var(--blue); }
-        .w-step-dot.done { background:var(--blue); opacity:.4; }
+        .w-step-dot.active { width:24px; border-radius:4px; background:var(--blue); box-shadow:0 0 12px rgba(59,130,246,.3); }
+        .w-step-dot.done { background:var(--blue); opacity:.5; }
 
         .w-step { display:none; }
         .w-step.active { display:block; animation:wStepIn .35s cubic-bezier(.16,1,.3,1); }
-        @keyframes wStepIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+        @keyframes wStepIn { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:translateX(0); } }
 
         .w-step .w-q { font-size:.9rem; font-weight:600; margin-bottom:.8rem; }
         .w-options { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; }
@@ -84,13 +92,19 @@
             background:rgba(148,163,184,.04); border:1px solid rgba(148,163,184,.08);
             border-radius:12px; padding:.7rem .8rem; cursor:pointer;
             transition:all .25s; text-align:left; font-family:inherit; color:#b0baca;
-            font-size:.82rem; font-weight:500;
+            font-size:.82rem; font-weight:500; position:relative; overflow:hidden;
         }
-        .w-opt:hover { background:rgba(59,130,246,.08); border-color:rgba(59,130,246,.2); color:#fff; }
-        .w-opt.selected { background:rgba(59,130,246,.12); border-color:var(--blue); color:#fff; box-shadow:0 0 20px rgba(59,130,246,.08); }
-        .w-opt .w-opt-icon { display:block; font-size:1.3rem; margin-bottom:.15rem; }
-        .w-opt .w-opt-label { display:block; }
+        .w-opt::before {
+            content:''; position:absolute; inset:0; opacity:0;
+            background:radial-gradient(circle at center,rgba(59,130,246,.08),transparent 70%);
+            transition:opacity .3s;
+        }
+        .w-opt:hover { background:rgba(59,130,246,.08); border-color:rgba(59,130,246,.2); color:#fff; transform:translateY(-1px); }
+        .w-opt:hover::before { opacity:1; }
+        .w-opt.selected { background:rgba(59,130,246,.12); border-color:var(--blue); color:#fff; box-shadow:0 0 24px rgba(59,130,246,.1); }
+        .w-opt .w-opt-label { display:block; font-weight:600; }
         .w-opt .w-opt-desc { display:block; font-size:.7rem; color:#5a6a7e; font-weight:400; margin-top:.1rem; }
+        .w-opt.selected .w-opt-desc { color:rgba(255,255,255,.4); }
 
         .w-nav { display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem; }
         .w-nav button {
@@ -118,35 +132,46 @@
         /* ── BUNDLES ── */
         .bundles { display:flex; gap:.7rem; margin-bottom:1.5rem; flex-wrap:wrap; }
         .bundle-card {
-            flex:1; min-width:160px;
-            background:linear-gradient(145deg,#141d30,#0f1625);
-            border:1px solid rgba(148,163,184,.08); border-radius:16px;
+            flex:1; min-width:160px; border-radius:16px;
             padding:.9rem .9rem .8rem; cursor:pointer;
-            transition:all .3s cubic-bezier(.16,1,.3,1); position:relative;
+            transition:all .35s cubic-bezier(.16,1,.3,1); position:relative;
+            overflow:hidden;
         }
-        .bundle-card:hover { transform:translateY(-4px); border-color:rgba(59,130,246,.15); box-shadow:0 12px 40px rgba(0,0,0,.3); }
-        .bundle-card.recommended { border-color:rgba(59,130,246,.2); box-shadow:0 0 30px rgba(59,130,246,.06); }
+        .bundle-card::after {
+            content:''; position:absolute; inset:0; border-radius:16px;
+            border:1px solid rgba(148,163,184,.08); pointer-events:none;
+        }
+        .bundle-card:hover { transform:translateY(-5px); box-shadow:0 16px 48px rgba(0,0,0,.35); }
+        .bundle-card.recommended { box-shadow:0 0 32px rgba(59,130,246,.08); }
+        .bundle-card.recommended::after { border-color:rgba(59,130,246,.2); }
+        .bundle-card.applied { box-shadow:inset 0 0 0 1px rgba(34,197,94,.2); }
+        .bundle-card.applied::after { border-color:rgba(34,197,94,.2); }
+
+        .bundle-card .b-bg {
+            position:absolute; inset:0; border-radius:16px; z-index:0;
+        }
+        .bundle-card .b-content { position:relative; z-index:1; }
+
         .bundle-card .b-badge {
-            position:absolute; top:-6px; right:10px; font-size:.6rem;
-            font-weight:700; text-transform:uppercase; letter-spacing:.06em;
-            background:linear-gradient(135deg,var(--blue),#2563eb); color:#fff;
-            padding:.15rem .5rem; border-radius:20px;
+            display:inline-block; font-size:.58rem; font-weight:700; text-transform:uppercase;
+            letter-spacing:.06em; background:linear-gradient(135deg,var(--blue),#2563eb);
+            color:#fff; padding:.15rem .5rem; border-radius:20px; margin-bottom:.35rem;
         }
         .bundle-card .b-name { font-weight:700; font-size:.85rem; }
-        .bundle-card .b-tagline { font-size:.7rem; color:#5a6a7e; margin-bottom:.35rem; line-height:1.4; }
-        .bundle-card .b-price { display:flex; align-items:center; gap:.3rem; margin-bottom:.2rem; }
-        .bundle-card .b-price .b-cur { font-weight:700; font-size:1.1rem; color:#fff; }
-        .bundle-card .b-price .b-old { font-size:.75rem; color:#5a6a7e; text-decoration:line-through; }
-        .bundle-card .b-price .b-pct { font-size:.65rem; color:#22c55e; font-weight:600; }
-        .bundle-card .b-items { display:flex; flex-wrap:wrap; gap:.2rem .4rem; font-size:.68rem; color:#6b7a8e; }
-        .bundle-card .b-items span { background:rgba(148,163,184,.04); padding:.05rem .35rem; border-radius:4px; }
+        .bundle-card .b-tagline { font-size:.68rem; color:rgba(255,255,255,.4); margin-bottom:.35rem; line-height:1.4; }
+        .bundle-card .b-price { display:flex; align-items:baseline; gap:.35rem; margin-bottom:.2rem; flex-wrap:wrap; }
+        .bundle-card .b-price .b-cur { font-weight:800; font-size:1.25rem; }
+        .bundle-card .b-price .b-old { font-size:.72rem; color:rgba(255,255,255,.25); text-decoration:line-through; }
+        .bundle-card .b-price .b-pct { font-size:.65rem; font-weight:600; color:#22c55e; background:rgba(34,197,94,.12); padding:.05rem .35rem; border-radius:4px; }
+        .bundle-card .b-items { display:flex; flex-wrap:wrap; gap:.2rem .35rem; font-size:.66rem; color:rgba(255,255,255,.35); margin-top:.15rem; }
+        .bundle-card .b-items span { background:rgba(255,255,255,.04); padding:.04rem .35rem; border-radius:4px; }
         .bundle-card .b-action {
             margin-top:.5rem; padding:.3rem 0; width:100%; border-radius:8px;
-            font-size:.73rem; font-weight:600; font-family:inherit; cursor:pointer; border:none;
-            background:rgba(59,130,246,.1); color:var(--blue); transition:all .2s;
+            font-size:.72rem; font-weight:600; font-family:inherit; cursor:pointer; border:none;
+            transition:all .25s;
         }
-        .bundle-card .b-action:hover { background:rgba(59,130,246,.18); }
-        .bundle-card.applied { border-color:rgba(34,197,94,.2); }
+        .bundle-card.recommended .b-action { background:rgba(59,130,246,.15); color:var(--blue); }
+        .bundle-card.recommended .b-action:hover { background:rgba(59,130,246,.25); }
         .bundle-card.applied .b-action { background:rgba(34,197,94,.12); color:#22c55e; cursor:default; }
 
         /* ── SERVICE GRID ── */
@@ -156,31 +181,35 @@
         .svc-card {
             background:linear-gradient(145deg,#141d30,#0f1625);
             border:1px solid rgba(148,163,184,.08); border-radius:14px;
-            padding:1rem 1rem; transition:all .3s cubic-bezier(.16,1,.3,1);
+            padding:1rem; transition:all .35s cubic-bezier(.16,1,.3,1);
             position:relative; overflow:hidden;
         }
         .svc-card::before {
             content:''; position:absolute; top:0; left:0; right:0; height:3px;
-            background:var(--svc-accent,var(--blue)); opacity:.5;
-            transition:opacity .3s;
+            background:var(--svc-accent,var(--blue)); opacity:.5; transition:opacity .3s;
         }
-        .svc-card:hover { transform:translateY(-3px); border-color:rgba(148,163,184,.15); box-shadow:0 8px 30px rgba(0,0,0,.25); }
+        .svc-card::after {
+            content:''; position:absolute; inset:0; border-radius:14px; opacity:0;
+            box-shadow:inset 0 0 40px var(--svc-accent,var(--blue));
+            transition:opacity .4s; pointer-events:none;
+        }
+        .svc-card:hover { transform:translateY(-4px); border-color:rgba(148,163,184,.15); box-shadow:0 12px 40px rgba(0,0,0,.3); }
         .svc-card:hover::before { opacity:1; }
+        .svc-card:hover::after { opacity:.06; }
 
         .svc-card .svc-top { display:flex; align-items:flex-start; gap:.6rem; margin-bottom:.4rem; }
         .svc-card .svc-icon {
-            width:38px; height:38px; border-radius:10px; flex-shrink:0;
+            width:40px; height:40px; border-radius:10px; flex-shrink:0;
             display:flex; align-items:center; justify-content:center;
-            background:linear-gradient(135deg, var(--svc-accent,var(--blue))22, var(--svc-accent,var(--blue))08);
+            background:linear-gradient(135deg, var(--svc-accent,var(--blue))22, var(--svc-accent,var(--blue))06);
             color:var(--svc-accent,var(--blue));
         }
-        .svc-card .svc-icon svg { width:18px; height:18px; }
+        .svc-card .svc-icon svg { width:19px; height:19px; }
         .svc-card .svc-mid { flex:1; min-width:0; }
         .svc-card .svc-name { font-weight:700; font-size:.85rem; }
         .svc-card .svc-desc { font-size:.72rem; color:#5a6a7e; line-height:1.4; }
         .svc-card .svc-price { font-size:.75rem; color:#6b7a8e; margin:.35rem 0 .5rem; }
         .svc-card .svc-price strong { color:#b0baca; font-weight:600; }
-
         .add-btn {
             width:100%; padding:.4rem 0; border-radius:8px; font-weight:600;
             font-size:.75rem; font-family:inherit; cursor:pointer; transition:all .25s;
@@ -208,17 +237,36 @@
         }
 
         .proposal-header { border-bottom:1px solid rgba(148,163,184,.06); padding-bottom:.7rem; margin-bottom:.7rem; }
+        .proposal-header .p-title-row {
+            display:flex; align-items:center; justify-content:space-between; margin-bottom:.1rem;
+        }
         .proposal-header .p-title {
             font-size:.7rem; text-transform:uppercase; letter-spacing:.06em;
-            color:#5a6a7e; font-weight:600; margin-bottom:.1rem;
+            color:#5a6a7e; font-weight:600;
         }
+        .p-header-actions { display:flex; gap:.15rem; }
+        .p-header-actions button {
+            background:none; border:none; width:20px; height:20px; border-radius:4px;
+            color:#5a6a7e; cursor:pointer; display:flex; align-items:center; justify-content:center;
+            transition:color .2s,background .2s; font-size:.6rem;
+        }
+        .p-header-actions button:hover { color:#b0baca; background:rgba(148,163,184,.08); }
+        .p-header-actions button:disabled { opacity:.2; cursor:default; background:none; }
+        .p-reset-btn {
+            background:none; border:none; color:#5a6a7e; font-size:.65rem;
+            font-weight:500; font-family:inherit; cursor:pointer;
+            padding:.1rem .3rem; border-radius:4px; transition:color .2s,background .2s;
+            display:none; line-height:1;
+        }
+        .p-reset-btn:hover { color:#ef4444; background:rgba(239,68,68,.08); }
+        .p-reset-btn.visible { display:inline; }
         .proposal-header .p-name {
             width:100%; background:none; border:none; color:#fff;
-            font-size:1.1rem; font-weight:700; font-family:inherit;
-            outline:none; padding:.1rem 0;
+            font-size:1.05rem; font-weight:700; font-family:inherit;
+            outline:none; padding:.1rem 0; transition:border-color .2s;
         }
         .proposal-header .p-name::placeholder { color:rgba(255,255,255,.2); }
-        .proposal-header .p-name:focus { border-bottom:1px solid rgba(59,130,246,.2); }
+        .proposal-header .p-name:focus { border-bottom:1px solid rgba(59,130,246,.15); }
 
         .proposal-body { flex:1; overflow-y:auto; }
 
@@ -228,56 +276,63 @@
 
         /* ── PROJECT ITEM ── */
         .p-item {
-            border:1px solid rgba(148,163,184,.06); border-radius:12px;
-            margin-bottom:.5rem; background:rgba(148,163,184,.02);
-            animation:pItemIn .3s cubic-bezier(.16,1,.3,1); overflow:hidden;
+            border-radius:12px; margin-bottom:.5rem; overflow:hidden;
+            animation:pItemIn .35s cubic-bezier(.16,1,.3,1);
+            background:rgba(148,163,184,.02); position:relative;
         }
+        .p-item::before {
+            content:''; position:absolute; left:0; top:2px; bottom:2px; width:3px;
+            border-radius:0 3px 3px 0;
+            background:var(--p-accent,var(--blue)); opacity:.5;
+            transition:opacity .3s;
+        }
+        .p-item:hover::before { opacity:1; }
         @keyframes pItemIn {
             from { opacity:0; transform:translateY(8px); }
             to { opacity:1; transform:translateY(0); }
         }
-        .p-item.removing { animation:pItemOut .25s ease forwards; }
+        .p-item.removing { animation:pItemOut .28s ease forwards; }
         @keyframes pItemOut {
             to { opacity:0; transform:scale(.95); max-height:0; margin-bottom:0; border-width:0; padding:0; overflow:hidden; }
         }
 
         .p-item-main {
             display:flex; align-items:center; gap:.5rem;
-            padding:.45rem .6rem .45rem .5rem; cursor:pointer;
+            padding:.4rem .6rem .4rem .5rem; cursor:pointer;
         }
         .p-item-main .pi-preview {
-            width:32px; height:32px; border-radius:8px; flex-shrink:0;
+            width:30px; height:30px; border-radius:8px; flex-shrink:0;
             display:flex; align-items:center; justify-content:center;
-            color:#fff; font-size:.7rem;
+            color:#fff;
         }
-        .p-item-main .pi-preview svg { width:15px; height:15px; }
+        .p-item-main .pi-preview svg { width:14px; height:14px; }
         .p-item-main .pi-info { flex:1; min-width:0; }
-        .p-item-main .pi-name { font-weight:600; font-size:.8rem; }
-        .p-item-main .pi-config { font-size:.68rem; color:#5a6a7e; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .p-item-main .pi-price { font-size:.8rem; font-weight:600; color:var(--blue); white-space:nowrap; }
+        .p-item-main .pi-name { font-weight:600; font-size:.78rem; }
+        .p-item-main .pi-config { font-size:.66rem; color:#5a6a7e; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .p-item-main .pi-price { font-size:.78rem; font-weight:600; color:var(--blue); white-space:nowrap; }
         .p-item-main .pi-toggle { font-size:.6rem; color:#5a6a7e; transition:transform .25s; }
         .p-item-main .pi-toggle.open { transform:rotate(180deg); }
 
         .p-item-options {
-            display:none; padding:0 .6rem .5rem;
-            border-top:1px solid rgba(148,163,184,.04); margin-top:.05rem; padding-top:.45rem;
+            display:none; padding:0 .6rem .5rem .5rem;
+            border-top:1px solid rgba(148,163,184,.04); padding-top:.4rem;
         }
         .p-item-options.open { display:block; }
-        .p-item-options .po-actions { display:flex; gap:.3rem; margin-bottom:.45rem; }
+        .p-item-options .po-actions { display:flex; gap:.25rem; margin-bottom:.4rem; flex-wrap:wrap; }
         .p-item-options .po-actions button {
-            background:rgba(148,163,184,.05); border:1px solid rgba(148,163,184,.06);
-            color:#6b7a8e; padding:.2rem .55rem; border-radius:6px;
-            font-size:.68rem; font-weight:500; cursor:pointer; font-family:inherit;
-            transition:background .2s,color .2s;
+            background:rgba(148,163,184,.05); border:none; color:#6b7a8e;
+            padding:.15rem .5rem; border-radius:5px; font-size:.66rem; font-weight:500;
+            cursor:pointer; font-family:inherit; transition:all .2s;
         }
         .p-item-options .po-actions button:hover { background:rgba(148,163,184,.1); color:#b0baca; }
-        .p-item-options .po-actions .po-del:hover { background:rgba(239,68,68,.12); color:#ef4444; border-color:rgba(239,68,68,.15); }
+        .p-item-options .po-actions .po-del:hover { background:rgba(239,68,68,.12); color:#ef4444; }
+        .p-item-options .po-actions .po-move { font-size:.7rem; }
 
         .po-opt-group { margin-bottom:.35rem; }
-        .po-opt-group .po-label { font-size:.65rem; font-weight:600; color:#5a6a7e; text-transform:uppercase; letter-spacing:.04em; margin-bottom:.2rem; }
+        .po-opt-group .po-label { font-size:.63rem; font-weight:600; color:#5a6a7e; text-transform:uppercase; letter-spacing:.04em; margin-bottom:.2rem; }
         .po-opt-group .po-choices { display:flex; flex-wrap:wrap; gap:.2rem; }
         .po-choice {
-            padding:.2rem .45rem; border-radius:5px; font-size:.68rem; font-weight:500;
+            padding:.2rem .45rem; border-radius:5px; font-size:.66rem; font-weight:500;
             font-family:inherit; background:rgba(148,163,184,.04); border:1px solid rgba(148,163,184,.06);
             color:#6b7a8e; cursor:pointer; transition:all .2s; text-align:center;
         }
@@ -286,11 +341,32 @@
             background:rgba(59,130,246,.12); border-color:var(--blue); color:#fff;
         }
 
+        /* ── TEMPLATES ── */
+        .tmpl-bar {
+            display:none; margin-bottom:.5rem; padding:.35rem .5rem;
+            background:rgba(148,163,184,.03); border:1px solid rgba(148,163,184,.06);
+            border-radius:8px; gap:.3rem; align-items:center; flex-wrap:wrap;
+        }
+        .tmpl-bar.visible { display:flex; }
+        .tmpl-bar .tmpl-label { font-size:.62rem; color:#5a6a7e; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+        .tmpl-bar select {
+            flex:1; min-width:80px; background:rgba(11,19,36,.5); border:1px solid rgba(148,163,184,.08);
+            border-radius:5px; color:#b0baca; font-size:.68rem; font-family:inherit;
+            padding:.15rem .25rem; outline:none; cursor:pointer;
+        }
+        .tmpl-bar button {
+            background:rgba(148,163,184,.05); border:none; color:#6b7a8e;
+            padding:.15rem .45rem; border-radius:5px; font-size:.65rem; font-weight:500;
+            cursor:pointer; font-family:inherit; transition:all .2s; white-space:nowrap;
+        }
+        .tmpl-bar button:hover { background:rgba(148,163,184,.1); color:#b0baca; }
+        .tmpl-bar .tmpl-del:hover { background:rgba(239,68,68,.12); color:#ef4444; }
+
         /* ── PROPOSAL FOOTER ── */
         .proposal-footer { border-top:1px solid rgba(148,163,184,.06); padding-top:.6rem; margin-top:.5rem; }
         .p-notes {
             width:100%; background:rgba(148,163,184,.03); border:1px solid rgba(148,163,184,.06);
-            border-radius:8px; padding:.4rem .6rem; font-size:.75rem; font-family:inherit;
+            border-radius:8px; padding:.4rem .6rem; font-size:.73rem; font-family:inherit;
             color:#b0baca; resize:none; outline:none; transition:border-color .2s;
         }
         .p-notes:focus { border-color:rgba(59,130,246,.15); }
@@ -298,25 +374,35 @@
 
         .p-delivery {
             display:flex; align-items:center; gap:.35rem;
-            font-size:.72rem; color:#5a6a7e; margin:.35rem 0;
+            font-size:.7rem; color:#5a6a7e; margin:.3rem 0;
         }
-        .p-delivery svg { width:14px; height:14px; flex-shrink:0; }
+        .p-delivery svg { width:13px; height:13px; flex-shrink:0; }
         .p-delivery strong { color:#22c55e; font-weight:600; }
 
-        .p-total-row {
-            display:flex; justify-content:space-between; align-items:center;
-            margin:.35rem 0 .5rem;
+        .p-total-wrap {
+            background:linear-gradient(135deg,rgba(59,130,246,.06),rgba(37,99,235,.03));
+            border:1px solid rgba(59,130,246,.08); border-radius:10px;
+            padding:.5rem .7rem; margin:.35rem 0 .5rem;
         }
-        .p-total-row .pt-label { font-weight:600; font-size:.8rem; color:#b0baca; }
-        .p-total-row .pt-value { font-weight:800; font-size:1.2rem; color:var(--blue); font-variant-numeric:tabular-nums; }
+        .p-total-row { display:flex; justify-content:space-between; align-items:center; }
+        .p-total-row .pt-label { font-weight:600; font-size:.78rem; color:#b0baca; }
+        .p-total-row .pt-value { font-weight:800; font-size:1.15rem; color:var(--blue); font-variant-numeric:tabular-nums; }
+        .p-total-row .pt-value.counting { opacity:.7; }
 
+        .p-actions-row { display:flex; gap:.4rem; }
+        .p-actions-row button {
+            flex:1; padding:.5rem 0; border-radius:10px; font-weight:700;
+            font-size:.8rem; font-family:inherit; cursor:pointer; transition:all .25s; border:none;
+        }
         .p-cta {
-            width:100%; padding:.55rem 0; border-radius:10px; font-weight:700;
-            font-size:.82rem; font-family:inherit; cursor:pointer; transition:all .25s;
-            border:none; background:linear-gradient(135deg,var(--blue),#2563eb);
+            background:linear-gradient(135deg,var(--blue),#2563eb);
             color:#fff; box-shadow:0 4px 25px rgba(59,130,246,.25);
         }
         .p-cta:hover { transform:translateY(-2px); box-shadow:0 8px 35px rgba(59,130,246,.4); filter:brightness(1.08); }
+        .p-print {
+            background:rgba(148,163,184,.06); color:#6b7a8e; border:1px solid rgba(148,163,184,.08) !important;
+        }
+        .p-print:hover { background:rgba(148,163,184,.1); color:#b0baca; }
 
         /* ── QUOTE OVERLAY ── */
         .q-overlay {
@@ -361,6 +447,36 @@
         ::-webkit-scrollbar { width:4px; }
         ::-webkit-scrollbar-track { background:transparent; }
         ::-webkit-scrollbar-thumb { background:rgba(148,163,184,.08); border-radius:10px; }
+
+        /* ── PRINT ── */
+        @media print {
+            body { background:#fff !important; color:#000 !important; background-image:none !important; }
+            .builder-header, .welcome-overlay, .services-col,
+            .q-overlay, .p-item-options, .po-actions, .p-print,
+            .close-btn, .hint, .p-reset-btn, .p-header-actions { display:none !important; }
+            .builder { display:block !important; min-height:auto !important; }
+            .project-col {
+                width:100% !important; min-width:0 !important; position:static !important;
+                height:auto !important; border:none !important; padding:1.5rem !important;
+                background:none !important;
+            }
+            .proposal { border:none !important; box-shadow:none !important; padding:0 !important; background:none !important; }
+            .proposal-header { border-bottom-color:#ddd !important; }
+            .proposal-header .p-name { color:#000 !important; }
+            .p-item { border:1px solid #ddd !important; background:#f8f8f8 !important; }
+            .p-item::before { display:none !important; }
+            .p-item-main { cursor:default !important; }
+            .p-item-main .pi-price { color:#2563eb !important; }
+            .p-empty { color:#999 !important; }
+            .p-total-wrap { background:#f0f4ff !important; border-color:#2563eb !important; }
+            .p-total-row .pt-value { color:#2563eb !important; }
+            .p-delivery strong { color:#22c55e !important; }
+            .p-cta { background:#2563eb !important; color:#fff !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+            .p-notes { border-color:#ddd !important; color:#333 !important; }
+            .po-choice.selected { background:#2563eb !important; color:#fff !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+            .po-opt-group { margin-bottom:.2rem !important; }
+            .tmpl-bar { display:none !important; }
+        }
 
         /* ── RESPONSIVE ── */
         @media(max-width:920px) {
@@ -413,7 +529,6 @@
                 <div class="w-step-dot"></div>
                 <div class="w-step-dot"></div>
             </div>
-            <!-- Steps rendered by JS -->
             <div id="w-step-container"></div>
             <div class="w-nav">
                 <button class="w-back" id="w-back" style="visibility:hidden">Atrás</button>
@@ -436,12 +551,25 @@
         <div class="project-col" id="project-col">
             <div class="proposal">
                 <div class="proposal-header">
-                    <div class="p-title">Propuesta de Proyecto</div>
+                    <div class="p-title-row">
+                        <div class="p-title">Propuesta de Proyecto</div>
+                        <div class="p-header-actions">
+                            <button onclick="undo()" id="undo-btn" title="Deshacer (Ctrl+Z)">↩</button>
+                            <button onclick="redo()" id="redo-btn" title="Rehacer (Ctrl+Shift+Z)">↪</button>
+                            <button class="p-reset-btn" id="p-reset-btn" onclick="resetProject()">Limpiar</button>
+                        </div>
+                    </div>
                     <input class="p-name" id="p-name" placeholder="Nombre de tu proyecto" value="Mi Proyecto Creativo">
+                </div>
+                <div class="tmpl-bar" id="tmpl-bar">
+                    <span class="tmpl-label">Plantilla:</span>
+                    <select id="tmpl-select"></select>
+                    <button onclick="saveTemplate()">Guardar</button>
+                    <button class="tmpl-del" onclick="delTemplate()">Eliminar</button>
                 </div>
                 <div class="proposal-body" id="proposal-body">
                     <div class="p-empty" id="p-empty">
-                        Selecciona un paquete o agrega <br>servicios individuales para empezar.
+                        Selecciona un paquete o agrega servicios para empezar.
                     </div>
                 </div>
                 <div class="proposal-footer" id="proposal-footer" style="display:none">
@@ -450,11 +578,16 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                         <span id="p-delivery-text">Entrega estimada: <strong>&mdash;</strong></span>
                     </div>
-                    <div class="p-total-row">
-                        <span class="pt-label">Total estimado</span>
-                        <span class="pt-value" id="p-total">$0</span>
+                    <div class="p-total-wrap">
+                        <div class="p-total-row">
+                            <span class="pt-label">Total estimado</span>
+                            <span class="pt-value" id="p-total">$0</span>
+                        </div>
                     </div>
-                    <button class="p-cta" id="p-cta">Solicitar Cotización</button>
+                    <div class="p-actions-row">
+                        <button class="p-cta" id="p-cta">Solicitar Cotización</button>
+                        <button class="p-print" onclick="window.print()">Imprimir</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -484,150 +617,264 @@
             shorts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M10 9l5 3-5 3V9z"/></svg>',
             thumbnail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="2.5"/><path d="M2 16l5-5 2.5 2.5L13 10l9 9"/></svg>',
             branding: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="15" cy="9" r="1.5" fill="currentColor"/><path d="M12 12l-2 7"/></svg>',
-            star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
-            clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
         };
 
         const ACCENTS = {
-            'video-editing': '#3B82F6',
-            'gaming-editing': '#8B5CF6',
-            'shorts-editing': '#2cbab2',
-            'thumbnail-design': '#EC4899',
-            'channel-branding': '#F59E0B',
+            'video-editing':'#3B82F6','gaming-editing':'#8B5CF6','shorts-editing':'#2cbab2',
+            'thumbnail-design':'#EC4899','channel-branding':'#F59E0B',
+        };
+        const BUNDLE_GRADIENTS = {
+            starter: 'linear-gradient(145deg,#1a2744,#111d30)',
+            growth: 'linear-gradient(145deg,#1f243d,#151b30)',
+            pro: 'linear-gradient(145deg,#2a1d3d,#1a1530)',
         };
 
         // ── SERVICE DEFINITIONS ──
         const SERVICES = [
-            { id:'video-editing',   name:'Video Editing',   icon:'video',    desc:'Edición profesional para YouTube, vlogs y contenido informativo.', basePrice:50, baseTime:3, accent:'#3B82F6',
+            { id:'video-editing',name:'Video Editing',icon:'video',desc:'Edición profesional para YouTube, vlogs y contenido informativo.',basePrice:50,baseTime:3,accent:'#3B82F6',
                 options:[
-                    { key:'duration', label:'Duración', choices:[{l:'<5 min',v:'5min',p:0,t:0},{l:'5-10 min',v:'10min',p:15,t:1},{l:'10-20 min',v:'20min',p:25,t:2},{l:'>20 min',v:'30min',p:50,t:3}] },
-                    { key:'level', label:'Nivel', choices:[{l:'Básico',v:'basic',p:0,t:0},{l:'Estándar',v:'standard',p:20,t:1},{l:'Premium',v:'premium',p:40,t:2}] },
-                    { key:'thumbnail', label:'Miniatura', choices:[{l:'Incluir',v:'yes',p:10,t:1},{l:'No',v:'no',p:0,t:0}] },
-                    { key:'thumb-qty', label:'Cant. miniaturas', depends:{key:'thumbnail',val:'yes'}, choices:[{l:'1',v:'1',p:0,t:0},{l:'3',v:'3',p:5,t:1},{l:'5',v:'5',p:10,t:1}] },
-                    { key:'delivery', label:'Entrega', choices:[{l:'Standard 3d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}] },
+                    {key:'duration',label:'Duración',choices:[{l:'<5 min',v:'5min',p:0,t:0},{l:'5-10 min',v:'10min',p:15,t:1},{l:'10-20 min',v:'20min',p:25,t:2},{l:'>20 min',v:'30min',p:50,t:3}]},
+                    {key:'level',label:'Nivel',choices:[{l:'Básico',v:'basic',p:0,t:0},{l:'Estándar',v:'standard',p:20,t:1},{l:'Premium',v:'premium',p:40,t:2}]},
+                    {key:'thumbnail',label:'Miniatura',choices:[{l:'Incluir',v:'yes',p:10,t:1},{l:'No',v:'no',p:0,t:0}]},
+                    {key:'thumb-qty',label:'Cant. miniaturas',depends:{key:'thumbnail',val:'yes'},choices:[{l:'1',v:'1',p:0,t:0},{l:'3',v:'3',p:5,t:1},{l:'5',v:'5',p:10,t:1}]},
+                    {key:'delivery',label:'Entrega',choices:[{l:'Standard 3d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}]},
                 ]},
-            { id:'gaming-editing',  name:'Gaming Editing',  icon:'gaming',   desc:'Perfecto para gameplays, highlights y contenido de gaming.',          basePrice:50, baseTime:3, accent:'#8B5CF6',
+            { id:'gaming-editing',name:'Gaming Editing',icon:'gaming',desc:'Perfecto para gameplays, highlights y contenido de gaming.',basePrice:50,baseTime:3,accent:'#8B5CF6',
                 options:[
-                    { key:'duration', label:'Duración', choices:[{l:'<5 min',v:'5min',p:0,t:0},{l:'5-10 min',v:'10min',p:15,t:1},{l:'10-20 min',v:'20min',p:25,t:2},{l:'>20 min',v:'30min',p:50,t:3}] },
-                    { key:'level', label:'Nivel', choices:[{l:'Básico',v:'basic',p:0,t:0},{l:'Estándar',v:'standard',p:20,t:1},{l:'Premium',v:'premium',p:40,t:2}] },
-                    { key:'thumbnail', label:'Miniatura', choices:[{l:'Incluir',v:'yes',p:10,t:1},{l:'No',v:'no',p:0,t:0}] },
-                    { key:'thumb-qty', label:'Cant. miniaturas', depends:{key:'thumbnail',val:'yes'}, choices:[{l:'1',v:'1',p:0,t:0},{l:'3',v:'3',p:5,t:1},{l:'5',v:'5',p:10,t:1}] },
-                    { key:'delivery', label:'Entrega', choices:[{l:'Standard 3d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}] },
+                    {key:'duration',label:'Duración',choices:[{l:'<5 min',v:'5min',p:0,t:0},{l:'5-10 min',v:'10min',p:15,t:1},{l:'10-20 min',v:'20min',p:25,t:2},{l:'>20 min',v:'30min',p:50,t:3}]},
+                    {key:'level',label:'Nivel',choices:[{l:'Básico',v:'basic',p:0,t:0},{l:'Estándar',v:'standard',p:20,t:1},{l:'Premium',v:'premium',p:40,t:2}]},
+                    {key:'thumbnail',label:'Miniatura',choices:[{l:'Incluir',v:'yes',p:10,t:1},{l:'No',v:'no',p:0,t:0}]},
+                    {key:'thumb-qty',label:'Cant. miniaturas',depends:{key:'thumbnail',val:'yes'},choices:[{l:'1',v:'1',p:0,t:0},{l:'3',v:'3',p:5,t:1},{l:'5',v:'5',p:10,t:1}]},
+                    {key:'delivery',label:'Entrega',choices:[{l:'Standard 3d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}]},
                 ]},
-            { id:'shorts-editing',  name:'Shorts Editing',  icon:'shorts',   desc:'Edición dinámica para Shorts, Reels y TikTok.',          basePrice:10, baseTime:2, accent:'#2cbab2',
+            { id:'shorts-editing',name:'Shorts Editing',icon:'shorts',desc:'Edición dinámica para Shorts, Reels y TikTok.',basePrice:10,baseTime:2,accent:'#2cbab2',
                 options:[
-                    { key:'quantity', label:'Cantidad', choices:[{l:'1',v:'1',p:10,t:0},{l:'2',v:'2',p:20,t:0},{l:'3',v:'3',p:30,t:1},{l:'5',v:'5',p:50,t:1},{l:'10',v:'10',p:100,t:2}] },
-                    { key:'thumbnail', label:'Miniatura', choices:[{l:'Incluir',v:'yes',p:5,t:1},{l:'No',v:'no',p:0,t:0}] },
-                    { key:'delivery', label:'Entrega', choices:[{l:'Standard 2d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}] },
+                    {key:'quantity',label:'Cantidad',choices:[{l:'1',v:'1',p:10,t:0},{l:'2',v:'2',p:20,t:0},{l:'3',v:'3',p:30,t:1},{l:'5',v:'5',p:50,t:1},{l:'10',v:'10',p:100,t:2}]},
+                    {key:'thumbnail',label:'Miniatura',choices:[{l:'Incluir',v:'yes',p:5,t:1},{l:'No',v:'no',p:0,t:0}]},
+                    {key:'delivery',label:'Entrega',choices:[{l:'Standard 2d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}]},
                 ]},
-            { id:'thumbnail-design',name:'Thumbnail Design',icon:'thumbnail', desc:'Miniaturas profesionales diseñadas para alto CTR.',                 basePrice:10, baseTime:2, accent:'#EC4899',
+            { id:'thumbnail-design',name:'Thumbnail Design',icon:'thumbnail',desc:'Miniaturas profesionales diseñadas para alto CTR.',basePrice:10,baseTime:2,accent:'#EC4899',
                 options:[
-                    { key:'quantity', label:'Cantidad', choices:[{l:'1',v:'1',p:10,t:0},{l:'3 Variantes',v:'3',p:25,t:1},{l:'5',v:'5',p:40,t:1}] },
-                    { key:'delivery', label:'Entrega', choices:[{l:'Standard 2d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}] },
+                    {key:'quantity',label:'Cantidad',choices:[{l:'1',v:'1',p:10,t:0},{l:'3 Variantes',v:'3',p:25,t:1},{l:'5',v:'5',p:40,t:1}]},
+                    {key:'delivery',label:'Entrega',choices:[{l:'Standard 2d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}]},
                 ]},
-            { id:'channel-branding',name:'Channel Branding',icon:'branding', desc:'Identidad visual completa: banner, logo, paleta de colores.',             basePrice:120,baseTime:5, accent:'#F59E0B',
+            { id:'channel-branding',name:'Channel Branding',icon:'branding',desc:'Identidad visual completa: banner, logo, paleta de colores.',basePrice:120,baseTime:5,accent:'#F59E0B',
                 options:[
-                    { key:'delivery', label:'Entrega', choices:[{l:'Standard 5d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}] },
+                    {key:'delivery',label:'Entrega',choices:[{l:'Standard 5d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}]},
                 ]},
         ];
 
         // ── BUNDLES ──
         const BUNDLES = [
-            { id:'starter', name:'Starter Creator', tagline:'Perfecto para empezar a crecer',
-              services:[
-                { id:'gaming-editing', opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'} },
-                { id:'thumbnail-design', opts:{quantity:'1',delivery:'standard'} },
-              ], normalPrice:75, bundlePrice:60, saving:15 },
-            { id:'growth', name:'Growth Channel', tagline:'Ideal para creadores en expansi&oacute;n',
-              services:[
-                { id:'gaming-editing', opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'} },
-                { id:'gaming-editing', opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'} },
-                { id:'gaming-editing', opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'} },
-                { id:'shorts-editing', opts:{quantity:'1',thumbnail:'yes',delivery:'standard'} },
-                { id:'shorts-editing', opts:{quantity:'1',thumbnail:'yes',delivery:'standard'} },
-                { id:'thumbnail-design', opts:{quantity:'1',delivery:'standard'} },
-                { id:'thumbnail-design', opts:{quantity:'1',delivery:'standard'} },
-                { id:'thumbnail-design', opts:{quantity:'1',delivery:'standard'} },
-              ], normalPrice:290, bundlePrice:230, saving:60 },
-            { id:'pro', name:'Professional', tagline:'Solución completa para canales establecidos',
-              services:[
-                { id:'gaming-editing', opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'} },
-                { id:'gaming-editing', opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'} },
-                { id:'gaming-editing', opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'} },
-                { id:'gaming-editing', opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'} },
-                { id:'gaming-editing', opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'} },
-                { id:'gaming-editing', opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'} },
-                { id:'shorts-editing', opts:{quantity:'1',thumbnail:'yes',delivery:'standard'} },
-                { id:'shorts-editing', opts:{quantity:'1',thumbnail:'yes',delivery:'standard'} },
-                { id:'shorts-editing', opts:{quantity:'1',thumbnail:'yes',delivery:'standard'} },
-                { id:'shorts-editing', opts:{quantity:'1',thumbnail:'yes',delivery:'standard'} },
-                { id:'thumbnail-design', opts:{quantity:'1',delivery:'standard'} },
-                { id:'thumbnail-design', opts:{quantity:'1',delivery:'standard'} },
-                { id:'thumbnail-design', opts:{quantity:'1',delivery:'standard'} },
-                { id:'thumbnail-design', opts:{quantity:'1',delivery:'standard'} },
-                { id:'thumbnail-design', opts:{quantity:'1',delivery:'standard'} },
-                { id:'channel-branding', opts:{delivery:'standard'} },
-              ], normalPrice:620, bundlePrice:500, saving:120 },
+            {id:'starter',name:'Starter Creator',tagline:'Perfecto para empezar a crecer',
+             services:[
+                {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+             ],normalPrice:75,bundlePrice:60,saving:15},
+            {id:'growth',name:'Growth Channel',tagline:'Ideal para creadores en expansión',
+             services:[
+                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+             ],normalPrice:290,bundlePrice:230,saving:60},
+            {id:'pro',name:'Professional',tagline:'Solución completa para canales establecidos',
+             services:[
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'channel-branding',opts:{delivery:'standard'}},
+             ],normalPrice:620,bundlePrice:500,saving:120},
         ];
 
         // ── WELCOME STEPS ──
         const WSTEPS = [
-            { q:'¿Qué tipo de contenido creas?',
-              opts:[
-                { label:'Gaming', desc:'Gameplays, streams, highlights', val:'gaming' },
-                { label:'Educación', desc:'Tutoriales, cursos, guías', val:'education' },
-                { label:'Entretenimiento', desc:'Vlogs, sketches, variedad', val:'entertainment' },
-                { label:'Negocios', desc:'Branding, corporativo, producto', val:'business' },
-                { label:'Variedad', desc:'Un poco de todo', val:'variety' },
-                { label:'Música / Arte', desc:'MVs, showcases, portfolios', val:'music' },
-              ]},
-            { q:'¿Cuál es tu objetivo principal?',
-              opts:[
-                { label:'Crecer audiencia', desc:'Atraer más suscriptores y views', val:'grow' },
-                { label:'Profesionalizar', desc:'Mejorar la calidad del canal', val:'pro' },
-                { label:'Consistencia', desc:'Publicar con regularidad', val:'consistent' },
-                { label:'Monetizar', desc:'Maximizar ingresos del canal', val:'monetize' },
-              ]},
-            { q:'¿Cuántos videos publicas al mes?',
-              opts:[
-                { label:'1-2 videos', desc:'Ritmo inicial', val:'1-2' },
-                { label:'3-5 videos', desc:'Ritmo constante', val:'3-5' },
-                { label:'6-10 videos', desc:'Alta producción', val:'6-10' },
-                { label:'10+ videos', desc:'Producción intensiva', val:'10+' },
-              ]},
+            {q:'¿Qué tipo de contenido creas?',
+             opts:[
+                {label:'Gaming',desc:'Gameplays, streams, highlights',val:'gaming'},
+                {label:'Educación',desc:'Tutoriales, cursos, guías',val:'education'},
+                {label:'Entretenimiento',desc:'Vlogs, sketches, variedad',val:'entertainment'},
+                {label:'Negocios',desc:'Branding, corporativo, producto',val:'business'},
+                {label:'Variedad',desc:'Un poco de todo',val:'variety'},
+                {label:'Música / Arte',desc:'MVs, showcases, portfolios',val:'music'},
+             ]},
+            {q:'¿Cuál es tu objetivo principal?',
+             opts:[
+                {label:'Crecer audiencia',desc:'Atraer más suscriptores y views',val:'grow'},
+                {label:'Profesionalizar',desc:'Mejorar la calidad del canal',val:'pro'},
+                {label:'Consistencia',desc:'Publicar con regularidad',val:'consistent'},
+                {label:'Monetizar',desc:'Maximizar ingresos del canal',val:'monetize'},
+             ]},
+            {q:'¿Cuántos videos publicas al mes?',
+             opts:[
+                {label:'1-2 videos',desc:'Ritmo inicial',val:'1-2'},
+                {label:'3-5 videos',desc:'Ritmo constante',val:'3-5'},
+                {label:'6-10 videos',desc:'Alta producción',val:'6-10'},
+                {label:'10+ videos',desc:'Producción intensiva',val:'10+'},
+             ]},
         ];
 
         // ── STATE ──
         const project = []; // { serviceId, opts:{} }
-        let welcomeDone = false;
         let appliedBundle = null;
+        let welcomeDone = false;
         let wAnswers = [];
+        const undoStack = [];
+        const redoStack = [];
+        const MAX_HISTORY = 40;
+        let suppressHistory = false;
 
         // ── DOM refs ──
-        const wOverlay = document.getElementById('welcome-overlay');
-        const wDots = document.getElementById('w-dots');
-        const wContainer = document.getElementById('w-step-container');
-        const wBack = document.getElementById('w-back');
-        const wNext = document.getElementById('w-next');
-        const wSkip = document.getElementById('w-skip');
-
-        const svcGrid = document.getElementById('service-grid');
-        const bundlesEl = document.getElementById('bundles');
-        const pBody = document.getElementById('proposal-body');
-        const pEmpty = document.getElementById('p-empty');
-        const pFooter = document.getElementById('proposal-footer');
-        const pTotal = document.getElementById('p-total');
-        const pDelivery = document.getElementById('p-delivery-text');
-        const pCta = document.getElementById('p-cta');
-        const pName = document.getElementById('p-name');
-        const pNotes = document.getElementById('p-notes');
-        const qOverlay = document.getElementById('q-overlay');
-        const qBody = document.getElementById('q-body');
+        const wOverlay=document.getElementById('welcome-overlay');
+        const wDots=document.getElementById('w-dots');
+        const wContainer=document.getElementById('w-step-container');
+        const wBack=document.getElementById('w-back');
+        const wNext=document.getElementById('w-next');
+        const wSkip=document.getElementById('w-skip');
+        const svcGrid=document.getElementById('service-grid');
+        const bundlesEl=document.getElementById('bundles');
+        const pBody=document.getElementById('proposal-body');
+        const pEmpty=document.getElementById('p-empty');
+        const pFooter=document.getElementById('proposal-footer');
+        const pTotal=document.getElementById('p-total');
+        const pDelivery=document.getElementById('p-delivery-text');
+        const pCta=document.getElementById('p-cta');
+        const pName=document.getElementById('p-name');
+        const pNotes=document.getElementById('p-notes');
+        const pReset=document.getElementById('p-reset-btn');
+        const undoBtn=document.getElementById('undo-btn');
+        const redoBtn=document.getElementById('redo-btn');
+        const tmplBar=document.getElementById('tmpl-bar');
+        const tmplSelect=document.getElementById('tmpl-select');
+        const qOverlay=document.getElementById('q-overlay');
+        const qBody=document.getElementById('q-body');
 
         // ── HELPERS ──
-        function getSvc(id) { return SERVICES.find(s=>s.id===id); }
-        function getIcon(name) { return ICONS[name] || ''; }
-        function accent(id) { return ACCENTS[id] || '#3B82F6'; }
+        function getSvc(id){return SERVICES.find(s=>s.id===id);}
+        function getIcon(n){return ICONS[n]||'';}
+        function accentId(id){return ACCENTS[id]||'#3B82F6';}
+
+        // ── HISTORY (Undo/Redo) ──
+        function pushHistory() {
+            if (suppressHistory) return;
+            redoStack.length = 0;
+            undoStack.push(JSON.stringify({ project, appliedBundle, pName:pName?.value }));
+            if (undoStack.length > MAX_HISTORY) undoStack.shift();
+            updateUndoButtons();
+        }
+        function restoreState(stateStr) {
+            const s = JSON.parse(stateStr);
+            project.length = 0;
+            s.project.forEach(p => project.push(p));
+            appliedBundle = s.appliedBundle;
+            if (s.pName && pName) pName.value = s.pName;
+            renderAll();
+        }
+        window.undo = function() {
+            if (undoStack.length < 2) return;
+            const cur = undoStack.pop();
+            redoStack.push(cur);
+            const prev = undoStack[undoStack.length-1];
+            suppressHistory = true;
+            restoreState(prev);
+            suppressHistory = false;
+            updateUndoButtons();
+        };
+        window.redo = function() {
+            if (!redoStack.length) return;
+            const next = redoStack.pop();
+            undoStack.push(next);
+            suppressHistory = true;
+            restoreState(next);
+            suppressHistory = false;
+            updateUndoButtons();
+        };
+        function updateUndoButtons() {
+            undoBtn.disabled = undoStack.length < 2;
+            redoBtn.disabled = !redoStack.length;
+        }
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.shiftKey && e.key==='z') { e.preventDefault(); redo(); }
+            else if (e.ctrlKey && e.key==='z') { e.preventDefault(); undo(); }
+        });
+
+        // ── TEMPLATES ──
+        function loadTemplates() {
+            try { return JSON.parse(localStorage.getItem('dude_templates')||'{}'); } catch { return {}; }
+        }
+        function saveTemplates(t) { localStorage.setItem('dude_templates',JSON.stringify(t)); }
+        function renderTemplates() {
+            const t = loadTemplates();
+            const keys = Object.keys(t);
+            tmplBar.classList.toggle('visible', keys.length>0);
+            tmplSelect.innerHTML = keys.map(k => `<option value="${k}">${k}</option>`).join('');
+        }
+        window.saveTemplate = function() {
+            const name = prompt('Nombre para esta plantilla:');
+            if (!name) return;
+            const t = loadTemplates();
+            t[name] = { project:JSON.parse(JSON.stringify(project)), appliedBundle, pName:pName.value };
+            saveTemplates(t);
+            renderTemplates();
+        };
+        window.delTemplate = function() {
+            const name = tmplSelect.value;
+            if (!name) return;
+            const t = loadTemplates();
+            delete t[name];
+            saveTemplates(t);
+            renderTemplates();
+        };
+        tmplSelect?.addEventListener('change', function() {
+            const t = loadTemplates();
+            const data = t[this.value];
+            if (!data) return;
+            project.length = 0;
+            data.project.forEach(p => project.push(p));
+            appliedBundle = data.appliedBundle;
+            if (data.pName) pName.value = data.pName;
+            pushHistory();
+            renderAll();
+        });
+
+        // ── DRAFT AUTO-SAVE ──
+        function saveDraft() {
+            try {
+                localStorage.setItem('dude_builder_draft', JSON.stringify({
+                    project, appliedBundle, pName:pName?.value, pNotes:pNotes?.value
+                }));
+            } catch {}
+        }
+        function loadDraft() {
+            try {
+                const raw = localStorage.getItem('dude_builder_draft');
+                if (!raw) return false;
+                const d = JSON.parse(raw);
+                if (!d.project || !d.project.length) return false;
+                d.project.forEach(p => project.push(p));
+                appliedBundle = d.appliedBundle || null;
+                if (d.pName && pName) pName.value = d.pName;
+                if (d.pNotes && pNotes) pNotes.value = d.pNotes;
+                return true;
+            } catch { return false; }
+        }
+        function clearDraft() { localStorage.removeItem('dude_builder_draft'); }
 
         // ── WELCOME FLOW ──
         let wStep = 0;
@@ -641,39 +888,34 @@
                         <span class="w-opt-desc">${o.desc}</span>
                     </button>`;
                 }).join('')}</div></div>`;
-            // Dots
             wDots.innerHTML = WSTEPS.map((_,i)=>`<div class="w-step-dot${i===wStep?' active':''}${i<wStep?' done':''}"></div>`).join('');
             wBack.style.visibility = wStep===0 ? 'hidden' : 'visible';
             wNext.textContent = wStep===WSTEPS.length-1 ? 'Comenzar' : 'Siguiente';
             wNext.disabled = wAnswers[wStep]===undefined || wAnswers[wStep]===null;
         }
-        window.pickWelcome = function(i) {
-            wAnswers[wStep] = i;
-            renderWelcome();
-        };
+        window.pickWelcome = function(i) { wAnswers[wStep] = i; renderWelcome(); };
         wBack.addEventListener('click', ()=>{ if(wStep>0){ wStep--; renderWelcome(); } });
         wNext.addEventListener('click', ()=>{
             if (wAnswers[wStep]===undefined) return;
             if (wStep < WSTEPS.length-1) { wStep++; renderWelcome(); }
-            else { closeWelcome(); }
+            else closeWelcome();
         });
         wSkip.addEventListener('click', closeWelcome);
 
         function closeWelcome() {
             wOverlay.classList.remove('open');
             welcomeDone = true;
-            suggestBundle();
+            if (!loadDraft()) suggestBundle();
+            else renderAll();
         }
 
         function suggestBundle() {
-            // Determine recommended bundle based on answers
-            const vol = wAnswers[2];
-            const goal = wAnswers[1];
+            const vol = wAnswers[2], goal = wAnswers[1];
             let rec = 'growth';
-            if (vol===0) rec = 'starter'; // 1-2 videos
-            else if (vol===1) rec = 'growth'; // 3-5
-            else rec = 'pro'; // 6+ or 10+
-            if (goal===1 || goal===3) rec = 'pro'; // professionalize or monetize
+            if (vol===0) rec = 'starter';
+            else if (vol===1) rec = 'growth';
+            else rec = 'pro';
+            if (goal===1 || goal===3) rec = 'pro';
             applyBundle(rec);
             renderBundles();
         }
@@ -683,22 +925,23 @@
             bundlesEl.innerHTML = BUNDLES.map(b => {
                 const isApp = appliedBundle===b.id;
                 const isRec = !appliedBundle && b.id==='growth';
+                const grad = BUNDLE_GRADIENTS[b.id] || 'linear-gradient(145deg,#141d30,#0f1625)';
                 return `<div class="bundle-card${isRec?' recommended':''}${isApp?' applied':''}">
-                    ${isRec?'<div class="b-badge">Recomendado</div>':''}
-                    <div class="b-name">${b.name}</div>
-                    <div class="b-tagline">${b.tagline}</div>
-                    <div class="b-price">
-                        <span class="b-cur">$${b.bundlePrice}</span>
-                        <span class="b-old">$${b.normalPrice}</span>
-                        <span class="b-pct">Ahorra $${b.saving}</span>
+                    <div class="b-bg" style="background:${grad}"></div>
+                    <div class="b-content">
+                        ${isRec?'<div class="b-badge">Recomendado</div>':''}
+                        <div class="b-name">${b.name}</div>
+                        <div class="b-tagline">${b.tagline}</div>
+                        <div class="b-price">
+                            <span class="b-cur" style="color:${isApp?'#22c55e':'var(--blue)'}">$${b.bundlePrice}</span>
+                            <span class="b-old">$${b.normalPrice}</span>
+                            <span class="b-pct">Ahorra $${b.saving}</span>
+                        </div>
+                        <div class="b-items">${b.services.map(s=>`<span>${(getSvc(s.id)||{}).name||''}</span>`).join('')}</div>
+                        <button class="b-action" onclick="event.stopPropagation();applyBundle('${b.id}')">
+                            ${isApp?'Aplicado':'Usar Paquete'}
+                        </button>
                     </div>
-                    <div class="b-items">${b.services.map(s=>{
-                        const sv = getSvc(s.id);
-                        return `<span>${sv?sv.name:''}</span>`;
-                    }).join('')}</div>
-                    <button class="b-action" onclick="event.stopPropagation();applyBundle('${b.id}')">
-                        ${isApp?'Aplicado':'Usar Paquete'}
-                    </button>
                 </div>`;
             }).join('');
         }
@@ -706,29 +949,21 @@
         window.applyBundle = function(bId) {
             const b = BUNDLES.find(x=>x.id===bId);
             if (!b) return;
+            pushHistory();
             appliedBundle = bId;
-            // Clear existing project
             project.length = 0;
-            // Add bundle services
             b.services.forEach(s => {
                 const entry = { serviceId:s.id, opts:{...s.opts} };
-                // Fill in defaults for any missing options
                 const sv = getSvc(s.id);
                 if (sv) {
                     sv.options.forEach(o => {
-                        if (!entry.opts[o.key] && !o.depends && o.choices.length) {
-                            entry.opts[o.key] = o.choices[0].v;
-                        }
-                        if (!entry.opts[o.key] && o.depends && entry.opts[o.depends.key]===o.depends.val && o.choices.length) {
-                            entry.opts[o.key] = o.choices[0].v;
-                        }
+                        if (!entry.opts[o.key] && !o.depends && o.choices.length) entry.opts[o.key] = o.choices[0].v;
+                        if (!entry.opts[o.key] && o.depends && entry.opts[o.depends.key]===o.depends.val && o.choices.length) entry.opts[o.key] = o.choices[0].v;
                     });
                 }
                 project.push(entry);
             });
-            renderBundles();
-            renderServices();
-            renderProposal();
+            renderAll();
         };
 
         // ── SERVICES ──
@@ -753,32 +988,37 @@
         window.addService = function(svcId) {
             const s = getSvc(svcId);
             if (!s) return;
+            pushHistory();
             appliedBundle = null;
             const entry = { serviceId:svcId, opts:{} };
             s.options.forEach(o => {
                 if (!o.depends && o.choices.length) entry.opts[o.key] = o.choices[0].v;
             });
             s.options.forEach(o => {
-                if (o.depends && entry.opts[o.depends.key]===o.depends.val && o.choices.length) {
-                    entry.opts[o.key] = o.choices[0].v;
-                }
+                if (o.depends && entry.opts[o.depends.key]===o.depends.val && o.choices.length) entry.opts[o.key] = o.choices[0].v;
             });
             project.push(entry);
-            renderBundles();
-            renderServices();
-            renderProposal();
+            renderAll();
         };
 
         window.removeService = function(idx) {
             const el = document.querySelector(`.p-item[data-idx="${idx}"]`);
             if (el) el.classList.add('removing');
             setTimeout(() => {
+                pushHistory();
                 project.splice(idx, 1);
                 appliedBundle = null;
-                renderBundles();
-                renderServices();
-                renderProposal();
+                renderAll();
             }, 250);
+        };
+
+        window.moveService = function(idx, dir) {
+            const to = idx + dir;
+            if (to < 0 || to >= project.length) return;
+            pushHistory();
+            [project[idx], project[to]] = [project[to], project[idx]];
+            appliedBundle = null;
+            renderAll();
         };
 
         // ── OPTION UPDATE ──
@@ -787,48 +1027,38 @@
             if (!e) return;
             const s = getSvc(e.serviceId);
             if (!s) return;
+            pushHistory();
             e.opts[key] = val;
             s.options.forEach(o => {
                 if (o.depends && o.depends.key===key) {
-                    if (val===o.depends.val && o.choices.length) {
-                        e.opts[o.key] = o.choices[0].v;
-                    } else if (val!==o.depends.val) {
-                        delete e.opts[o.key];
-                    }
+                    if (val===o.depends.val && o.choices.length) e.opts[o.key] = o.choices[0].v;
+                    else delete e.opts[o.key];
                 }
             });
             appliedBundle = null;
-            renderBundles();
-            renderProposal();
+            renderAll();
         };
 
         // ── CALCULATE ──
         function calcItem(idx) {
-            const e = project[idx];
-            const s = getSvc(e.serviceId);
-            if (!s) return { price:0, time:s.baseTime, items:[], timeAdd:0 };
-            let price = s.basePrice, time = 0;
+            const e = project[idx], s = getSvc(e.serviceId);
+            if (!s) return { price:0, time:s?.baseTime||0, items:[], timeAdd:0 };
+            let price = s.basePrice, time = 0, priority = false;
             const items = [];
-            let priority = false;
             s.options.forEach(o => {
                 const val = e.opts[o.key];
                 if (!val) return;
                 const c = o.choices.find(ch=>ch.v===val);
                 if (!c) return;
-                if (o.key==='delivery' && val==='priority') { priority=true; return; }
-                if (o.key==='delivery') return;
+                if (o.key==='delivery') { if (val==='priority') priority=true; return; }
                 if (c.p!==null && c.p!==undefined) price += c.p;
                 if (c.t) time += c.t;
-                if (o.key==='thumb-qty') {
-                    if (val!=='1') items.push(val==='3'?'3 Variantes':'5 Miniaturas');
-                } else if (o.key==='thumbnail' && val==='yes') {
-                    items.push('Miniatura incluida');
-                } else if (c.l) {
-                    items.push(c.l);
-                }
+                if (o.key==='thumb-qty') { if (val!=='1') items.push(val==='3'?'3 Variantes':'5 Miniaturas'); }
+                else if (o.key==='thumbnail' && val==='yes') items.push('Miniatura incluida');
+                else if (c.l) items.push(c.l);
             });
             if (priority) { price = Math.round(price*1.5); time = Math.ceil((s.baseTime+time)*0.5); }
-            else { time = s.baseTime + time; }
+            else time = s.baseTime + time;
             return { price, time, items };
         }
 
@@ -846,43 +1076,41 @@
 
         // ── COUNT-UP ──
         function animateCountUp(el, target) {
-            const dur = 400;
-            const start = performance.now();
+            const dur = 400, start = performance.now();
             function tick(now) {
                 const t = Math.min((now-start)/dur, 1);
-                const e = 1 - Math.pow(1-t, 3);
-                el.textContent = '$' + Math.round(target * e);
+                el.textContent = '$' + Math.round(target * (1-Math.pow(1-t,3)));
                 if (t<1) requestAnimationFrame(tick);
             }
             requestAnimationFrame(tick);
         }
 
-        // ── RENDER PROPOSAL ──
+        // ── RENDER ──
+        function renderAll() {
+            renderBundles();
+            renderServices();
+            renderProposal();
+            saveDraft();
+            renderTemplates();
+            updateUndoButtons();
+        }
+        const rOptsSel = new Map();
+
         function renderProposal() {
             if (project.length===0) {
-                pEmpty.style.display = 'block';
-                pBody.innerHTML = '';
-                pFooter.style.display = 'none';
+                pEmpty.style.display='block'; pBody.innerHTML=''; pFooter.style.display='none';
+                pReset.classList.remove('visible');
                 return;
             }
-            pEmpty.style.display = 'none';
-            pFooter.style.display = 'block';
+            pEmpty.style.display='none'; pFooter.style.display='block'; pReset.classList.add('visible');
 
             pBody.innerHTML = project.map((e,idx)=>{
                 const s = getSvc(e.serviceId);
                 if (!s) return '';
                 const r = calcItem(idx);
                 const configStr = r.items.slice(0,2).join(' · ');
-                const detailLabels = s.options
-                    .filter(o => !['delivery','thumb-qty','thumbnail'].includes(o.key))
-                    .map(o => {
-                        const val = e.opts[o.key];
-                        if (!val) return null;
-                        const c = o.choices.find(ch=>ch.v===val);
-                        return c ? { key:o.key, label:o.label, choices:o.choices, val } : null;
-                    }).filter(Boolean);
-                return `<div class="p-item" data-idx="${idx}">
-                    <div class="p-item-main" onclick="event.currentTarget.parentElement.querySelector('.p-item-options').classList.toggle('open');event.currentTarget.querySelector('.pi-toggle').classList.toggle('open')">
+                return `<div class="p-item" data-idx="${idx}" style="--p-accent:${s.accent}">
+                    <div class="p-item-main" onclick="this.parentElement.querySelector('.p-item-options').classList.toggle('open');this.querySelector('.pi-toggle').classList.toggle('open')">
                         <div class="pi-preview" style="background:linear-gradient(135deg,${s.accent}22,${s.accent}44);color:${s.accent}">
                             ${getIcon(s.icon)}
                         </div>
@@ -895,14 +1123,15 @@
                     </div>
                     <div class="p-item-options">
                         <div class="po-actions">
+                            <button class="po-move" onclick="event.stopPropagation();moveService(${idx},-1)" ${idx===0?'disabled':''}>↑</button>
+                            <button class="po-move" onclick="event.stopPropagation();moveService(${idx},1)" ${idx===project.length-1?'disabled':''}>↓</button>
                             <button onclick="event.stopPropagation();removeService(${idx})" class="po-del">Eliminar</button>
                         </div>
-                        ${renderPItemOpts(s, e.opts, idx)}
+                        ${renderPOpts(s, e.opts, idx)}
                     </div>
                 </div>`;
             }).join('');
 
-            // Summary
             const total = calcTotal();
             animateCountUp(pTotal, total.total);
             pDelivery.innerHTML = total.maxTime
@@ -910,12 +1139,9 @@
                 : 'Entrega estimada: <strong>&mdash;</strong>';
         }
 
-        function renderPItemOpts(s, opts, idx) {
-            const visOpts = s.options.filter(o => {
-                if (!o.depends) return true;
-                return opts[o.depends.key]===o.depends.val;
-            });
-            return visOpts.map(o => {
+        function renderPOpts(s, opts, idx) {
+            const vis = s.options.filter(o => !o.depends || opts[o.depends.key]===o.depends.val);
+            return vis.map(o => {
                 const sel = opts[o.key]||'';
                 return `<div class="po-opt-group">
                     <div class="po-label">${o.label}</div>
@@ -933,67 +1159,67 @@
         function generateQuote() {
             const total = calcTotal();
             const projName = pName.value.trim() || 'Mi Proyecto Creativo';
-            let lines = [`Hola Christian,`, ``];
-            lines.push(`Me interesa cotizar el siguiente proyecto:`);
-            lines.push(`"${projName}"`);
-            lines.push(``);
+            let lines = ['Hola Christian,',''];
+            lines.push('Me interesa cotizar el siguiente proyecto:');
+            lines.push(`"${projName}"`); lines.push('');
             project.forEach((e,i)=>{
                 const s = getSvc(e.serviceId);
                 if (!s) return;
                 const r = calcItem(i);
                 lines.push(`• ${s.name}`);
                 r.items.forEach(d => lines.push(`  · ${d}`));
-                lines.push(``);
+                lines.push('');
             });
-            lines.push(`Precio total estimado:`);
-            lines.push(`$${total.total} USD`);
-            lines.push(``);
-            if (total.maxTime) {
-                lines.push(`Entrega estimada: ${total.maxTime} día${total.maxTime!==1?'s':''} hábiles`);
-                lines.push(``);
-            }
+            lines.push('Precio total estimado:'); lines.push(`$${total.total} USD`); lines.push('');
+            if (total.maxTime) { lines.push(`Entrega estimada: ${total.maxTime} día${total.maxTime!==1?'s':''} hábiles`); lines.push(''); }
             const notes = pNotes.value.trim();
-            if (notes) { lines.push(`Notas adicionales: ${notes}`); lines.push(``); }
-            lines.push(`Quedo atento a tu disponibilidad.`);
+            if (notes) { lines.push(`Notas adicionales: ${notes}`); lines.push(''); }
+            lines.push('Quedo atento a tu disponibilidad.');
             return lines.join('\n');
         }
 
-        pCta.addEventListener('click', ()=>{
-            const msg = generateQuote();
-            qBody.innerHTML = msg.replace(/\n/g,'<br>');
-            qOverlay.classList.add('open');
-        });
-
+        pCta.addEventListener('click', ()=>{ qBody.innerHTML = generateQuote().replace(/\n/g,'<br>'); qOverlay.classList.add('open'); });
         window.copyQuote = function() {
             const text = qBody.textContent;
             navigator.clipboard.writeText(text).then(()=>{
                 const btn = document.querySelector('.q-copy');
-                btn.textContent = 'Copiado';
-                setTimeout(()=>btn.textContent='Copiar', 2000);
+                btn.textContent = 'Copiado'; setTimeout(()=>btn.textContent='Copiar', 2000);
             });
         };
         window.sendWA = function() {
-            const text = encodeURIComponent(qBody.textContent);
-            window.open(`https://wa.me/51987654321?text=${text}`, '_blank');
+            window.open(`https://wa.me/51987654321?text=${encodeURIComponent(qBody.textContent)}`,'_blank');
         };
         window.sendMail = function() {
-            const text = encodeURIComponent(qBody.textContent);
-            window.open(`mailto:dude3d@example.com?subject=Cotización Project Builder&body=${text}`, '_blank');
+            window.open(`mailto:dude3d@example.com?subject=Cotización Project Builder&body=${encodeURIComponent(qBody.textContent)}`,'_blank');
         };
         window.sendToContact = function() {
             localStorage.setItem('dude_workflow', qBody.textContent);
-            window.open('contacto.html', '_blank');
+            window.open('contacto.html','_blank');
         };
         window.closeQuote = function() { qOverlay.classList.remove('open'); };
+        window.resetProject = function() {
+            if (!project.length) return;
+            if (!confirm('¿Limpiar todo el proyecto?')) return;
+            pushHistory();
+            project.length = 0;
+            appliedBundle = null;
+            clearDraft();
+            renderAll();
+        };
         qOverlay.addEventListener('click', e => { if (e.target===qOverlay) closeQuote(); });
 
         // ── INIT ──
+        pushHistory();
         renderBundles();
         renderServices();
         renderProposal();
         renderWelcome();
-        // Show welcome after a brief delay
-        setTimeout(() => wOverlay.classList.add('open'), 300);
+        renderTemplates();
+        updateUndoButtons();
+        setTimeout(() => {
+            if (!welcomeDone && !loadDraft()) wOverlay.classList.add('open');
+            else { welcomeDone = true; renderAll(); }
+        }, 300);
     </script>
 </body>
 </html>
