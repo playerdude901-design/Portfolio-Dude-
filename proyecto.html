@@ -129,51 +129,6 @@
         .sc-title { font-weight:700; font-size:1.05rem; margin-bottom:.1rem; }
         .sc-sub { font-size:.78rem; color:#5a6a7e; margin-bottom:1.2rem; }
 
-        /* ── BUNDLES ── */
-        .bundles { display:flex; gap:.7rem; margin-bottom:1.5rem; flex-wrap:wrap; }
-        .bundle-card {
-            flex:1; min-width:160px; border-radius:16px;
-            padding:.9rem .9rem .8rem; cursor:pointer;
-            transition:all .35s cubic-bezier(.16,1,.3,1); position:relative;
-            overflow:hidden;
-        }
-        .bundle-card::after {
-            content:''; position:absolute; inset:0; border-radius:16px;
-            border:1px solid rgba(148,163,184,.08); pointer-events:none;
-        }
-        .bundle-card:hover { transform:translateY(-5px); box-shadow:0 16px 48px rgba(0,0,0,.35); }
-        .bundle-card.recommended { box-shadow:0 0 32px rgba(59,130,246,.08); }
-        .bundle-card.recommended::after { border-color:rgba(59,130,246,.2); }
-        .bundle-card.applied { box-shadow:inset 0 0 0 1px rgba(34,197,94,.2); }
-        .bundle-card.applied::after { border-color:rgba(34,197,94,.2); }
-
-        .bundle-card .b-bg {
-            position:absolute; inset:0; border-radius:16px; z-index:0;
-        }
-        .bundle-card .b-content { position:relative; z-index:1; }
-
-        .bundle-card .b-badge {
-            display:inline-block; font-size:.58rem; font-weight:700; text-transform:uppercase;
-            letter-spacing:.06em; background:linear-gradient(135deg,var(--blue),#2563eb);
-            color:#fff; padding:.15rem .5rem; border-radius:20px; margin-bottom:.35rem;
-        }
-        .bundle-card .b-name { font-weight:700; font-size:.85rem; }
-        .bundle-card .b-tagline { font-size:.68rem; color:rgba(255,255,255,.4); margin-bottom:.35rem; line-height:1.4; }
-        .bundle-card .b-price { display:flex; align-items:baseline; gap:.35rem; margin-bottom:.2rem; flex-wrap:wrap; }
-        .bundle-card .b-price .b-cur { font-weight:800; font-size:1.25rem; }
-        .bundle-card .b-price .b-old { font-size:.72rem; color:rgba(255,255,255,.25); text-decoration:line-through; }
-        .bundle-card .b-price .b-pct { font-size:.65rem; font-weight:600; color:#22c55e; background:rgba(34,197,94,.12); padding:.05rem .35rem; border-radius:4px; }
-        .bundle-card .b-items { display:flex; flex-wrap:wrap; gap:.2rem .35rem; font-size:.66rem; color:rgba(255,255,255,.35); margin-top:.15rem; }
-        .bundle-card .b-items span { background:rgba(255,255,255,.04); padding:.04rem .35rem; border-radius:4px; }
-        .bundle-card .b-action {
-            margin-top:.5rem; padding:.3rem 0; width:100%; border-radius:8px;
-            font-size:.72rem; font-weight:600; font-family:inherit; cursor:pointer; border:none;
-            transition:all .25s;
-        }
-        .bundle-card.recommended .b-action { background:rgba(59,130,246,.15); color:var(--blue); }
-        .bundle-card.recommended .b-action:hover { background:rgba(59,130,246,.25); }
-        .bundle-card.applied .b-action { background:rgba(34,197,94,.12); color:#22c55e; cursor:default; }
-
         /* ── SERVICE GRID ── */
         .sg-title { font-size:.82rem; font-weight:700; color:#b0baca; margin-bottom:.6rem; }
         .service-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:.7rem; margin-bottom:.8rem; }
@@ -255,6 +210,8 @@
         }
         .plan-card .p-btn:hover { background:rgba(59,130,246,.2); filter:brightness(1.08); }
         .plan-card.popular .p-btn { background:rgba(59,130,246,.15); }
+        .plan-card.applied { border-color:rgba(34,197,94,.2); box-shadow:inset 0 0 0 1px rgba(34,197,94,.15); }
+        .plan-card.applied .p-btn { background:rgba(34,197,94,.12); color:#22c55e; cursor:default; }
 
         /* ── TERMS ── */
         .terms-section { margin-top:1.5rem; border-top:1px solid rgba(148,163,184,.06); padding-top:1rem; }
@@ -551,14 +508,11 @@
             }
             .services-col { padding:1.2rem 1rem; }
             .project-col { padding:1.2rem 1rem; }
-            .bundle-card { min-width:140px; }
             .plans-grid { grid-template-columns:repeat(2,1fr); }
         }
         @media(max-width:560px) {
             .service-grid { grid-template-columns:1fr; }
             .w-options { grid-template-columns:1fr; }
-            .bundles { flex-direction:column; }
-            .bundle-card { min-width:0; }
             .builder-header .hint { display:none; }
             .welcome-card { padding:1.5rem 1.2rem; }
         }
@@ -606,58 +560,10 @@
     <!-- BUILDER -->
     <div class="builder">
         <div class="services-col">
-            <div class="sc-title">Paquetes Recomendados</div>
-            <div class="sc-sub">Selecciona un paquete o arma tu proyecto desde cero</div>
-            <div class="bundles" id="bundles"></div>
-            <div class="sg-title">Planes Mensuales</div>
+            <div class="sc-title">Planes Mensuales</div>
+            <div class="sc-sub">Selecciona un plan o arma tu proyecto desde cero</div>
             <div class="plans-section">
-                <div class="plans-grid">
-                    <div class="plan-card">
-                        <div class="p-label">Getting Started</div>
-                        <div class="p-name">Starter Creator</div>
-                        <div class="p-price">$150 <span>/month</span></div>
-                        <div class="p-divider"></div>
-                        <ul class="p-features">
-                            <li>2–4 Edited Videos</li>
-                            <li>2–4 Custom Thumbnails</li>
-                            <li>48-Hour Delivery</li>
-                            <li>Unlimited Revisions</li>
-                        </ul>
-                        <a href="contacto.html" target="_blank" rel="noopener" class="p-btn">Get Started</a>
-                    </div>
-                    <div class="plan-card popular">
-                        <div class="p-badge">Most Popular</div>
-                        <div class="p-label">Consistent Growth</div>
-                        <div class="p-name">Growth Pack</div>
-                        <div class="p-price">$250 <span>/month</span></div>
-                        <div class="p-divider"></div>
-                        <ul class="p-features">
-                            <li>6–8 Edited Videos</li>
-                            <li>6–8 Custom Thumbnails</li>
-                            <li>Shorts Repurposing</li>
-                            <li>Priority Workflow</li>
-                            <li>Unlimited Revisions</li>
-                            <li>Direct Communication</li>
-                        </ul>
-                        <a href="contacto.html" target="_blank" rel="noopener" class="p-btn">Get Started</a>
-                    </div>
-                    <div class="plan-card">
-                        <div class="p-label">Dedicated Partner</div>
-                        <div class="p-name">Creator Partner</div>
-                        <div class="p-price">$500 <span>/month</span></div>
-                        <div class="p-divider"></div>
-                        <ul class="p-features">
-                            <li>10–16 Edited Videos</li>
-                            <li>10–16 Custom Thumbnails</li>
-                            <li>Shorts Repurposing</li>
-                            <li>Highest Priority</li>
-                            <li>Unlimited Revisions</li>
-                            <li>Direct Communication</li>
-                            <li>YouTube Branding Support</li>
-                        </ul>
-                        <a href="contacto.html" target="_blank" rel="noopener" class="p-btn">Book a Call</a>
-                    </div>
-                </div>
+                <div class="plans-grid" id="plans-grid"></div>
             </div>
             <div class="sg-title">Servicios Individuales</div>
             <div class="service-grid" id="service-grid"></div>
@@ -754,11 +660,62 @@
             'video-editing':'#3B82F6','gaming-editing':'#8B5CF6','shorts-editing':'#2cbab2',
             'thumbnail-design':'#EC4899','channel-branding':'#F59E0B',
         };
-        const BUNDLE_GRADIENTS = {
-            starter: 'linear-gradient(145deg,#1a2744,#111d30)',
-            growth: 'linear-gradient(145deg,#1f243d,#151b30)',
-            pro: 'linear-gradient(145deg,#2a1d3d,#1a1530)',
-        };
+
+        // ── PLANS ──
+        const PLANS = [
+            { id:'starter', name:'Starter Creator', label:'Getting Started', badge:'', price:150,
+              features:['2–4 Edited Videos','2–4 Custom Thumbnails','48-Hour Delivery','Unlimited Revisions'],
+              services:[
+                {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+              ], btn:'Get Started' },
+            { id:'growth', name:'Growth Pack', label:'Consistent Growth', badge:'Most Popular', price:250,
+              features:['6–8 Edited Videos','6–8 Custom Thumbnails','Shorts Repurposing','Priority Workflow','Unlimited Revisions','Direct Communication'],
+              services:[
+                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+              ], btn:'Get Started' },
+            { id:'pro', name:'Creator Partner', label:'Dedicated Partner', badge:'', price:500,
+              features:['10–16 Edited Videos','10–16 Custom Thumbnails','Shorts Repurposing','Highest Priority','Unlimited Revisions','Direct Communication','YouTube Branding Support'],
+              services:[
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'channel-branding',opts:{delivery:'standard'}},
+              ], btn:'Book a Call' },
+        ];
 
         // ── SERVICE DEFINITIONS ──
         const SERVICES = [
@@ -795,45 +752,6 @@
                 ]},
         ];
 
-        // ── BUNDLES ──
-        const BUNDLES = [
-            {id:'starter',name:'Starter Creator',tagline:'Perfecto para empezar a crecer',
-             services:[
-                {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-             ],normalPrice:75,bundlePrice:60,saving:15},
-            {id:'growth',name:'Growth Channel',tagline:'Ideal para creadores en expansión',
-             services:[
-                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'15min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-             ],normalPrice:290,bundlePrice:230,saving:60},
-            {id:'pro',name:'Professional',tagline:'Solución completa para canales establecidos',
-             services:[
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'20min',level:'premium',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'channel-branding',opts:{delivery:'standard'}},
-             ],normalPrice:620,bundlePrice:500,saving:120},
-        ];
-
         // ── WELCOME STEPS ──
         const WSTEPS = [
             {q:'¿Qué tipo de contenido creas?',
@@ -863,7 +781,7 @@
 
         // ── STATE ──
         const project = []; // { serviceId, opts:{} }
-        let appliedBundle = null;
+        let appliedPlan = null;
         let welcomeDone = false;
         let wAnswers = [];
         const undoStack = [];
@@ -879,7 +797,7 @@
         const wNext=document.getElementById('w-next');
         const wSkip=document.getElementById('w-skip');
         const svcGrid=document.getElementById('service-grid');
-        const bundlesEl=document.getElementById('bundles');
+        const plansGridEl=document.getElementById('plans-grid');
         const pBody=document.getElementById('proposal-body');
         const pEmpty=document.getElementById('p-empty');
         const pFooter=document.getElementById('proposal-footer');
@@ -905,7 +823,7 @@
         function pushHistory() {
             if (suppressHistory) return;
             redoStack.length = 0;
-            undoStack.push(JSON.stringify({ project, appliedBundle, pName:pName?.value }));
+            undoStack.push(JSON.stringify({ project, appliedPlan, pName:pName?.value }));
             if (undoStack.length > MAX_HISTORY) undoStack.shift();
             updateUndoButtons();
         }
@@ -913,7 +831,7 @@
             const s = JSON.parse(stateStr);
             project.length = 0;
             s.project.forEach(p => project.push(p));
-            appliedBundle = s.appliedBundle;
+            appliedPlan = s.appliedPlan;
             if (s.pName && pName) pName.value = s.pName;
             renderAll();
         }
@@ -960,7 +878,7 @@
             const name = prompt('Nombre para esta plantilla:');
             if (!name) return;
             const t = loadTemplates();
-            t[name] = { project:JSON.parse(JSON.stringify(project)), appliedBundle, pName:pName.value };
+            t[name] = { project:JSON.parse(JSON.stringify(project)), appliedPlan, pName:pName.value };
             saveTemplates(t);
             renderTemplates();
         };
@@ -978,7 +896,7 @@
             if (!data) return;
             project.length = 0;
             data.project.forEach(p => project.push(p));
-            appliedBundle = data.appliedBundle;
+            appliedPlan = data.appliedPlan;
             if (data.pName) pName.value = data.pName;
             pushHistory();
             renderAll();
@@ -988,7 +906,7 @@
         function saveDraft() {
             try {
                 localStorage.setItem('dude_builder_draft', JSON.stringify({
-                    project, appliedBundle, pName:pName?.value, pNotes:pNotes?.value
+                    project, appliedPlan, pName:pName?.value, pNotes:pNotes?.value
                 }));
             } catch {}
         }
@@ -999,7 +917,7 @@
                 const d = JSON.parse(raw);
                 if (!d.project || !d.project.length) return false;
                 d.project.forEach(p => project.push(p));
-                appliedBundle = d.appliedBundle || null;
+                appliedPlan = d.appliedPlan || null;
                 if (d.pName && pName) pName.value = d.pName;
                 if (d.pNotes && pNotes) pNotes.value = d.pNotes;
                 return true;
@@ -1036,54 +954,47 @@
         function closeWelcome() {
             wOverlay.classList.remove('open');
             welcomeDone = true;
-            if (!loadDraft()) suggestBundle();
+            if (!loadDraft()) suggestPlan();
             else renderAll();
         }
 
-        function suggestBundle() {
+        function suggestPlan() {
             const vol = wAnswers[2], goal = wAnswers[1];
             let rec = 'growth';
             if (vol===0) rec = 'starter';
             else if (vol===1) rec = 'growth';
             else rec = 'pro';
             if (goal===1 || goal===3) rec = 'pro';
-            applyBundle(rec);
-            renderBundles();
+            applyPlan(rec);
+            renderPlanCards();
         }
 
-        // ── BUNDLES ──
-        function renderBundles() {
-            bundlesEl.innerHTML = BUNDLES.map(b => {
-                const isApp = appliedBundle===b.id;
-                const isRec = !appliedBundle && b.id==='growth';
-                const grad = BUNDLE_GRADIENTS[b.id] || 'linear-gradient(145deg,#141d30,#0f1625)';
-                return `<div class="bundle-card${isRec?' recommended':''}${isApp?' applied':''}">
-                    <div class="b-bg" style="background:${grad}"></div>
-                    <div class="b-content">
-                        ${isRec?'<div class="b-badge">Recomendado</div>':''}
-                        <div class="b-name">${b.name}</div>
-                        <div class="b-tagline">${b.tagline}</div>
-                        <div class="b-price">
-                            <span class="b-cur" style="color:${isApp?'#22c55e':'var(--blue)'}">$${b.bundlePrice}</span>
-                            <span class="b-old">$${b.normalPrice}</span>
-                            <span class="b-pct">Ahorra $${b.saving}</span>
-                        </div>
-                        <div class="b-items">${b.services.map(s=>`<span>${(getSvc(s.id)||{}).name||''}</span>`).join('')}</div>
-                        <button class="b-action" onclick="event.stopPropagation();applyBundle('${b.id}')">
-                            ${isApp?'Aplicado':'Usar Paquete'}
-                        </button>
-                    </div>
+        // ── PLANS ──
+        function renderPlanCards() {
+            plansGridEl.innerHTML = PLANS.map(p => {
+                const isApp = appliedPlan===p.id;
+                const isRec = !appliedPlan && p.id==='growth';
+                const badgeText = isRec ? 'Recomendado' : (p.badge || '');
+                return `<div class="plan-card${isRec?' popular':''}${isApp?' applied':''}" onclick="applyPlan('${p.id}')">
+                    ${badgeText?`<div class="p-badge">${badgeText}</div>`:''}
+                    <div class="p-label">${p.label}</div>
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">$${p.price} <span>/month</span></div>
+                    <div class="p-divider"></div>
+                    <ul class="p-features">${p.features.map(f=>`<li>${f}</li>`).join('')}</ul>
+                    <div class="p-btn">${isApp?'Applied':p.btn}</div>
                 </div>`;
             }).join('');
         }
 
-        window.applyBundle = function(bId) {
-            const b = BUNDLES.find(x=>x.id===bId);
-            if (!b) return;
+        window.applyPlan = function(pId) {
+            const p = PLANS.find(x=>x.id===pId);
+            if (!p) return;
+            if (appliedPlan===pId) return;
             pushHistory();
-            appliedBundle = bId;
+            appliedPlan = pId;
             project.length = 0;
-            b.services.forEach(s => {
+            p.services.forEach(s => {
                 const entry = { serviceId:s.id, opts:{...s.opts} };
                 const sv = getSvc(s.id);
                 if (sv) {
@@ -1120,7 +1031,7 @@
             const s = getSvc(svcId);
             if (!s) return;
             pushHistory();
-            appliedBundle = null;
+            appliedPlan = null;
             const entry = { serviceId:svcId, opts:{} };
             s.options.forEach(o => {
                 if (!o.depends && o.choices.length) entry.opts[o.key] = o.choices[0].v;
@@ -1138,7 +1049,7 @@
             setTimeout(() => {
                 pushHistory();
                 project.splice(idx, 1);
-                appliedBundle = null;
+                appliedPlan = null;
                 renderAll();
             }, 250);
         };
@@ -1148,7 +1059,7 @@
             if (to < 0 || to >= project.length) return;
             pushHistory();
             [project[idx], project[to]] = [project[to], project[idx]];
-            appliedBundle = null;
+            appliedPlan = null;
             renderAll();
         };
 
@@ -1166,7 +1077,7 @@
                     else delete e.opts[o.key];
                 }
             });
-            appliedBundle = null;
+            appliedPlan = null;
             renderAll();
         };
 
@@ -1218,7 +1129,7 @@
 
         // ── RENDER ──
         function renderAll() {
-            renderBundles();
+            renderPlanCards();
             renderServices();
             renderProposal();
             saveDraft();
@@ -1333,7 +1244,7 @@
             if (!confirm('¿Limpiar todo el proyecto?')) return;
             pushHistory();
             project.length = 0;
-            appliedBundle = null;
+            appliedPlan = null;
             clearDraft();
             renderAll();
         };
@@ -1341,7 +1252,7 @@
 
         // ── INIT ──
         pushHistory();
-        renderBundles();
+        renderPlanCards();
         renderServices();
         renderProposal();
         renderWelcome();
