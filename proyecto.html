@@ -796,7 +796,7 @@
                         <span id="p-delivery-text">Entrega estimada: <strong>&mdash;</strong></span>
                     </div>
                     <div class="p-cal-row">
-                        <button class="p-cal-btn" onclick="openCalendar()">📅 Seleccionar Fecha</button>
+                        <button class="p-cal-btn" onclick="openCalendar()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Seleccionar Fecha</button>
                         <span class="p-selected-date" id="p-selected-date"></span>
                     </div>
                     <div class="p-total-wrap">
@@ -849,7 +849,7 @@
     <div class="admin-overlay" id="admin-overlay">
         <div class="admin-card">
             <div class="ad-hdr">
-                <div class="ad-title">⚙ Admin · Reservas</div>
+                <div class="ad-title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33"/><path d="M15 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06"/><path d="M4.6 15a1.65 1.65 0 0 0-.33 1.82l-.06.06a2 2 0 1 0 2.83 2.83l.06-.06"/><path d="M9 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06"/></svg> Admin · Reservas</div>
                 <div class="ad-login" id="ad-login">
                     <input type="password" id="ad-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')adminAuth()">
                     <button class="admin-btn primary" onclick="adminAuth()">Ingresar</button>
@@ -1094,45 +1094,51 @@
         }
 
         // ── DELIVERY DATE CALCULATOR ──
+        // Counts business days forward based on calcTotal().maxTime
+        function calcBusinessDays() {
+            const total = calcTotal();
+            return total.maxTime || 0;
+        }
+
         async function calculateDeliveryDate() {
             const data = await fetchCalendarData_();
             if (!data) { alert('Error al conectar con la base de datos. Verifica las credenciales de Supabase.'); return; }
 
-            const neededHours = calcHoursNeeded(getProjectServices());
+            const businessDays = calcBusinessDays();
+            if (businessDays <= 0) return null;
+
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             const cutoffHour = 17;
-            const startDay = now.getHours() >= cutoffHour ? 1 : 0; // start tomorrow if past cutoff
+            const offset = now.getHours() >= cutoffHour ? 1 : 0;
 
-            let remaining = neededHours;
             const days = [];
-            let totalDays = 0;
+            let counted = 0;
 
-            for (let i = startDay; i < 60; i++) {
+            for (let i = offset; i < 90 && counted < businessDays; i++) {
                 const d = addDays(today, i);
                 const dateStr = toDateStr(d);
                 const dow = d.getDay();
                 const baseCap = data.overrides[dateStr] !== undefined ? data.overrides[dateStr] : (data.weekly[dow] || 2);
                 const usedHrs = data.bookingsByDate[dateStr] || 0;
-                const available = Math.max(0, baseCap - usedHrs);
+                const available = Math.round((baseCap - usedHrs) * 100) / 100;
 
-                if (available <= 0) {
-                    days.push({ dateStr, dow, available: 0, used: 0, status: 'full' });
+                if (dow === 0 || dow === 6) {
+                    days.push({ dateStr, dow, available, used: 0, status: 'weekend' });
+                    continue;
+                }
+                if (data.overrides[dateStr] === 0 || available <= 0) {
+                    days.push({ dateStr, dow, available, used: 0, status: 'blocked' });
                     continue;
                 }
 
-                const consume = Math.min(remaining, available);
-                remaining -= consume;
+                const consume = Math.min(businessDays - counted, 1);
+                counted += consume;
                 days.push({ dateStr, dow, available, used: consume, status: 'work' });
-                totalDays++;
-
-                if (remaining <= 0) break;
             }
 
-            const deliveryDate = days.length > 0 ? days[days.length - 1].dateStr : null;
-            const canDeliver = remaining <= 0 && deliveryDate;
-
-            return { neededHours, days, deliveryDate, canDeliver, today, startDay, totalDays };
+            const deliveryDate = counted >= businessDays && days.length > 0 ? days[days.length - 1].dateStr : null;
+            return { businessDays, days, deliveryDate, canDeliver: !!deliveryDate };
         }
 
         async function openCalendar() {
@@ -1151,34 +1157,29 @@
                 return;
             }
 
-            const needed = result.neededHours;
-            const totalWorkDays = result.days.filter(d => d.used > 0).length;
+            const bDays = result.businessDays;
+            const totalWorkDays = result.days.filter(d => d.status === 'work').length;
             const dateObj = new Date(result.deliveryDate + 'T12:00:00');
             const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
             const formattedDate = dateObj.toLocaleDateString('es-ES', opts);
 
-            // Calculate calendar days elapsed (not just work days)
-            const firstWorkDay = new Date(result.days.find(d => d.used > 0)?.dateStr + 'T12:00:00');
-            const lastWorkDay = new Date(result.deliveryDate + 'T12:00:00');
-            const calendarDays = Math.round((lastWorkDay - firstWorkDay) / (1000 * 60 * 60 * 24)) + 1;
-
             let tlHtml = `<div class="cal-tl-summary">
-                <strong>${needed}h</strong> de trabajo · <strong>${totalWorkDays} día${totalWorkDays !== 1 ? 's' : ''} laboral${totalWorkDays !== 1 ? 'es' : ''}</strong> · Entrega: <strong>${formattedDate}</strong>
+                <strong>${bDays} día${bDays !== 1 ? 's' : ''} hábil${bDays !== 1 ? 'es' : ''}</strong> de trabajo · ${totalWorkDays} día${totalWorkDays !== 1 ? 's' : ''} calendario · Entrega: <strong>${formattedDate}</strong>
             </div><div class="cal-tl">`;
 
             let cumulative = 0;
             result.days.forEach(d => {
-                if (d.used === 0) return;
+                if (d.status !== 'work') return;
                 cumulative += d.used;
-                const pct = Math.min(100, (cumulative / needed) * 100);
+                const pct = Math.min(100, (cumulative / bDays) * 100);
                 const dayOpts = { weekday: 'short', day: 'numeric', month: 'short' };
                 const label = new Date(d.dateStr + 'T12:00:00').toLocaleDateString('es-ES', dayOpts);
-                const isLast = cumulative >= needed;
-                const barColor = isLast ? 'linear-gradient(90deg,#22c55e,var(--blue))' : (d.used >= d.available * 0.8 ? '#3B82F6' : '#22c55e');
+                const isLast = cumulative >= bDays;
+                const barColor = isLast ? 'linear-gradient(90deg,#22c55e,var(--blue))' : '#3B82F6';
                 tlHtml += `<div class="cal-tl-day ${isLast ? 'tl-last' : 'tl-active'}">
                     <span class="tl-date">${label}</span>
                     <div class="tl-bar-wrap"><div class="tl-bar" style="width:${pct}%;background:${barColor}"></div></div>
-                    <span class="tl-hours">${d.used}h</span>
+                    <span class="tl-hours">${d.available}h disp.</span>
                 </div>`;
             });
 
