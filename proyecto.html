@@ -267,7 +267,73 @@
         .plan-card[data-plan="growth"] {
             border-color: rgba(255,0,64,.2);
             animation: growthGlow 3s linear infinite;
+            overflow: hidden;
+            isolation: isolate;
         }
+        .plan-card[data-plan="growth"]::before {
+            content: '';
+            position: absolute;
+            inset: -100%;
+            background: conic-gradient(
+                transparent, rgba(255,255,255,.07) 4deg, transparent 8deg,
+                rgba(255,255,255,.07) 12deg, transparent 16deg,
+                rgba(255,255,255,.07) 20deg, transparent 24deg,
+                rgba(255,255,255,.07) 28deg, transparent 32deg,
+                rgba(255,255,255,.07) 36deg, transparent 40deg,
+                rgba(255,255,255,.07) 44deg, transparent 48deg,
+                rgba(255,255,255,.07) 52deg, transparent 56deg,
+                rgba(255,255,255,.07) 60deg, transparent 64deg,
+                rgba(255,255,255,.07) 68deg, transparent 72deg,
+                rgba(255,255,255,.07) 76deg, transparent 80deg,
+                rgba(255,255,255,.07) 84deg, transparent 88deg,
+                rgba(255,255,255,.07) 92deg, transparent 96deg,
+                rgba(255,255,255,.07) 100deg, transparent 104deg,
+                rgba(255,255,255,.07) 108deg, transparent 112deg,
+                rgba(255,255,255,.07) 116deg, transparent 120deg,
+                rgba(255,255,255,.07) 124deg, transparent 128deg,
+                rgba(255,255,255,.07) 132deg, transparent 136deg,
+                rgba(255,255,255,.07) 140deg, transparent 144deg,
+                rgba(255,255,255,.07) 148deg, transparent 152deg,
+                rgba(255,255,255,.07) 156deg, transparent 160deg,
+                rgba(255,255,255,.07) 164deg, transparent 168deg,
+                rgba(255,255,255,.07) 172deg, transparent 176deg,
+                rgba(255,255,255,.07) 180deg, transparent 184deg,
+                rgba(255,255,255,.07) 188deg, transparent 192deg,
+                rgba(255,255,255,.07) 196deg, transparent 200deg,
+                rgba(255,255,255,.07) 204deg, transparent 208deg,
+                rgba(255,255,255,.07) 212deg, transparent 216deg,
+                rgba(255,255,255,.07) 220deg, transparent 224deg,
+                rgba(255,255,255,.07) 228deg, transparent 232deg,
+                rgba(255,255,255,.07) 236deg, transparent 240deg,
+                rgba(255,255,255,.07) 244deg, transparent 248deg,
+                rgba(255,255,255,.07) 252deg, transparent 256deg,
+                rgba(255,255,255,.07) 260deg, transparent 264deg,
+                rgba(255,255,255,.07) 268deg, transparent 272deg,
+                rgba(255,255,255,.07) 276deg, transparent 280deg,
+                rgba(255,255,255,.07) 284deg, transparent 288deg,
+                rgba(255,255,255,.07) 292deg, transparent 296deg,
+                rgba(255,255,255,.07) 300deg, transparent 304deg,
+                rgba(255,255,255,.07) 308deg, transparent 312deg,
+                rgba(255,255,255,.07) 316deg, transparent 320deg,
+                rgba(255,255,255,.07) 324deg, transparent 328deg,
+                rgba(255,255,255,.07) 332deg, transparent 336deg,
+                rgba(255,255,255,.07) 340deg, transparent 344deg,
+                rgba(255,255,255,.07) 348deg, transparent 352deg,
+                rgba(255,255,255,.07) 356deg, transparent 360deg
+            );
+            opacity: 0;
+            transition: opacity .4s;
+            z-index: 0;
+            pointer-events: none;
+        }
+        @keyframes spinRays {
+            to { transform: rotate(360deg); }
+        }
+        .plan-card[data-plan="growth"]:hover::before {
+            opacity: 1;
+            animation: spinRays 6s linear infinite;
+        }
+        .plan-card[data-plan="growth"] > * { position:relative; z-index:1; }
         .plan-card[data-plan="growth"]:hover {
             border-color: rgba(255,0,64,.35);
             box-shadow: 0 0 35px rgba(255,0,64,.25), 0 12px 40px rgba(0,0,0,.3);
