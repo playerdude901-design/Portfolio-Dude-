@@ -214,15 +214,20 @@
             padding:.08rem .45rem; border-radius:20px; display:inline-block;
             margin-top:.25rem; letter-spacing:.03em;
         }
-        .plan-card .p-savings-pct {
-            font-size:.65rem; color:#5a6a7e; margin:.1rem 0 .3rem;
-        }
-        .plan-card .p-savings-pct strong { color:var(--blue); }
+        .plan-card .p-savings-pct { display:none; }
+        .plan-card .p-perunit { display:none; }
+        .plan-card .p-savings { display:none; }
         .plan-card .p-label { font-size:.65rem; color:#5a6a7e; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:.35rem; font-weight:500; }
         .plan-card .p-name { font-weight:700; font-size:1.1rem; }
-        .plan-card .p-price { font-weight:700; font-size:2rem; color:#fff; margin:.15rem 0; }
-        .plan-card .p-price span { font-size:.8rem; font-weight:400; color:#6b7a8e; }
-        .plan-card .p-divider { height:1px; background:linear-gradient(90deg,transparent,rgba(148,163,184,.1),transparent); margin:.8rem 0; }
+        .plan-card .p-price { font-weight:700; font-size:1.8rem; color:#fff; margin:.1rem 0 0; line-height:1.2; }
+        .plan-card .p-price span { font-size:.7rem; font-weight:400; color:#6b7a8e; }
+        .plan-card .p-price-row { display:flex; align-items:center; justify-content:center; gap:.35rem; margin:.05rem 0 .2rem; }
+        .plan-card .p-old-price { font-size:.8rem; color:#5a6a7e; text-decoration:line-through; }
+        .plan-card .p-unit-price { font-size:.65rem; color:#6b7a8e; font-weight:400; }
+        .plan-card .p-savings-hero {
+            font-size:1.6rem; font-weight:800; color:#22c55e; letter-spacing:0; line-height:1.1; margin:.1rem 0;
+        }
+        .plan-card .p-savings-sub { font-size:.6rem; color:#5a6a7e; margin-bottom:.35rem; }
         .plan-card .p-features { list-style:none; text-align:left; margin:0 0 .8rem; }
         .plan-card .p-features li {
             font-size:.75rem; color:#b0baca; padding:.2rem 0 .2rem 1.2rem;
@@ -381,10 +386,19 @@
         .svc-hint {
             font-size:.72rem; color:#5a6a7e; margin:.5rem 0 .2rem; padding:.5rem .65rem;
             background:rgba(251,191,36,.06); border:1px solid rgba(251,191,36,.1);
-            border-radius:8px; line-height:1.5; display:none;
+            border-radius:8px; line-height:1.5; display:none; text-align:center;
         }
         .svc-hint.visible { display:block; }
-        .svc-hint strong { color:#f59e0b; }
+        .svc-hint .hint-badge {
+            font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+            color:#f59e0b; margin-bottom:.15rem;
+        }
+        .svc-hint .hint-name { font-weight:700; font-size:.85rem; color:#f0f4f8; }
+        .svc-hint .hint-price { font-weight:700; font-size:1.2rem; color:#fff; margin:.1rem 0; }
+        .svc-hint .hint-price span { font-size:.6rem; font-weight:400; color:#5a6a7e; }
+        .svc-hint .hint-save { color:#22c55e; font-size:.75rem; }
+        .svc-hint .hint-save strong { color:#22c55e; font-weight:700; }
+        .svc-hint .hint-old { font-size:.6rem; color:#5a6a7e; text-decoration:line-through; }
 
         /* ── BOOKING CALENDAR ── */
         .cal-overlay {
@@ -1014,22 +1028,33 @@
 
         // ── PLANS ──
         const PLANS = [
-            { id:'starter', name:'Starter Creator', label:'Getting Started', badge:'', price:169, individualPrice:240,
-              videoCount:4, thumbCount:4, shortCount:0, perUnitCost:42.25,
-              features:['4 Edited Videos','4 Custom Thumbnails','48-Hour Delivery','Unlimited Revisions'],
+            { id:'starter', name:'Starter Creator', label:'Getting Started', badge:'', price:119,
+              videoCount:2, thumbCount:2, shortCount:0,
+              features:['2 Edited Videos','2 Custom Thumbnails','48-Hour Delivery','Unlimited Revisions'],
               services:[
                 {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
                 {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+              ], btn:'Get Started' },
+            { id:'growth', name:'Growth Pack', label:'Consistent Growth', badge:'RECOMENDADO', price:299,
+              videoCount:4, thumbCount:4, shortCount:2,
+              features:['4 Edited Videos','4 Custom Thumbnails','2 Shorts Repurposing','Priority Workflow','Direct Communication','Unlimited Revisions'],
+              services:[
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
               ], btn:'Get Started' },
-            { id:'growth', name:'Growth Pack', label:'Consistent Growth', badge:'RECOMENDADO', price:329, individualPrice:520,
-              videoCount:8, thumbCount:8, shortCount:4, perUnitCost:41.10,
-              features:['8 Edited Videos','8 Custom Thumbnails','4 Shorts Repurposing','Priority Workflow','Direct Communication','Unlimited Revisions'],
+            { id:'pro', name:'Creator Partner', label:'Dedicated Partner', badge:'', price:549,
+              videoCount:8, thumbCount:8, shortCount:4,
+              features:['8 Edited Videos','8 Custom Thumbnails','4 Shorts Repurposing','Highest Priority','Direct Communication','Unlimited Revisions','YouTube Branding Support*'],
               services:[
                 {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
                 {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
@@ -1043,51 +1068,6 @@
                 {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
                 {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
                 {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-              ], btn:'Get Started' },
-            { id:'pro', name:'Creator Partner', label:'Dedicated Partner', badge:'', price:599, individualPrice:1040,
-              videoCount:16, thumbCount:16, shortCount:8, perUnitCost:37.40,
-              features:['16 Edited Videos','16 Custom Thumbnails','8 Shorts Repurposing','Highest Priority','Direct Communication','Unlimited Revisions','YouTube Branding Support*'],
-              services:[
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'gaming-editing',opts:{duration:'10min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
-                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
@@ -1702,7 +1682,7 @@
         }
 
         function calcPlanPrices(plan) {
-            const individualTotal = plan.individualPrice;
+            const individualTotal = plan.services.reduce((sum, s) => sum + calcServicePrice(s).price, 0);
             const planPrice = plan.price;
             const { ahorro, porcentaje } = calcularAhorro(individualTotal, planPrice);
             return { individualTotal, planPrice, ahorro, porcentaje };
@@ -1715,32 +1695,33 @@
                 const isApp = appliedPlan===p.id;
                 const isRec = !appliedPlan && p.id==='growth';
                 const badgeText = isRec ? 'Recomendado' : (p.badge || '');
-                const puHtml = `≈ <strong>$${p.perUnitCost}</strong> por video`;
-                const savingsPctText = `${prices.porcentaje}% de ahorro`;
+                const perUnit = p.videoCount ? Math.round(prices.planPrice / p.videoCount) : 0;
 
                 let compareHtml = '';
                 if (isRec && PLANS.length > 1) {
                     const starter = PLANS.find(x => x.id === 'starter');
-                    const pro = PLANS.find(x => x.id === 'pro');
                     if (starter) {
-                        const diff = p.price - starter.price;
-                        const extraPct = prices.porcentaje - (() => { const s = calcPlanPrices(starter); return s.porcentaje; })();
-                        compareHtml = `Solo <strong>$${diff}/mes</strong> más que Starter, pero el doble de entregables y <strong>${Math.abs(extraPct)} puntos más</strong> de ahorro.`;
+                        const stPrices = calcPlanPrices(starter);
+                        const diff = prices.planPrice - stPrices.planPrice;
+                        const extraSavings = prices.ahorro - stPrices.ahorro;
+                        compareHtml = `Solo <strong>$${diff}/mes</strong> más que Starter — ahorras <strong>$${extraSavings} adicionales</strong>.`;
                     }
                 }
+
+                const savingsHero = prices.ahorro > 0 ? prices.ahorro : 0;
 
                 return `<div class="plan-card${isRec?' popular':''}${isApp?' applied':''}" data-plan="${p.id}" onclick="applyPlan('${p.id}')">
                     ${badgeText?`<div class="p-badge">${badgeText}</div>`:''}
                     ${isRec?`<div class="p-sub-badge">MEJOR RELACIÓN COSTO-BENEFICIO</div>`:''}
                     <div class="p-label">${p.label}</div>
                     <div class="p-name">${p.name}</div>
+                    <div class="p-price">$${prices.planPrice} <span>/mes</span></div>
                     <div class="p-price-row">
-                        ${prices.individualTotal > prices.planPrice ? `<span class="p-old-price">$${prices.individualTotal}</span>` : ''}
-                        <span class="p-price">$${p.price} <span>/month</span></span>
+                        <span class="p-old-price">$${prices.individualTotal}</span>
+                        <span class="p-unit-price">— $${perUnit}/video</span>
                     </div>
-                    ${prices.ahorro > 0 ? `<span class="p-savings">Ahorras $${prices.ahorro} (${prices.porcentaje}%)</span>` : ''}
-                    <div class="p-savings-pct">${savingsPctText}</div>
-                    <div class="p-perunit">${puHtml}</div>
+                    ${savingsHero > 0 ? `<div class="p-savings-hero">SAVE $${savingsHero}</div>` : ''}
+                    <div class="p-savings-sub">Compared to individual services</div>
                     ${compareHtml ? `<div class="p-compare">${compareHtml}</div>` : ''}
                     <div class="p-divider"></div>
                     <ul class="p-features">${p.features.map(f => {
@@ -1797,25 +1778,11 @@
                 </div>`;
             }).join('');
 
-            // Loss-framing text
+            // Dynamic plan comparison
             const total = calcTotal();
-            if (total.total > 0) {
-                svcLoss.innerHTML = `Comprando estos servicios por separado pagarías <strong>$${total.total} USD</strong>. `;
-                let cheapest = null;
-                PLANS.forEach(p => {
-                    const pp = calcPlanPrices(p);
-                    if (pp.planPrice < total.total && (!cheapest || pp.planPrice < cheapest.pp)) cheapest = { p, pp: pp.planPrice };
-                });
-                if (cheapest) {
-                    const saving = total.total - cheapest.pp;
-                    svcLoss.innerHTML += `Con el plan <strong>${cheapest.p.name}</strong> ahorrarías <span class="lf-green">$${saving} USD/mes</span>.`;
-                }
-                svcLoss.style.display = 'block';
-            } else {
-                svcLoss.style.display = 'none';
-            }
+            svcLoss.style.display = 'none';
+            svcHint.classList.remove('visible');
 
-            // Contextual hint
             if (!appliedPlan && total.total > 0) {
                 let bestPlan = null, bestSavings = 0;
                 PLANS.forEach(p => {
@@ -1825,15 +1792,21 @@
                         if (s > bestSavings) { bestSavings = s; bestPlan = p; }
                     }
                 });
+
+                svcLoss.innerHTML = `Individual: <strong>$${total.total} USD</strong>`;
+                svcLoss.style.display = 'block';
+
                 if (bestPlan) {
                     const pp = calcPlanPrices(bestPlan);
-                    svcHint.innerHTML = `Esta combinación te saldría en <strong>$${total.total}</strong> comprándola por separado — el plan <strong>${bestPlan.name}</strong> te daría más por <strong>$${pp.planPrice}/mes</strong>.`;
+                    svcHint.innerHTML = `
+                        <div class="hint-badge">✧ Better Option</div>
+                        <div class="hint-name">${bestPlan.name}</div>
+                        <div class="hint-price">$${pp.planPrice} <span>/mes</span></div>
+                        <div class="hint-save">You save <strong>$${bestSavings} USD</strong></div>
+                        <div class="hint-old">$${total.total} individual</div>
+                    `;
                     svcHint.classList.add('visible');
-                } else {
-                    svcHint.classList.remove('visible');
                 }
-            } else {
-                svcHint.classList.remove('visible');
             }
         }
 
@@ -1902,26 +1875,47 @@
         };
 
         // ── CALCULATE ──
-        function calcItem(idx) {
-            const e = project[idx], s = getSvc(e.serviceId);
-            if (!s) return { price:0, time:s?.baseTime||0, items:[], timeAdd:0 };
+        // ── PRICE CALCULATORS ──
+        function calcServicePrice(entry) {
+            const s = getSvc(entry.serviceId);
+            if (!s) return { price:0, time:0 };
             let price = s.basePrice, time = 0, priority = false;
-            const items = [];
             s.options.forEach(o => {
-                const val = e.opts[o.key];
+                const val = entry.opts[o.key];
                 if (!val) return;
                 const c = o.choices.find(ch=>ch.v===val);
                 if (!c) return;
                 if (o.key==='delivery') { if (val==='priority') priority=true; return; }
                 if (c.p!==null && c.p!==undefined) price += c.p;
                 if (c.t) time += c.t;
-                if (o.key==='thumb-qty') { if (val!=='1') items.push(val==='3'?'3 Variantes':'5 Miniaturas'); }
-                else if (o.key==='thumbnail' && val==='yes') items.push('Miniatura incluida');
-                else if (c.l) items.push(c.l);
             });
             if (priority) { price = Math.round(price*1.5); time = Math.ceil((s.baseTime+time)*0.5); }
             else time = s.baseTime + time;
-            return { price, time, items };
+            return { price, time };
+        }
+
+        function calcItem(idx) {
+            const e = project[idx];
+            const r = calcServicePrice(e);
+            const s = getSvc(e.serviceId);
+            const items = [];
+            if (s) {
+                s.options.forEach(o => {
+                    const val = e.opts[o.key];
+                    if (!val) return;
+                    const c = o.choices.find(ch=>ch.v===val);
+                    if (!c) return;
+                    if (o.key==='delivery' || o.key==='thumb-qty' || o.key==='thumbnail') return;
+                    if (c.l) items.push(c.l);
+                });
+                const thumbVal = e.opts['thumbnail'];
+                if (thumbVal==='yes') {
+                    const tq = e.opts['thumb-qty'];
+                    if (tq && tq!=='1') items.push(tq==='3'?'3 Variantes':'5 Miniaturas');
+                    else items.push('Miniatura incluida');
+                }
+            }
+            return { ...r, items };
         }
 
         function calcTotal() {
