@@ -178,33 +178,41 @@ img { display:block; }
     background: url('./assets/cuadricula_azul.png') center/cover no-repeat;
 }
 
-.hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,.58);
-    z-index: 1;
-}
-
 .hero-inner { position:relative; z-index:2; }
 
 .hero-title {
-    font-family: var(--bebas);
+    font-family: Impact, 'Arial Black', sans-serif;
     font-size: clamp(3.5rem,8vw,7rem);
-    color: var(--teal);
-    letter-spacing: 4px;
+    color: var(--white);
+    letter-spacing: 2px;
     line-height: 1;
-    text-shadow: 0 0 40px rgba(44,186,178,.55);
-    animation: fadeUp .8s ease both;
+    animation: glowPulse 2s ease-in-out infinite alternate, fadeUp .8s ease both;
 }
 
 .hero-sub {
-    font-family: var(--bebas);
-    font-size: clamp(1.4rem,3vw,2.2rem);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    font-size: clamp(1rem,2.5vw,1.5rem);
     color: var(--white);
-    letter-spacing: 3px;
-    margin-top: .4rem;
-    opacity: .9;
+    letter-spacing: 2px;
+    margin-top: .6rem;
+    opacity: .85;
     animation: fadeUp .8s .18s ease both;
+    text-transform: lowercase;
+}
+
+.hero-divider {
+    width: 60px;
+    height: 2px;
+    background: var(--white);
+    margin: .8rem auto 0;
+    border: 0;
+    animation: fadeUp .8s .35s ease both;
+}
+
+@keyframes glowPulse {
+    0%   { text-shadow: 0 0 20px rgba(255,255,255,.3), 0 0 40px rgba(255,255,255,.1); }
+    100% { text-shadow: 0 0 30px rgba(255,255,255,.6), 0 0 60px rgba(255,255,255,.2), 0 0 80px rgba(44,186,178,.3); }
 }
 
 @keyframes fadeUp {
