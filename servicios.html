@@ -234,6 +234,93 @@
             font-size: .65rem;
             margin-bottom: .3rem;
         }
+        .terms-section {
+            max-width: 720px;
+            margin: 3rem auto 0;
+        }
+        .terms-section h2 {
+            font-family: var(--inter);
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            text-align: center;
+            margin-bottom: .3rem;
+            letter-spacing: -.02em;
+        }
+        .terms-section .terms-intro {
+            text-align: center;
+            color: #8892a4;
+            font-size: .85rem;
+            font-family: var(--inter);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        .terms-accordion {
+            border-top: 1px solid rgba(148,163,184,.1);
+        }
+        .terms-item {
+            border-bottom: 1px solid rgba(148,163,184,.08);
+        }
+        .terms-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 1rem 0;
+            background: none;
+            border: none;
+            color: #e8edf5;
+            font-family: var(--inter);
+            font-weight: 500;
+            font-size: .9rem;
+            cursor: pointer;
+            text-align: left;
+            transition: color .2s;
+        }
+        .terms-trigger:hover {
+            color: #60a5fa;
+        }
+        .terms-trigger .arrow {
+            font-size: .7rem;
+            color: #5a6a7e;
+            transition: transform .25s;
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+        .terms-item.open .terms-trigger .arrow {
+            transform: rotate(180deg);
+        }
+        .terms-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .35s ease, padding .35s ease;
+            padding: 0;
+        }
+        .terms-item.open .terms-content {
+            max-height: 300px;
+            padding: 0 0 1rem;
+        }
+        .terms-content p {
+            font-family: var(--inter);
+            font-weight: 400;
+            font-size: .82rem;
+            color: #8892a4;
+            line-height: 1.7;
+            margin: 0;
+        }
+        .terms-footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-family: var(--inter);
+            font-weight: 400;
+            font-size: .8rem;
+            color: #6b7a8e;
+            line-height: 1.6;
+            padding: 1rem;
+            border: 1px solid rgba(148,163,184,.08);
+            border-radius: 12px;
+            background: rgba(148,163,184,.03);
+        }
         .back-link {
             display: block;
             text-align: center;
@@ -399,7 +486,61 @@
             </div>
         </div>
 
+        <div class="terms-section">
+            <h2>Términos de Servicio</h2>
+            <p class="terms-intro">Para garantizar una colaboración clara y profesional, todos los proyectos se rigen por las siguientes condiciones.</p>
+            <div class="terms-accordion">
+                <div class="terms-item">
+                    <button class="terms-trigger">Comunicación <span class="arrow">▼</span></button>
+                    <div class="terms-content"><p>Toda la comunicación del proyecto se realizará a través del medio acordado (Discord, correo electrónico o WhatsApp). Se recomienda mantener una comunicación clara para evitar retrasos.</p></div>
+                </div>
+                <div class="terms-item">
+                    <button class="terms-trigger">Revisiones <span class="arrow">▼</span></button>
+                    <div class="terms-content"><p>Todos los servicios incluyen las revisiones especificadas en cada plan. Las revisiones contemplan ajustes y mejoras; un cambio completo de concepto puede considerarse un nuevo proyecto.</p></div>
+                </div>
+                <div class="terms-item">
+                    <button class="terms-trigger">Tiempos de entrega <span class="arrow">▼</span></button>
+                    <div class="terms-content"><p>Los tiempos de entrega comienzan una vez recibido todo el material necesario (videos, imágenes, guion, referencias y cualquier otro recurso requerido). Los tiempos pueden variar según la complejidad del proyecto.</p></div>
+                </div>
+                <div class="terms-item">
+                    <button class="terms-trigger">Material proporcionado <span class="arrow">▼</span></button>
+                    <div class="terms-content"><p>El cliente es responsable de contar con los derechos de uso del material enviado (videos, música, imágenes, logos, etc.). No se aceptará material que infrinja derechos de autor o incumpla políticas legales.</p></div>
+                </div>
+                <div class="terms-item">
+                    <button class="terms-trigger">Pagos <span class="arrow">▼</span></button>
+                    <div class="terms-content"><p>Los proyectos comienzan únicamente después de confirmar el pago o el anticipo acordado. Los pagos no son reembolsables una vez iniciada la edición.</p></div>
+                </div>
+                <div class="terms-item">
+                    <button class="terms-trigger">Cancelaciones <span class="arrow">▼</span></button>
+                    <div class="terms-content"><p>Si un proyecto es cancelado después de haber iniciado, se cobrará el trabajo realizado hasta ese momento.</p></div>
+                </div>
+                <div class="terms-item">
+                    <button class="terms-trigger">Entregas <span class="arrow">▼</span></button>
+                    <div class="terms-content"><p>Los archivos finales se entregarán en el formato acordado antes de iniciar el proyecto. Los archivos editables (PSD, Premiere, After Effects, etc.) no están incluidos, salvo que se acuerde previamente.</p></div>
+                </div>
+                <div class="terms-item">
+                    <button class="terms-trigger">Disponibilidad <span class="arrow">▼</span></button>
+                    <div class="terms-content"><p>Los clientes con planes mensuales tienen prioridad sobre proyectos individuales. Los tiempos de respuesta pueden variar durante fines de semana o días festivos.</p></div>
+                </div>
+                <div class="terms-item">
+                    <button class="terms-trigger">Calidad del servicio <span class="arrow">▼</span></button>
+                    <div class="terms-content"><p>Cada proyecto recibe el mismo nivel de atención y calidad, independientemente de su tamaño o presupuesto. Mi objetivo es entregar contenido que represente de la mejor manera posible la identidad de tu marca y cumpla con los estándares profesionales acordados.</p></div>
+                </div>
+            </div>
+            <p class="terms-footer">Al contratar cualquiera de mis servicios, aceptas los términos y condiciones descritos anteriormente.</p>
+        </div>
+
         <a href="index.html" class="back-link">← Volver al portfolio</a>
     </div>
+    <script>
+        document.querySelectorAll('.terms-trigger').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.parentElement;
+                const open = item.classList.contains('open');
+                document.querySelectorAll('.terms-item.open').forEach(i => i.classList.remove('open'));
+                if (!open) item.classList.add('open');
+            });
+        });
+    </script>
 </body>
 </html>
