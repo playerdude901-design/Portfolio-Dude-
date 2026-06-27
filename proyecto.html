@@ -250,6 +250,29 @@
         .plan-card.applied { border-color:rgba(34,197,94,.2); box-shadow:inset 0 0 0 1px rgba(34,197,94,.15); }
         .plan-card.applied .p-btn { background:rgba(34,197,94,.12); color:#22c55e; cursor:default; }
 
+        /* ── Plan examples grid ── */
+        .p-examples { display:grid; grid-template-columns:repeat(3,1fr); gap:.3rem; margin:.5rem 0 .6rem; }
+        .p-example {
+            border-radius:8px; overflow:hidden; cursor:pointer; position:relative;
+            background:rgba(148,163,184,.04); border:1px solid rgba(148,163,184,.06);
+            transition:border-color .2s,transform .2s; aspect-ratio:16/9;
+            display:flex; align-items:center; justify-content:center; min-height:52px;
+        }
+        .p-example:hover { border-color:var(--blue); transform:translateY(-1px); }
+        .p-example .pex-icon { width:18px; height:18px; color:rgba(148,163,184,.4); }
+        .p-example .pex-label {
+            position:absolute; bottom:0; left:0; right:0;
+            font-size:.5rem; padding:.15rem .25rem;
+            background:rgba(0,0,0,.6); color:#b0baca; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+        }
+        .p-examples-btn {
+            font-size:.6rem; font-weight:600; color:#8899aa; cursor:pointer; background:none; border:none;
+            font-family:inherit; padding:.2rem 0; margin-bottom:.3rem; display:inline-flex; align-items:center; gap:.2rem;
+            transition:color .2s;
+        }
+        .p-examples-btn:hover { color:var(--blue); }
+        .p-examples-btn svg { width:12px; height:12px; }
+
         /* ── Plan glow borders ── */
         .plan-card[data-plan="starter"] {
             border-color: rgba(255,255,255,.25);
@@ -532,6 +555,13 @@
         .p-empty {
             text-align:center; padding:2.5rem 1rem; color:#8899aa; font-size:.82rem; line-height:1.6;
         }
+        .p-empty svg { width:32px; height:32px; color:rgba(148,163,184,.15); margin-bottom:.5rem; }
+        .p-group-hdr {
+            font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+            color:#5a6a7e; padding:.4rem .3rem .2rem; margin-top:.2rem;
+            border-bottom:1px solid rgba(148,163,184,.04);
+        }
+        .p-group-hdr:first-child { margin-top:0; padding-top:0; }
 
         /* ── PROJECT ITEM ── */
         .p-item {
@@ -902,6 +932,17 @@
         </div>
     </div>
 
+    <!-- EXAMPLES OVERLAY -->
+    <div class="cal-overlay" id="examples-overlay">
+        <div class="cal-card" style="max-width:600px">
+            <div class="cal-header">
+                <div class="cal-title" id="examples-title">Ejemplos</div>
+                <button class="cal-close" onclick="document.getElementById('examples-overlay').classList.remove('open')">✕</button>
+            </div>
+            <div id="examples-body" style="padding:.5rem 0;font-size:.75rem;color:#8899aa;line-height:1.6"></div>
+        </div>
+    </div>
+
     <!-- CALENDAR OVERLAY -->
     <div class="cal-overlay" id="cal-overlay">
         <div class="cal-card">
@@ -971,7 +1012,11 @@
             { id:'starter', name:'Starter Creator', label:'Getting Started', badge:'', price:119,
               videoCount:2, thumbCount:2, shortCount:0,
               features:['2 Edited Videos (5-10 min)','2 Custom Thumbnails','48-Hour Delivery','Unlimited Revisions'],
-              services:[
+              examples:[
+                { type:'video', title:'Edición gaming <5 min', file:'', desc:'Edición básica con transiciones y corrección de color' },
+                { type:'thumbnail', title:'Miniatura directa', file:'', desc:'Diseño simple de alto impacto' },
+                { type:'beforeafter', title:'Antes/Después CTR', file:'', desc:'Mejora visual en thumbnail' },
+              ], services:[
                 {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
                 {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
                 {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
@@ -980,7 +1025,11 @@
             { id:'growth', name:'Growth Pack', label:'Consistent Growth', badge:'RECOMENDADO', price:299,
               videoCount:4, thumbCount:4, shortCount:2,
               features:['4 Edited Videos (10-20 min)','4 Custom Thumbnails','2 Shorts','Priority Workflow','Direct Communication','Unlimited Revisions'],
-              services:[
+              examples:[
+                { type:'video', title:'Edición gaming 10-20 min', file:'', desc:'Edición estándar con efectos, transiciones y SFX' },
+                { type:'video', title:'Shorts dinámicos', file:'', desc:'Edición rápida para Shorts y Reels' },
+                { type:'thumbnail', title:'Miniatura profesional', file:'', desc:'Diseño con tipografía y jerarquía visual' },
+              ], services:[
                 {id:'gaming-editing',opts:{duration:'20min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
                 {id:'gaming-editing',opts:{duration:'20min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
                 {id:'gaming-editing',opts:{duration:'20min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
@@ -995,7 +1044,11 @@
             { id:'pro', name:'Creator Partner', label:'Dedicated Partner', badge:'', price:549,
               videoCount:8, thumbCount:8, shortCount:4,
               features:['8 Edited Videos (>20 min)','8 Custom Thumbnails','4 Shorts','Highest Priority','Direct Communication','Unlimited Revisions','YouTube Branding Support*'],
-              services:[
+              examples:[
+                { type:'video', title:'Edición gaming >20 min', file:'', desc:'Edición premium con narrativa, color grading y motion' },
+                { type:'video', title:'Short de alto impacto', file:'', desc:'Edición avanzada con gráficos animados' },
+                { type:'thumbnail', title:'Miniatura premium CTR', file:'', desc:'Diseño profesional con branding integrado' },
+              ], services:[
                 {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
                 {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
                 {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
@@ -1651,7 +1704,7 @@
 
                 const savingsHero = prices.ahorro > 0 ? prices.ahorro : 0;
 
-                return `<div class="plan-card${isRec?' popular':''}${isApp?' applied':''}" data-plan="${p.id}" onclick="applyPlan('${p.id}')">
+                return `<div class="plan-card${isRec?' popular':''}${isApp?' applied':''}" data-plan="${p.id}">
                     ${badgeText?`<div class="p-badge">${badgeText}</div>`:''}
                     ${isRec?`<div class="p-sub-badge">MEJOR RELACIÓN COSTO-BENEFICIO</div>`:''}
                     <div class="p-label">${p.label}</div>
@@ -1668,9 +1721,58 @@
                         if (f.includes('*')) return `<li>${f.replace('*',' <span style="font-size:.6rem;color:#8899aa">(bonus)</span>')}</li>`;
                         return `<li>${f}</li>`;
                     }).join('')}</ul>
+                    ${p.examples ? `<div class="p-examples">
+                        ${p.examples.map(ex => `<div class="p-example" onclick="event.stopPropagation();openExamples('${p.id}',${p.examples.indexOf(ex)})" title="${ex.desc}">
+                            <svg class="pex-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="2.5"/><path d="M2 16l5-5 2.5 2.5L13 10l9 9"/></svg>
+                            <span class="pex-label">${ex.title}</span>
+                        </div>`).join('')}
+                    </div>` : ''}
+                    <button class="p-examples-btn" onclick="event.stopPropagation();openExamples('${p.id}')" data-examples="${p.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg> Ver ejemplos</button>
                     <div class="p-btn">${isApp?'Aplicado':p.btn}</div>
                 </div>`;
             }).join('');
+            // Lazy-load examples via IntersectionObserver
+            document.querySelectorAll('.p-examples-btn[data-examples]').forEach(btn => {
+                if (window._exObs) window._exObs.observe(btn);
+            });
+        }
+
+        // ── EXAMPLES ──
+        function openExamples(planId, idx) {
+            const p = PLANS.find(x => x.id === planId);
+            if (!p || !p.examples) return;
+            const overlay = document.getElementById('examples-overlay');
+            const title = document.getElementById('examples-title');
+            const body = document.getElementById('examples-body');
+            title.textContent = p.name + ' — Ejemplos';
+
+            if (idx !== undefined && p.examples[idx]) {
+                const ex = p.examples[idx];
+                body.innerHTML = `<div style="margin-bottom:.8rem"><strong>${ex.title}</strong><br><span style="font-size:.7rem;color:#8899aa">${ex.desc}</span></div>
+                    <div style="background:rgba(148,163,184,.04);border-radius:10px;padding:2rem 1rem;text-align:center;color:#5a6a7e;font-size:.8rem">
+                        ${ex.file ? `<img src="${ex.file}" alt="${ex.title}" style="max-width:100%;border-radius:8px">` : 'Agrega tu video/miniatura en <code>file</code> dentro de <code>PLANS</code>'}
+                    </div>`;
+            } else {
+                body.innerHTML = p.examples.map((ex, i) => `<div style="display:flex;align-items:center;gap:.6rem;padding:.4rem 0;border-bottom:1px solid rgba(148,163,184,.04);cursor:pointer" onclick="openExamples('${planId}',${i})">
+                    <div style="width:40px;height:40px;border-radius:8px;background:rgba(148,163,184,.04);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="2.5"/><path d="M2 16l5-5 2.5 2.5L13 10l9 9"/></svg>
+                    </div>
+                    <div style="flex:1"><strong style="font-size:.78rem;color:#e2e8f0">${ex.title}</strong><br><span style="font-size:.65rem;color:#8899aa">${ex.desc}</span></div>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </div>`).join('');
+            }
+            overlay.classList.add('open');
+        }
+
+        // ── IntersectionObserver for lazy examples ──
+        if (!window._exObs && 'IntersectionObserver' in window) {
+            window._exObs = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        window._exObs.unobserve(entry.target);
+                    }
+                });
+            }, { rootMargin: '100px' });
         }
 
         window.applyPlan = function(pId) {
@@ -1784,7 +1886,7 @@
                 project.splice(idx, 1);
                 appliedPlan = null;
                 renderAll();
-            }, 250);
+            }, 280);
         };
 
         window.moveService = function(idx, dir) {
@@ -1885,7 +1987,7 @@
                 const s = getSvc(e.serviceId);
                 allItems.push({ icon:getIcon(s.icon), name:s.name, details:r.items, price:r.price, accent:s.accent });
             });
-            return { total, maxTime, allItems };
+            return { total, maxTime, allItems, isPlan:false };
         }
 
         // ── COUNT-UP ──
@@ -1911,45 +2013,76 @@
         const rOptsSel = new Map();
 
         function renderProposal() {
-            if (project.length===0) {
+            const total = calcTotal();
+
+            if (project.length===0 && !appliedPlan) {
                 pEmpty.style.display='block'; pBody.innerHTML=''; pFooter.style.display='none';
                 pReset.classList.remove('visible');
+                pEmpty.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6M12 9v6"/></svg>
+                    <div>Tu propuesta aparecerá aquí en cuanto agregues un plan o servicio.</div>`;
                 return;
             }
             pEmpty.style.display='none'; pFooter.style.display='block'; pReset.classList.add('visible');
 
-            const total = calcTotal();
-            pBody.innerHTML = project.map((e,idx)=>{
-                const s = getSvc(e.serviceId);
-                if (!s) return '';
-                const r = calcItem(idx);
-                const configStr = r.items.slice(0,2).join(' · ');
-                const priceHtml = total.isPlan
-                    ? '<div class="pi-price pi-included">Incluido</div>'
-                    : `<div class="pi-price">$${r.price}</div>`;
-                return `<div class="p-item" data-idx="${idx}" style="--p-accent:${s.accent}">
-                    <div class="p-item-main" onclick="this.parentElement.querySelector('.p-item-options').classList.toggle('open');this.querySelector('.pi-toggle').classList.toggle('open')">
-                        <div class="pi-preview" style="background:linear-gradient(135deg,${s.accent}22,${s.accent}44);color:${s.accent}">
-                            ${getIcon(s.icon)}
-                        </div>
-                        <div class="pi-info">
-                            <div class="pi-name">${s.name}</div>
-                            ${configStr?`<div class="pi-config">${configStr}</div>`:''}
-                        </div>
-                        ${priceHtml}
-                        <div class="pi-toggle">▾</div>
-                    </div>
-                    <div class="p-item-options">
-                        <div class="po-actions">
-                            <button class="po-move" onclick="event.stopPropagation();moveService(${idx},-1)" ${idx===0?'disabled':''}>↑</button>
-                            <button class="po-move" onclick="event.stopPropagation();moveService(${idx},1)" ${idx===project.length-1?'disabled':''}>↓</button>
-                            ${total.isPlan?'':`<button onclick="event.stopPropagation();removeService(${idx})" class="po-del">Eliminar</button>`}
-                        </div>
-                        ${total.isPlan?'':renderPOpts(s, e.opts, idx)}
-                    </div>
-                </div>`;
-            }).join('');
+            // Separate plan items from individual services
+            const planServices = total.isPlan ? project : [];
+            const extraServices = total.isPlan ? [] : project;
 
+            let html = '';
+
+            // Plan section
+            if (total.isPlan && planServices.length > 0) {
+                html += `<div class="p-group-hdr">Plan mensual</div>`;
+                html += planServices.map((e,idx)=>{
+                    const s = getSvc(e.serviceId);
+                    if (!s) return '';
+                    const r = calcItem(idx);
+                    const configStr = r.items.slice(0,2).join(' · ');
+                    return `<div class="p-item" data-idx="${idx}" style="--p-accent:${s.accent}">
+                        <div class="p-item-main" onclick="this.parentElement.querySelector('.p-item-options').classList.toggle('open');this.querySelector('.pi-toggle').classList.toggle('open')">
+                            <div class="pi-preview" style="background:linear-gradient(135deg,${s.accent}22,${s.accent}44);color:${s.accent}">${getIcon(s.icon)}</div>
+                            <div class="pi-info">
+                                <div class="pi-name">${s.name}</div>
+                                ${configStr?`<div class="pi-config">${configStr}</div>`:''}
+                            </div>
+                            <div class="pi-price pi-included">Incluido</div>
+                            <div class="pi-toggle">▾</div>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            // Extra services section
+            if (extraServices.length > 0) {
+                html += `<div class="p-group-hdr">Servicios adicionales</div>`;
+                html += extraServices.map((e,idx)=>{
+                    const s = getSvc(e.serviceId);
+                    if (!s) return '';
+                    const r = calcItem(idx);
+                    const configStr = r.items.slice(0,2).join(' · ');
+                    return `<div class="p-item" data-idx="${idx}" style="--p-accent:${s.accent}">
+                        <div class="p-item-main" onclick="this.parentElement.querySelector('.p-item-options').classList.toggle('open');this.querySelector('.pi-toggle').classList.toggle('open')">
+                            <div class="pi-preview" style="background:linear-gradient(135deg,${s.accent}22,${s.accent}44);color:${s.accent}">${getIcon(s.icon)}</div>
+                            <div class="pi-info">
+                                <div class="pi-name">${s.name}</div>
+                                ${configStr?`<div class="pi-config">${configStr}</div>`:''}
+                            </div>
+                            <div class="pi-price">$${r.price}</div>
+                            <div class="pi-toggle">▾</div>
+                        </div>
+                        <div class="p-item-options">
+                            <div class="po-actions">
+                                <button class="po-move" onclick="event.stopPropagation();moveService(${idx},-1)" ${idx===0?'disabled':''}>↑</button>
+                                <button class="po-move" onclick="event.stopPropagation();moveService(${idx},1)" ${idx===project.length-1?'disabled':''}>↓</button>
+                                <button onclick="event.stopPropagation();removeService(${idx})" class="po-del">Eliminar</button>
+                            </div>
+                            ${renderPOpts(s, e.opts, idx)}
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            pBody.innerHTML = html;
             animateCountUp(pTotal, total.total);
             if (total.isPlan) {
                 const savings = total.individualTotal - total.total;
@@ -1959,7 +2092,6 @@
                     ? `Entrega estimada para tu proyecto: <strong>${total.maxTime} día${total.maxTime!==1?'s':''} hábiles</strong>`
                     : 'Entrega estimada: <strong>&mdash;</strong>';
             }
-            // Calendar row — hide for plans, show for individual services
             const calRow = document.querySelector('.p-cal-row');
             if (calRow) calRow.style.display = appliedPlan ? 'none' : 'flex';
         }
