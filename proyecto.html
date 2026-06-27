@@ -1091,9 +1091,8 @@
               videoCount:2, thumbCount:2, shortCount:0,
               features:['2 Edited Videos (5-10 min)','2 Custom Thumbnails','48-Hour Delivery','Unlimited Revisions'],
               examples:[
-                { type:'video', title:'Edición gaming <5 min', file:'', desc:'Edición básica con transiciones y corrección de color' },
-                { type:'thumbnail', title:'Miniatura directa', file:'', desc:'Diseño simple de alto impacto' },
-                { type:'beforeafter', title:'Antes/Después CTR', file:'', desc:'Mejora visual en thumbnail' },
+                { type:'video', title:'Avance de Edición', file:'./assets/assets_tarjetas/avance_starter.mp4', desc:'Edición básica con transiciones y corrección de color' },
+                { type:'thumbnail', title:'Miniatura', file:'./assets/assets_tarjetas/thumbnail_starter.png', desc:'Diseño simple de alto impacto' },
               ], services:[
                 {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
                 {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
@@ -1104,9 +1103,9 @@
               videoCount:4, thumbCount:4, shortCount:2,
               features:['4 Edited Videos (10-20 min)','4 Custom Thumbnails','2 Shorts','Priority Workflow','Direct Communication','Unlimited Revisions'],
               examples:[
-                { type:'video', title:'Edición gaming 10-20 min', file:'', desc:'Edición estándar con efectos, transiciones y SFX' },
-                { type:'video', title:'Shorts dinámicos', file:'', desc:'Edición rápida para Shorts y Reels' },
-                { type:'thumbnail', title:'Miniatura profesional', file:'', desc:'Diseño con tipografía y jerarquía visual' },
+                { type:'video', title:'Avance de Edición', file:'./assets/assets_tarjetas/avance_growth.mp4', desc:'Edición estándar con efectos, transiciones y SFX' },
+                { type:'shorts', title:'Short', file:'./assets/assets_tarjetas/short_growth.mp4', desc:'Edición rápida para Shorts y Reels' },
+                { type:'thumbnail', title:'Miniatura', file:'./assets/assets_tarjetas/thumbnail_growth.png', desc:'Diseño con tipografía y jerarquía visual' },
               ], services:[
                 {id:'gaming-editing',opts:{duration:'20min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
                 {id:'gaming-editing',opts:{duration:'20min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
@@ -1123,9 +1122,9 @@
               videoCount:8, thumbCount:8, shortCount:4,
               features:['8 Edited Videos (>20 min)','8 Custom Thumbnails','4 Shorts','Highest Priority','Direct Communication','Unlimited Revisions','YouTube Branding Support*'],
               examples:[
-                { type:'video', title:'Edición gaming >20 min', file:'', desc:'Edición premium con narrativa, color grading y motion' },
-                { type:'video', title:'Short de alto impacto', file:'', desc:'Edición avanzada con gráficos animados' },
-                { type:'thumbnail', title:'Miniatura premium CTR', file:'', desc:'Diseño profesional con branding integrado' },
+                { type:'video', title:'Avance de Edición', file:'./assets/assets_tarjetas/avance_partner.mp4', desc:'Edición premium con narrativa, color grading y motion' },
+                { type:'shorts', title:'Short', file:'./assets/assets_tarjetas/short_partner.mp4', desc:'Edición avanzada con gráficos animados' },
+                { type:'thumbnail', title:'Miniatura', file:'./assets/assets_tarjetas/thumbnail_partner.jpg', desc:'Diseño profesional con branding integrado' },
               ], services:[
                 {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
                 {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
@@ -1859,10 +1858,16 @@
                         return `<li>${f}</li>`;
                     }).join('')}</ul>
                     ${p.examples ? `<div class="p-examples">
-                        ${p.examples.map(ex => `<div class="p-example" onclick="event.stopPropagation();openExamples('${p.id}',${p.examples.indexOf(ex)})" title="${ex.desc}">
-                            <svg class="pex-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="2.5"/><path d="M2 16l5-5 2.5 2.5L13 10l9 9"/></svg>
+                        ${p.examples.map(ex => {
+                            const svgIcons = {
+                                video:'<svg class="pex-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 3l14 9-14 9V3z"/></svg>',
+                                shorts:'<svg class="pex-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M10 9l5 3-5 3V9z"/></svg>',
+                                thumbnail:'<svg class="pex-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="2.5"/><path d="M2 16l5-5 2.5 2.5L13 10l9 9"/></svg>',
+                            };
+                            return `<div class="p-example" onclick="event.stopPropagation();openExamples('${p.id}',${p.examples.indexOf(ex)})" title="${ex.desc}">
+                            ${svgIcons[ex.type]||svgIcons.video}
                             <span class="pex-label">${ex.title}</span>
-                        </div>`).join('')}
+                        </div>`}).join('')}
                     </div>` : ''}
                     <button class="p-examples-btn" onclick="event.stopPropagation();openExamples('${p.id}')" data-examples="${p.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg> Ver ejemplos</button>
                     <div class="p-btn" onclick="event.stopPropagation();applyPlan('${p.id}')">${isApp?'Aplicado':p.btn}</div>
@@ -1885,14 +1890,25 @@
 
             if (idx !== undefined && p.examples[idx]) {
                 const ex = p.examples[idx];
-                body.innerHTML = `<div style="margin-bottom:.8rem"><strong>${ex.title}</strong><br><span style="font-size:.7rem;color:#8899aa">${ex.desc}</span></div>
-                    <div style="background:rgba(148,163,184,.04);border-radius:10px;padding:2rem 1rem;text-align:center;color:#5a6a7e;font-size:.8rem">
-                        ${ex.file ? `<img src="${ex.file}" alt="${ex.title}" style="max-width:100%;border-radius:8px">` : 'Agrega tu video/miniatura en <code>file</code> dentro de <code>PLANS</code>'}
+                const isVideo = ex.type==='video' || ex.type==='shorts';
+                body.innerHTML = `<div style="margin-bottom:.6rem"><strong style="font-size:.85rem">${ex.title}</strong><br><span style="font-size:.7rem;color:#8899aa">${ex.desc}</span></div>
+                    <div style="background:rgba(148,163,184,.04);border-radius:10px;overflow:hidden;text-align:center">
+                        ${ex.file
+                            ? (isVideo
+                                ? `<video src="${ex.file}" controls style="max-width:100%;display:block" ${ex.type==='shorts'?'height="400"':''}></video>`
+                                : `<img src="${ex.file}" alt="${ex.title}" style="max-width:100%;display:block">`)
+                            : '<div style="padding:2rem 1rem;color:#5a6a7e;font-size:.8rem">Archivo no disponible</div>'
+                        }
                     </div>`;
             } else {
+                const svgIcons = {
+                    video:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 3l14 9-14 9V3z"/></svg>',
+                    shorts:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M10 9l5 3-5 3V9z"/></svg>',
+                    thumbnail:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="2.5"/><path d="M2 16l5-5 2.5 2.5L13 10l9 9"/></svg>',
+                };
                 body.innerHTML = p.examples.map((ex, i) => `<div style="display:flex;align-items:center;gap:.6rem;padding:.4rem 0;border-bottom:1px solid rgba(148,163,184,.04);cursor:pointer" onclick="openExamples('${planId}',${i})">
                     <div style="width:40px;height:40px;border-radius:8px;background:rgba(148,163,184,.04);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="2.5"/><path d="M2 16l5-5 2.5 2.5L13 10l9 9"/></svg>
+                        ${svgIcons[ex.type]||svgIcons.video}
                     </div>
                     <div style="flex:1"><strong style="font-size:.78rem;color:#e2e8f0">${ex.title}</strong><br><span style="font-size:.65rem;color:#8899aa">${ex.desc}</span></div>
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
