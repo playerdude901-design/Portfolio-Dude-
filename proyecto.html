@@ -702,6 +702,84 @@
         }
         .p-print:hover { background:rgba(148,163,184,.1); color:#b0baca; }
 
+        /* ── TIMELINE (vertical) ── */
+        .timeline { position:relative; padding:0 0 .3rem; }
+        .timeline::before {
+            content:''; position:absolute; left:11px; top:14px; bottom:14px;
+            width:2px; background:rgba(148,163,184,.08); border-radius:1px;
+        }
+        .tl-node { position:relative; padding:0 0 .6rem 2.2rem; }
+        .tl-node:last-child { padding-bottom:0; }
+        .tl-dot {
+            position:absolute; left:0; top:3px; width:24px; height:24px;
+            border-radius:50%; display:flex; align-items:center; justify-content:center;
+            border:2px solid; z-index:1; background:#0e1522;
+        }
+        .tl-dot svg { width:12px; height:12px; }
+        .tl-dot.tl-dot-today {
+            border-color:var(--blue); color:var(--blue);
+            box-shadow:0 0 12px rgba(59,130,246,.15);
+        }
+        .tl-dot.tl-dot-service { border-color:rgba(148,163,184,.15); color:#8899aa; }
+        .tl-dot.tl-dot-delivery {
+            border-color:#22c55e; color:#22c55e;
+            box-shadow:0 0 12px rgba(34,197,94,.15);
+        }
+        .tl-title { font-size:.78rem; font-weight:600; color:#e2e8f0; }
+        .tl-qty { color:#8899aa; font-weight:500; margin-left:.15rem; }
+        .tl-sub { font-size:.64rem; color:#8899aa; margin-top:1px; }
+        .tl-sub strong { color:#b0baca; font-weight:500; }
+        .tl-hours { font-size:.6rem; color:#5a6a7e; margin-top:1px; }
+
+        .tl-opts { display:none; margin-top:.35rem; border-top:1px solid rgba(148,163,184,.06); padding-top:.3rem; }
+        .tl-opts.open { display:block; }
+        .tl-opt-row { padding:.25rem 0; border-bottom:1px solid rgba(148,163,184,.03); }
+        .tl-opt-row:last-child { border-bottom:none; }
+        .tl-opt-hdr { display:flex; align-items:center; gap:.3rem; font-size:.65rem; color:#8899aa; margin-bottom:.2rem; }
+        .tl-opt-hdr .tl-opt-n { color:#5a6a7e; font-weight:600; min-width:1rem; }
+        .tl-opt-hdr .tl-opt-config { flex:1; color:#8899aa; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .tl-opt-del {
+            background:none; border:none; color:#5a6a7e; font-size:.6rem; font-weight:500;
+            font-family:inherit; cursor:pointer; padding:.1rem .3rem; border-radius:3px; transition:all .2s;
+        }
+        .tl-opt-del:hover { color:#ef4444; background:rgba(239,68,68,.08); }
+        .tl-opt-group { margin-bottom:.2rem; }
+        .tl-opt-group .tl-opt-label { font-size:.6rem; font-weight:600; color:#5a6a7e; text-transform:uppercase; letter-spacing:.03em; margin-bottom:.15rem; }
+        .tl-opt-group .tl-opt-choices { display:flex; flex-wrap:wrap; gap:.15rem; }
+        .tl-opt-choice {
+            padding:.15rem .4rem; border-radius:4px; font-size:.62rem; font-weight:500;
+            font-family:inherit; background:rgba(148,163,184,.04); border:1px solid rgba(148,163,184,.06);
+            color:#99aabb; cursor:pointer; transition:all .2s; text-align:center;
+        }
+        .tl-opt-choice:hover { background:rgba(148,163,184,.08); border-color:rgba(148,163,184,.1); color:#b0baca; }
+        .tl-opt-choice.selected { background:rgba(59,130,246,.12); border-color:var(--blue); color:#fff; }
+
+        .plan-ribbon {
+            background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(139,92,246,.06));
+            border:1px solid rgba(59,130,246,.12); border-radius:10px;
+            padding:.4rem .6rem; margin-bottom:.6rem;
+        }
+        .plan-ribbon .pr-name { font-size:.78rem; font-weight:600; color:var(--blue); }
+        .plan-ribbon .pr-sub { font-size:.65rem; color:#8899aa; margin-top:1px; }
+        .plan-ribbon .pr-price {
+            font-size:.68rem; color:#b0baca; margin-top:2px;
+            display:flex; gap:.25rem; align-items:center; flex-wrap:wrap;
+        }
+        .plan-ribbon .pr-price strong { color:var(--blue); }
+        .plan-ribbon .pr-price .pr-old { color:#5a6a7e; text-decoration:line-through; }
+        .plan-ribbon .pr-price .pr-save { color:#22c55e; font-weight:600; }
+
+        .tl-title { font-size:.78rem; font-weight:600; color:#e2e8f0; cursor:pointer; display:flex; align-items:center; gap:.25rem; }
+        .tl-title:hover { color:#fff; }
+        .tl-title.tl-title-open { color:var(--blue); }
+        .tl-rm {
+            margin-left:auto; cursor:pointer; font-size:.55rem; color:#5a6a7e;
+            opacity:0; transition:opacity .2s,color .2s; line-height:1; padding:2px 3px; border-radius:3px;
+        }
+        .tl-node:hover .tl-rm { opacity:1; }
+        .tl-rm:hover { color:#ef4444; background:rgba(239,68,68,.1); }
+        .tl-qty { color:#8899aa; font-weight:500; margin-left:.15rem; }
+
         /* ── QUOTE OVERLAY ── */
         .q-overlay {
             display:none; position:fixed; inset:0; z-index:200;
@@ -1165,6 +1243,64 @@
             return { weekly, overrides, serviceHoursMap, bookingsByDate, today, end };
         }
 
+        // ── REFRESH CALENDAR CACHE ──
+        async function refreshCalendarData() {
+            const data = await fetchCalendarData_();
+            if (data) {
+                _calData = data;
+                renderAll();
+            }
+        }
+
+        // ── SCHEDULE COMPUTATION ──
+        function computeSchedule(data) {
+            if (project.length===0) return { groups:[], finalDay:0, totalBusinessDays:0 };
+
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const cutoffHour = 17;
+            const offset = now.getHours()>=cutoffHour ? 1 : 0;
+            const defaultWeekly = { 0:4, 1:2, 2:2, 3:2, 4:3, 5:3, 6:4 };
+
+            // Group consecutive same serviceId items
+            const groups = [];
+            let cur = null;
+            project.forEach((e,i)=>{
+                const s = getSvc(e.serviceId);
+                if (!s) return;
+                const r = calcItem(i);
+                const hrs = r.time;
+                if (cur && cur.serviceId===e.serviceId) { cur.hours+=hrs; cur.qty++; cur.indices.push(i); }
+                else { cur = { serviceId:e.serviceId, name:s.name, accent:s.accent, qty:1, hours:hrs, indices:[i] }; groups.push(cur); }
+            });
+
+            let dayIdx = offset;
+            groups.forEach(g => {
+                let rem = g.hours;
+                let started = false;
+                while (rem > 0.001) {
+                    const d = addDays(today, dayIdx);
+                    const dow = d.getDay();
+                    const dateStr = toDateStr(d);
+                    const baseCap = data?.overrides?.[dateStr]!==undefined ? data.overrides[dateStr] : (data?.weekly?.[dow] ?? defaultWeekly[dow] ?? 2);
+                    const usedHrs = data?.bookingsByDate?.[dateStr] || 0;
+                    const available = Math.round((baseCap - usedHrs)*100)/100;
+
+                    if (dow===0 || dow===6) { dayIdx++; continue; }
+                    if (data?.overrides?.[dateStr]===0 || available <= 0.001) { dayIdx++; continue; }
+
+                    if (!started) { g.dateStart = dayIdx; started = true; }
+                    const consume = Math.min(rem, available);
+                    rem -= consume;
+                    g.dateEnd = dayIdx;
+                    dayIdx++;
+                }
+                if (!started) { g.dateStart = dayIdx; g.dateEnd = dayIdx; dayIdx++; }
+            });
+
+            return { groups, finalDay: dayIdx, totalBusinessDays: dayIdx - offset };
+        }
+
         // ── SERVICE HOURS NEEDED ──
         function calcHoursNeeded(services) {
             let total = 0;
@@ -1484,6 +1620,7 @@
         const redoStack = [];
         const MAX_HISTORY = 40;
         let suppressHistory = false;
+        let _calData = null; // cached calendar data for timeline scheduling
 
         // ── DOM refs ──
         const wOverlay=document.getElementById('welcome-overlay');
@@ -2012,6 +2149,38 @@
         }
         const rOptsSel = new Map();
 
+        // ── TIMELINE UX ──
+        window.toggleTimelineNode = function(el) {
+            const parent = el.closest('.tl-node') || el.parentElement?.closest?.('.tl-node');
+            if (!parent) return;
+            const opts = parent.querySelector('.tl-opts');
+            if (opts) opts.classList.toggle('open');
+            el.classList.toggle('tl-title-open');
+        };
+        window.removeTimelineGroup = function(startIdx, count) {
+            if (!confirm('Eliminar este grupo de servicios?')) return;
+            pushHistory();
+            project.splice(startIdx, count);
+            appliedPlan = null;
+            renderAll();
+        };
+
+        function renderPOpts(s, opts, idx) {
+            const vis = s.options.filter(o => !o.depends || opts[o.depends.key]===o.depends.val);
+            return vis.map(o => {
+                const sel = opts[o.key]||'';
+                return `<div class="tl-opt-group">
+                    <div class="tl-opt-label">${o.label}</div>
+                    <div class="tl-opt-choices">
+                        ${o.choices.map(c =>
+                            `<button class="tl-opt-choice${sel===c.v?' selected':''}"
+                                onclick="event.stopPropagation();updateOpt(${idx},'${o.key}','${c.v}')">${c.l}</button>`
+                        ).join('')}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
         function renderProposal() {
             const total = calcTotal();
 
@@ -2019,97 +2188,123 @@
                 pEmpty.style.display='block'; pBody.innerHTML=''; pFooter.style.display='none';
                 pReset.classList.remove('visible');
                 pEmpty.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6M12 9v6"/></svg>
-                    <div>Tu propuesta aparecerá aquí en cuanto agregues un plan o servicio.</div>`;
+                    <div>Agrega un servicio o un plan para ver tu l\u00ednea de tiempo.</div>`;
                 return;
             }
             pEmpty.style.display='none'; pFooter.style.display='block'; pReset.classList.add('visible');
 
-            // Separate plan items from individual services
-            const planServices = total.isPlan ? project : [];
-            const extraServices = total.isPlan ? [] : project;
-
             let html = '';
 
-            // Plan section
-            if (total.isPlan && planServices.length > 0) {
-                html += `<div class="p-group-hdr">Plan mensual</div>`;
-                html += planServices.map((e,idx)=>{
-                    const s = getSvc(e.serviceId);
-                    if (!s) return '';
-                    const r = calcItem(idx);
-                    const configStr = r.items.slice(0,2).join(' · ');
-                    return `<div class="p-item" data-idx="${idx}" style="--p-accent:${s.accent}">
-                        <div class="p-item-main" onclick="this.parentElement.querySelector('.p-item-options').classList.toggle('open');this.querySelector('.pi-toggle').classList.toggle('open')">
-                            <div class="pi-preview" style="background:linear-gradient(135deg,${s.accent}22,${s.accent}44);color:${s.accent}">${getIcon(s.icon)}</div>
-                            <div class="pi-info">
-                                <div class="pi-name">${s.name}</div>
-                                ${configStr?`<div class="pi-config">${configStr}</div>`:''}
-                            </div>
-                            <div class="pi-price pi-included">Incluido</div>
-                            <div class="pi-toggle">▾</div>
-                        </div>
-                    </div>`;
-                }).join('');
+            // Plan ribbon
+            if (total.isPlan) {
+                const savings = total.individualTotal - total.total;
+                html += `<div class="plan-ribbon">
+                    <div class="pr-name">${total.planName}</div>
+                    <div class="pr-sub">Entregas recurrentes durante el mes</div>
+                    <div class="pr-price">
+                        <span class="pr-old">$${total.individualTotal}</span>
+                        <strong>$${total.total}/mes</strong>
+                        <span class="pr-save">Ahorras $${savings}/mes</span>
+                    </div>
+                </div>`;
             }
 
-            // Extra services section
-            if (extraServices.length > 0) {
-                html += `<div class="p-group-hdr">Servicios adicionales</div>`;
-                html += extraServices.map((e,idx)=>{
-                    const s = getSvc(e.serviceId);
-                    if (!s) return '';
-                    const r = calcItem(idx);
-                    const configStr = r.items.slice(0,2).join(' · ');
-                    return `<div class="p-item" data-idx="${idx}" style="--p-accent:${s.accent}">
-                        <div class="p-item-main" onclick="this.parentElement.querySelector('.p-item-options').classList.toggle('open');this.querySelector('.pi-toggle').classList.toggle('open')">
-                            <div class="pi-preview" style="background:linear-gradient(135deg,${s.accent}22,${s.accent}44);color:${s.accent}">${getIcon(s.icon)}</div>
-                            <div class="pi-info">
-                                <div class="pi-name">${s.name}</div>
-                                ${configStr?`<div class="pi-config">${configStr}</div>`:''}
-                            </div>
-                            <div class="pi-price">$${r.price}</div>
-                            <div class="pi-toggle">▾</div>
+            // Timeline for individual services
+            if (project.length>0 && !total.isPlan) {
+                const schedule = computeSchedule(_calData);
+                const opts = { weekday:'short', day:'numeric', month:'short' };
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const todayStr = today.toLocaleDateString('es-ES', opts);
+
+                html += `<div class="timeline">`;
+
+                // Today node
+                html += `<div class="tl-node">
+                    <div class="tl-dot tl-dot-today">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <div class="tl-content">
+                        <div class="tl-title">Hoy</div>
+                        <div class="tl-sub">${todayStr}</div>
+                    </div>
+                </div>`;
+
+                // Service nodes
+                schedule.groups.forEach(g => {
+                    const qtyText = g.qty>1 ? `\u00d7${g.qty}` : '';
+                    const ds = addDays(today, g.dateStart);
+                    let dateText;
+                    if (g.dateStart===g.dateEnd) {
+                        dateText = ds.toLocaleDateString('es-ES', opts);
+                    } else {
+                        const de = addDays(today, g.dateEnd);
+                        dateText = `${ds.toLocaleDateString('es-ES', opts)} \u2013 ${de.toLocaleDateString('es-ES', opts)}`;
+                    }
+                    const idxStr = g.indices.join(',');
+                    html += `<div class="tl-node" data-indices="${idxStr}">
+                        <div class="tl-dot tl-dot-service" style="border-color:${g.accent}40;color:${g.accent}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>
                         </div>
-                        <div class="p-item-options">
-                            <div class="po-actions">
-                                <button class="po-move" onclick="event.stopPropagation();moveService(${idx},-1)" ${idx===0?'disabled':''}>↑</button>
-                                <button class="po-move" onclick="event.stopPropagation();moveService(${idx},1)" ${idx===project.length-1?'disabled':''}>↓</button>
-                                <button onclick="event.stopPropagation();removeService(${idx})" class="po-del">Eliminar</button>
+                        <div class="tl-content">
+                            <div class="tl-title" onclick="toggleTimelineNode(this)">
+                                ${g.name}<span class="tl-qty">${qtyText}</span>
+                                <span class="tl-rm" onclick="event.stopPropagation();removeTimelineGroup(${g.indices[0]},${g.qty})" title="Eliminar grupo">\u2715</span>
                             </div>
-                            ${renderPOpts(s, e.opts, idx)}
+                            <div class="tl-sub"><strong>${dateText}</strong></div>
+                            <div class="tl-hours">${Math.round(g.hours*10)/10}h</div>
+                            <div class="tl-opts">
+                                ${g.indices.map((idx,i)=>{
+                                    const e = project[idx];
+                                    const s = getSvc(e.serviceId);
+                                    if (!s) return '';
+                                    const r = calcItem(idx);
+                                    const confStr = r.items.slice(0,3).join(' \u00b7 ');
+                                    return `<div class="tl-opt-row">
+                                        <div class="tl-opt-hdr">
+                                            <span class="tl-opt-n">${i+1}.</span>
+                                            <span class="tl-opt-config">${confStr||'Opciones predeterminadas'}</span>
+                                            <button class="tl-opt-del" onclick="event.stopPropagation();removeService(${idx})">Eliminar</button>
+                                        </div>
+                                        <div class="tl-opt-body">${renderPOpts(s,e.opts,idx)}</div>
+                                    </div>`;
+                                }).join('')}
+                            </div>
                         </div>
                     </div>`;
-                }).join('');
+                });
+
+                // Delivery node
+                const delDate = addDays(today, schedule.finalDay);
+                const delStr = delDate.toLocaleDateString('es-ES', opts);
+                html += `<div class="tl-node">
+                    <div class="tl-dot tl-dot-delivery">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="tl-content">
+                        <div class="tl-title">Entrega final</div>
+                        <div class="tl-sub"><strong>${delStr}</strong></div>
+                    </div>
+                </div>`;
+
+                html += `</div>`;
+
+                // Footer delivery text
+                const bDays = schedule.totalBusinessDays;
+                pDelivery.innerHTML = `Entrega estimada: <strong>${bDays} d\u00eda${bDays!==1?'s':''} h\u00e1biles</strong> \u00b7 <strong style="color:var(--blue)">${delStr}</strong>`;
+            }
+
+            // Footer for plan
+            if (total.isPlan) {
+                const savings = total.individualTotal - total.total;
+                pDelivery.innerHTML = `Plan <strong>${total.planName}</strong> &middot; <span style="color:#94a3b8;text-decoration:line-through">$${total.individualTotal}</span> <strong style="color:var(--blue)">$${total.total}/mes</strong> <span class="p-save-tag" style="font-size:.65rem">Ahorras $${savings}/mes</span>`;
             }
 
             pBody.innerHTML = html;
             animateCountUp(pTotal, total.total);
-            if (total.isPlan) {
-                const savings = total.individualTotal - total.total;
-                pDelivery.innerHTML = `Plan <strong>${total.planName}</strong> &middot; <span style="color:#94a3b8;text-decoration:line-through">$${total.individualTotal}</span> <strong style="color:var(--blue)">$${total.total}/mes</strong> <span class="p-save-tag" style="font-size:.65rem">Ahorras $${savings}/mes</span>`;
-            } else {
-                pDelivery.innerHTML = total.maxTime
-                    ? `Entrega estimada para tu proyecto: <strong>${total.maxTime} día${total.maxTime!==1?'s':''} hábiles</strong>`
-                    : 'Entrega estimada: <strong>&mdash;</strong>';
-            }
+
             const calRow = document.querySelector('.p-cal-row');
             if (calRow) calRow.style.display = appliedPlan ? 'none' : 'flex';
-        }
-
-        function renderPOpts(s, opts, idx) {
-            const vis = s.options.filter(o => !o.depends || opts[o.depends.key]===o.depends.val);
-            return vis.map(o => {
-                const sel = opts[o.key]||'';
-                return `<div class="po-opt-group">
-                    <div class="po-label">${o.label}</div>
-                    <div class="po-choices">
-                        ${o.choices.map(c =>
-                            `<button class="po-choice${sel===c.v?' selected':''}"
-                                onclick="updateOpt(${idx},'${o.key}','${c.v}')">${c.l}</button>`
-                        ).join('')}
-                    </div>
-                </div>`;
-            }).join('');
         }
 
         // ── QUOTE ──
@@ -2208,6 +2403,7 @@
         renderWelcome();
         renderTemplates();
         updateUndoButtons();
+        refreshCalendarData(); // fetch capacity/bookings for timeline
         setTimeout(() => {
             if (!welcomeDone && !loadDraft()) wOverlay.classList.add('open');
             else { welcomeDone = true; renderAll(); }
