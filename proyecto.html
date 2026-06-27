@@ -1241,6 +1241,7 @@
             { id:'shorts-editing',name:'Shorts Editing',icon:'shorts',desc:'Edición dinámica para Shorts, Reels y TikTok.',basePrice:10,baseTime:2,accent:'#2cbab2',
                 options:[
                     {key:'quantity',label:'Cantidad',choices:[{l:'1',v:'1',p:10,t:0},{l:'2',v:'2',p:20,t:0},{l:'3',v:'3',p:30,t:1},{l:'5',v:'5',p:50,t:1},{l:'10',v:'10',p:100,t:2}]},
+                    {key:'level',label:'Nivel',choices:[{l:'Básico',v:'basic',p:0,t:0},{l:'Estándar',v:'standard',p:10,t:1},{l:'Premium',v:'premium',p:20,t:2}]},
                     {key:'thumbnail',label:'Miniatura',choices:[{l:'Incluir',v:'yes',p:5,t:1},{l:'No',v:'no',p:0,t:0}]},
                     {key:'delivery',label:'Entrega',choices:[{l:'Standard 2d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}]},
                 ]},
@@ -1323,14 +1324,13 @@
         }
 
         // ── SCHEDULE COMPUTATION ──
-        function computeSchedule(data) {
+        function computeSchedule() {
             if (project.length===0) return { groups:[], finalDay:0, totalBusinessDays:0 };
 
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             const cutoffHour = 17;
             const offset = now.getHours()>=cutoffHour ? 1 : 0;
-            const defaultWeekly = { 0:4, 1:2, 2:2, 3:2, 4:3, 5:3, 6:4 };
 
             // Group consecutive same serviceId items
             const groups = [];
@@ -1351,16 +1351,11 @@
                 while (rem > 0.001) {
                     const d = addDays(today, dayIdx);
                     const dow = d.getDay();
-                    const dateStr = toDateStr(d);
-                    const baseCap = data?.overrides?.[dateStr]!==undefined ? data.overrides[dateStr] : (data?.weekly?.[dow] ?? defaultWeekly[dow] ?? 2);
-                    const usedHrs = data?.bookingsByDate?.[dateStr] || 0;
-                    const available = Math.round((baseCap - usedHrs)*100)/100;
 
                     if (dow===0 || dow===6) { dayIdx++; continue; }
-                    if (data?.overrides?.[dateStr]===0 || available <= 0.001) { dayIdx++; continue; }
 
                     if (!started) { g.dateStart = dayIdx; started = true; }
-                    const consume = Math.min(rem, available);
+                    const consume = Math.min(rem, 1);
                     rem -= consume;
                     g.dateEnd = dayIdx;
                     dayIdx++;
@@ -2186,9 +2181,54 @@
             return { price, time };
         }
 
+        function calcDeliveryDays(entry) {
+            const s = getSvc(entry.serviceId || entry.id);
+            if (!s) return 0;
+            const isVid = s.id==='video-editing'||s.id==='gaming-editing';
+            const isShort = s.id==='shorts-editing';
+            const isThumb = s.id==='thumbnail-design';
+            let days = 0, priority = false;
+
+            if (isVid) {
+                days = 3;
+                const dur = entry.opts['duration'];
+                if (dur==='10min') days = 5;
+                else if (dur==='20min') days = 7;
+                else if (dur==='30min') days = 9;
+                const lvl = entry.opts['level'];
+                if (lvl==='standard') days += 1;
+                else if (lvl==='premium') days += 2;
+                if (entry.opts['thumbnail']==='yes') {
+                    const tq = entry.opts['thumb-qty'];
+                    if (tq==='3') days += 1.5;
+                    else if (tq==='5') days += 2;
+                }
+                if (entry.opts['delivery']==='priority') priority = true;
+            } else if (isShort) {
+                const qty = parseInt(entry.opts['quantity']||'1');
+                if (qty===1) days = 1.5;
+                else if (qty===2) days = 2;
+                else if (qty===3) days = 2.5;
+                else if (qty===4) days = 3;
+                else if (qty===5) days = 3.5;
+                else days = 7;
+                if (entry.opts['thumbnail']==='yes') days += 1;
+                const lvl = entry.opts['level'];
+                if (lvl==='standard'||lvl==='premium') days += 1;
+                if (entry.opts['delivery']==='priority') priority = true;
+            } else if (isThumb) {
+                const qty = parseInt(entry.opts['quantity']||'1');
+                days = 0.5 + (qty-1)*0.5;
+                if (entry.opts['delivery']==='priority') priority = true;
+            }
+            if (priority) days = Math.ceil(days * 1.5);
+            return Math.round(days*100)/100;
+        }
+
         function calcItem(idx) {
             const e = project[idx];
             const r = calcServicePrice(e);
+            const dDays = calcDeliveryDays(e);
             const s = getSvc(e.serviceId);
             const items = [];
             if (s) {
@@ -2207,7 +2247,7 @@
                     else items.push('Miniatura incluida');
                 }
             }
-            return { ...r, items };
+            return { ...r, time: dDays, items };
         }
 
         function calcTotal() {
@@ -2324,7 +2364,7 @@
 
             // Timeline for individual services
             if (project.length>0 && !total.isPlan) {
-                const schedule = computeSchedule(_calData);
+                const schedule = computeSchedule();
                 const opts = { weekday:'short', day:'numeric', month:'short' };
                 const now = new Date();
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
