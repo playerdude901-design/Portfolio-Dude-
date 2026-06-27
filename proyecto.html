@@ -1704,7 +1704,7 @@
 
                 const savingsHero = prices.ahorro > 0 ? prices.ahorro : 0;
 
-                return `<div class="plan-card${isRec?' popular':''}${isApp?' applied':''}" data-plan="${p.id}">
+                return `<div class="plan-card${isRec?' popular':''}${isApp?' applied':''}" data-plan="${p.id}" onclick="if(!event.target.closest('.p-examples,.p-examples-btn,.p-example'))applyPlan('${p.id}')">
                     ${badgeText?`<div class="p-badge">${badgeText}</div>`:''}
                     ${isRec?`<div class="p-sub-badge">MEJOR RELACIÓN COSTO-BENEFICIO</div>`:''}
                     <div class="p-label">${p.label}</div>
@@ -1728,7 +1728,7 @@
                         </div>`).join('')}
                     </div>` : ''}
                     <button class="p-examples-btn" onclick="event.stopPropagation();openExamples('${p.id}')" data-examples="${p.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg> Ver ejemplos</button>
-                    <div class="p-btn">${isApp?'Aplicado':p.btn}</div>
+                    <div class="p-btn" onclick="event.stopPropagation();applyPlan('${p.id}')">${isApp?'Aplicado':p.btn}</div>
                 </div>`;
             }).join('');
             // Lazy-load examples via IntersectionObserver
