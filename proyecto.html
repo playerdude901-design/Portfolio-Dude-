@@ -12,7 +12,8 @@
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             background: #0B1324;
-            background-image: url('./assets/cuadricula_azul.png');
+            background-image: radial-gradient(ellipse at 50% 40%, rgba(11,19,36,.3) 0%, rgba(11,19,36,.97) 80%),
+                url('./assets/cuadricula_azul.png');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -254,16 +255,44 @@
         .p-examples { display:grid; grid-template-columns:repeat(3,1fr); gap:.3rem; margin:.5rem 0 .6rem; }
         .p-example {
             border-radius:8px; overflow:hidden; cursor:pointer; position:relative;
-            background:rgba(148,163,184,.04); border:1px solid rgba(148,163,184,.06);
+            background:#0a1322; border:1px solid rgba(148,163,184,.08);
             transition:border-color .2s,transform .2s; aspect-ratio:16/9;
-            display:flex; align-items:center; justify-content:center; min-height:52px;
+            min-height:52px;
         }
-        .p-example:hover { border-color:var(--blue); transform:translateY(-1px); }
-        .p-example .pex-icon { width:18px; height:18px; color:rgba(148,163,184,.4); }
-        .p-example .pex-label {
+        .p-example:hover { border-color:var(--blue); transform:scale(1.04); }
+        .p-example video, .p-example img {
+            position:absolute; inset:0; width:100%; height:100%;
+            object-fit:cover; display:block;
+        }
+        .p-example video { pointer-events:none; }
+        .pex-overlay {
+            position:absolute; inset:0;
+            display:flex; align-items:center; justify-content:center;
+            opacity:0; transition:opacity .2s;
+            background:rgba(0,0,0,.1);
+        }
+        .p-example:hover .pex-overlay { opacity:1; }
+        .pex-icon-wrap {
+            width:28px; height:28px; border-radius:50%;
+            background:rgba(0,0,0,.55); backdrop-filter:blur(4px);
+            display:flex; align-items:center; justify-content:center;
+            color:#fff; transition:transform .2s;
+        }
+        .p-example:hover .pex-icon-wrap { transform:scale(1.1); }
+        .pex-icon-wrap svg { width:12px; height:12px; }
+        .pex-duration {
+            position:absolute; top:3px; right:3px;
+            font-size:.45rem; font-weight:600; color:#fff;
+            background:rgba(0,0,0,.6); padding:1px 4px; border-radius:3px;
+            line-height:1.2; display:none;
+        }
+        .pex-duration.visible { display:block; }
+        .pex-label {
             position:absolute; bottom:0; left:0; right:0;
-            font-size:.5rem; padding:.15rem .25rem;
-            background:rgba(0,0,0,.6); color:#b0baca; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+            font-size:.48rem; padding:.2rem .25rem .18rem;
+            background:linear-gradient(transparent,rgba(0,0,0,.75));
+            color:#d0d8e0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+            line-height:1.3;
         }
         .p-examples-btn {
             font-size:.6rem; font-weight:600; color:#8899aa; cursor:pointer; background:none; border:none;
@@ -395,6 +424,51 @@
         .cal-btn.primary:disabled { opacity:.3; cursor:default; filter:none; }
         .cal-btn.secondary { background:rgba(148,163,184,.08); color:#b0baca; }
         .cal-btn.secondary:hover { background:rgba(148,163,184,.14); }
+
+        /* ── LIGHTBOX ── */
+        .lb-overlay {
+            position:fixed; inset:0; z-index:700;
+            background:rgba(0,0,0,.92); backdrop-filter:blur(20px);
+            display:flex; align-items:center; justify-content:center;
+            padding:1.5rem; opacity:0; pointer-events:none;
+            transition:opacity .3s;
+        }
+        .lb-overlay.open { opacity:1; pointer-events:auto; }
+        .lb-close {
+            position:absolute; top:1rem; right:1rem; z-index:2;
+            width:36px; height:36px; border-radius:50%; border:none;
+            background:rgba(255,255,255,.08); color:#fff; cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            transition:background .2s; font-size:1.1rem;
+        }
+        .lb-close:hover { background:rgba(255,255,255,.16); }
+        .lb-nav {
+            position:absolute; top:50%; transform:translateY(-50%); z-index:2;
+            width:36px; height:36px; border-radius:50%; border:none;
+            background:rgba(255,255,255,.06); color:#fff; cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            transition:background .2s; opacity:0;
+        }
+        .lb-overlay:hover .lb-nav { opacity:1; }
+        .lb-nav:hover { background:rgba(255,255,255,.14); }
+        .lb-nav.lb-prev { left:1rem; }
+        .lb-nav.lb-next { right:1rem; }
+        .lb-body {
+            max-width:90vw; max-height:85vh; position:relative;
+            display:flex; flex-direction:column; align-items:center;
+            animation:lbIn .3s cubic-bezier(.16,1,.3,1);
+        }
+        @keyframes lbIn { from { opacity:0; transform:scale(.93); } to { opacity:1; transform:scale(1); } }
+        .lb-body video, .lb-body img {
+            max-width:100%; max-height:80vh; border-radius:12px;
+            box-shadow:0 20px 60px rgba(0,0,0,.5); display:block;
+        }
+        .lb-body video { width:100%; background:#000; }
+        .lb-info {
+            text-align:center; margin-top:.8rem; color:#b0baca;
+            font-size:.8rem;
+        }
+        .lb-info strong { color:#e2e8f0; }
 
         /* ── TIMELINE ── */
         .cal-tl-summary { font-size:.78rem; margin-bottom:.8rem; line-height:1.5; }
@@ -1010,15 +1084,12 @@
         </div>
     </div>
 
-    <!-- EXAMPLES OVERLAY -->
-    <div class="cal-overlay" id="examples-overlay">
-        <div class="cal-card" style="max-width:600px">
-            <div class="cal-header">
-                <div class="cal-title" id="examples-title">Ejemplos</div>
-                <button class="cal-close" onclick="document.getElementById('examples-overlay').classList.remove('open')">✕</button>
-            </div>
-            <div id="examples-body" style="padding:.5rem 0;font-size:.75rem;color:#8899aa;line-height:1.6"></div>
-        </div>
+    <!-- LIGHTBOX (examples viewer) -->
+    <div class="lb-overlay" id="lb-overlay" onclick="if(event.target===this)closeLightbox()">
+        <button class="lb-close" onclick="closeLightbox()">✕</button>
+        <button class="lb-nav lb-prev" id="lb-prev" onclick="event.stopPropagation();lightboxNav(-1)">‹</button>
+        <button class="lb-nav lb-next" id="lb-next" onclick="event.stopPropagation();lightboxNav(1)">›</button>
+        <div class="lb-body" id="lb-body"></div>
     </div>
 
     <!-- CALENDAR OVERLAY -->
@@ -1858,75 +1929,101 @@
                         return `<li>${f}</li>`;
                     }).join('')}</ul>
                     ${p.examples ? `<div class="p-examples">
-                        ${p.examples.map(ex => {
-                            const svgIcons = {
-                                video:'<svg class="pex-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 3l14 9-14 9V3z"/></svg>',
-                                shorts:'<svg class="pex-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M10 9l5 3-5 3V9z"/></svg>',
-                                thumbnail:'<svg class="pex-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="2.5"/><path d="M2 16l5-5 2.5 2.5L13 10l9 9"/></svg>',
-                            };
-                            return `<div class="p-example" onclick="event.stopPropagation();openExamples('${p.id}',${p.examples.indexOf(ex)})" title="${ex.desc}">
-                            ${svgIcons[ex.type]||svgIcons.video}
-                            <span class="pex-label">${ex.title}</span>
-                        </div>`}).join('')}
+                        ${p.examples.map((ex, ei) => {
+                            const isVid = ex.type==='video' || ex.type==='shorts';
+                            const playIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+                            const zoomIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M8 11h6M11 8v6"/></svg>';
+                            const icon = isVid ? playIcon : zoomIcon;
+                            return `<div class="p-example" onclick="event.stopPropagation();openLightbox('${p.id}',${ei})" title="${ex.desc}" data-file="${ex.file}" data-type="${ex.type}">
+                                ${isVid ? `<video src="${ex.file}" preload="metadata" muted loop playsinline></video>` : `<img src="${ex.file}" alt="${ex.title}" loading="lazy">`}
+                                <div class="pex-overlay"><div class="pex-icon-wrap">${icon}</div></div>
+                                <span class="pex-duration"></span>
+                                <span class="pex-label">${ex.title}</span>
+                            </div>`;
+                        }).join('')}
                     </div>` : ''}
-                    <button class="p-examples-btn" onclick="event.stopPropagation();openExamples('${p.id}')" data-examples="${p.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg> Ver ejemplos</button>
+                    <button class="p-examples-btn" onclick="event.stopPropagation();openLightbox('${p.id}')" data-examples="${p.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg> Ver ejemplos</button>
                     <div class="p-btn" onclick="event.stopPropagation();applyPlan('${p.id}')">${isApp?'Aplicado':p.btn}</div>
                 </div>`;
             }).join('');
-            // Lazy-load examples via IntersectionObserver
-            document.querySelectorAll('.p-examples-btn[data-examples]').forEach(btn => {
-                if (window._exObs) window._exObs.observe(btn);
-            });
         }
 
-        // ── EXAMPLES ──
-        function openExamples(planId, idx) {
+        // ── LIGHTBOX ──
+        let _lbPlanId = null;
+
+        function openLightbox(planId, idx) {
             const p = PLANS.find(x => x.id === planId);
+            if (!p || !p.examples || !p.examples.length) return;
+            _lbPlanId = planId;
+            renderLightbox(idx !== undefined ? idx : 0);
+            document.getElementById('lb-overlay').classList.add('open');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lb-overlay').classList.remove('open');
+            // Pause any playing video
+            const v = document.querySelector('#lb-body video');
+            if (v) v.pause();
+            _lbPlanId = null;
+        }
+
+        function renderLightbox(idx) {
+            const p = PLANS.find(x => x.id === _lbPlanId);
+            if (!p || !p.examples || !p.examples[idx]) return;
+            const ex = p.examples[idx];
+            const isVid = ex.type==='video' || ex.type==='shorts';
+            const body = document.getElementById('lb-body');
+            const prevBtn = document.getElementById('lb-prev');
+            const nextBtn = document.getElementById('lb-next');
+            prevBtn.style.display = idx > 0 ? 'flex' : 'none';
+            nextBtn.style.display = idx < p.examples.length-1 ? 'flex' : 'none';
+            body.innerHTML = ex.file
+                ? (isVid
+                    ? `<video src="${ex.file}" controls autoplay></video>`
+                    : `<img src="${ex.file}" alt="${ex.title}">`)
+                : '<div style="color:#5a6a7e;padding:2rem">Archivo no disponible</div>';
+            body.innerHTML += `<div class="lb-info"><strong>${ex.title}</strong> &middot; ${ex.desc}</div>`;
+        }
+
+        function lightboxNav(dir) {
+            const p = PLANS.find(x => x.id === _lbPlanId);
             if (!p || !p.examples) return;
-            const overlay = document.getElementById('examples-overlay');
-            const title = document.getElementById('examples-title');
-            const body = document.getElementById('examples-body');
-            title.textContent = p.name + ' — Ejemplos';
-
-            if (idx !== undefined && p.examples[idx]) {
-                const ex = p.examples[idx];
-                const isVideo = ex.type==='video' || ex.type==='shorts';
-                body.innerHTML = `<div style="margin-bottom:.6rem"><strong style="font-size:.85rem">${ex.title}</strong><br><span style="font-size:.7rem;color:#8899aa">${ex.desc}</span></div>
-                    <div style="background:rgba(148,163,184,.04);border-radius:10px;overflow:hidden;text-align:center">
-                        ${ex.file
-                            ? (isVideo
-                                ? `<video src="${ex.file}" controls style="max-width:100%;display:block" ${ex.type==='shorts'?'height="400"':''}></video>`
-                                : `<img src="${ex.file}" alt="${ex.title}" style="max-width:100%;display:block">`)
-                            : '<div style="padding:2rem 1rem;color:#5a6a7e;font-size:.8rem">Archivo no disponible</div>'
-                        }
-                    </div>`;
-            } else {
-                const svgIcons = {
-                    video:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 3l14 9-14 9V3z"/></svg>',
-                    shorts:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M10 9l5 3-5 3V9z"/></svg>',
-                    thumbnail:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="2.5"/><path d="M2 16l5-5 2.5 2.5L13 10l9 9"/></svg>',
-                };
-                body.innerHTML = p.examples.map((ex, i) => `<div style="display:flex;align-items:center;gap:.6rem;padding:.4rem 0;border-bottom:1px solid rgba(148,163,184,.04);cursor:pointer" onclick="openExamples('${planId}',${i})">
-                    <div style="width:40px;height:40px;border-radius:8px;background:rgba(148,163,184,.04);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                        ${svgIcons[ex.type]||svgIcons.video}
-                    </div>
-                    <div style="flex:1"><strong style="font-size:.78rem;color:#e2e8f0">${ex.title}</strong><br><span style="font-size:.65rem;color:#8899aa">${ex.desc}</span></div>
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-                </div>`).join('');
-            }
-            overlay.classList.add('open');
+            const current = document.querySelector('#lb-body video, #lb-body img');
+            if (!current) return;
+            // Find current index by matching src
+            const src = current.getAttribute('src');
+            const curIdx = p.examples.findIndex(ex => ex.file === src);
+            const newIdx = curIdx + dir;
+            if (newIdx < 0 || newIdx >= p.examples.length) return;
+            renderLightbox(newIdx);
         }
 
-        // ── IntersectionObserver for lazy examples ──
-        if (!window._exObs && 'IntersectionObserver' in window) {
-            window._exObs = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        window._exObs.unobserve(entry.target);
-                    }
-                });
-            }, { rootMargin: '100px' });
-        }
+        // ── CHIP HOVER (video preview) ──
+        document.addEventListener('mouseover', e => {
+            const chip = e.target.closest('.p-example');
+            if (!chip) return;
+            const vid = chip.querySelector('video');
+            if (vid) { vid.play().catch(()=>{}); }
+        });
+        document.addEventListener('mouseout', e => {
+            const chip = e.target.closest('.p-example');
+            if (!chip) return;
+            const vid = chip.querySelector('video');
+            if (vid) { vid.pause(); vid.currentTime = 0; }
+        });
+
+        // ── DURATION BADGE ──
+        document.addEventListener('loadedmetadata', e => {
+            if (e.target.tagName !== 'VIDEO') return;
+            const chip = e.target.closest('.p-example');
+            if (!chip) return;
+            const dur = e.target.duration;
+            if (!dur || !isFinite(dur)) return;
+            const m = Math.floor(dur / 60);
+            const s = Math.floor(dur % 60);
+            const badge = chip.querySelector('.pex-duration');
+            if (badge) { badge.textContent = `${m}:${s.toString().padStart(2,'0')}`; badge.classList.add('visible'); }
+        }, true);
 
         window.applyPlan = function(pId) {
             const p = PLANS.find(x=>x.id===pId);
