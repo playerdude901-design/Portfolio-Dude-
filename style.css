@@ -229,9 +229,8 @@ img { display:block; }
 }
 
 .verified-badge {
-    height: .75em;
+    height: 1em;
     width: auto;
-    vertical-align: middle;
     display: inline-block;
 }
 
