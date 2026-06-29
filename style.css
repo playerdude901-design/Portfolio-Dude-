@@ -222,6 +222,17 @@ img { display:block; }
     line-height: 1;
     text-shadow: 0 0 30px rgba(255,255,255,.15);
     animation: fadeUp .8s ease both;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .15em;
+}
+
+.verified-badge {
+    height: .75em;
+    width: auto;
+    vertical-align: middle;
+    display: inline-block;
 }
 
 .hero-sub {
