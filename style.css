@@ -87,6 +87,13 @@ img { display:block; }
     object-fit: cover;
 }
 
+.nav-verified {
+    height: 46px;
+    width: auto;
+    margin-left: -.15rem;
+    flex-shrink: 0;
+}
+
 .nav-links {
     display: flex;
     align-items: center;
@@ -226,12 +233,6 @@ img { display:block; }
     align-items: center;
     justify-content: center;
     gap: .15em;
-}
-
-.verified-badge {
-    height: 1.2em;
-    width: auto;
-    display: inline-block;
 }
 
 .hero-sub {
@@ -1046,6 +1047,7 @@ footer span { color:var(--teal); }
         padding: .4rem .4rem .4rem .4rem;
     }
     .nav-logo { width: 34px; height: 34px; margin-right: .15rem; }
+    .nav-verified { height: 34px; margin-left: -.15rem; }
     .nav-links { gap: .1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     .nav-links::-webkit-scrollbar { display: none; }
     .nav-item { font-size: .8rem; padding: .35rem .55rem; flex-shrink: 0; }
