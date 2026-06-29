@@ -222,17 +222,18 @@ img { display:block; }
 .hero-inner { position:relative; z-index:2; }
 
 .hero-title {
-    font-family: Impact, 'Arial Black', sans-serif;
-    font-size: clamp(3.5rem,8vw,7rem);
-    color: var(--white);
-    letter-spacing: 2px;
-    line-height: 1;
-    text-shadow: 0 0 30px rgba(255,255,255,.15);
     animation: fadeUp .8s ease both;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: .15em;
+    margin: 0;
+}
+
+.hero-gif {
+    display: block;
+    max-width: min(90vw, 700px);
+    width: 100%;
+    height: auto;
 }
 
 .hero-sub {
