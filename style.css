@@ -266,7 +266,7 @@ img { display:block; }
 .presentation-section {
     width: 100%;
     padding: 4.5rem clamp(1.5rem, 4vw, 2.5rem);
-    background: linear-gradient(135deg, rgba(14,14,14,.96), rgba(18,18,18,.88));
+    background: #080808;
     border-top: 1px solid rgba(44,186,178,.15);
 }
 
