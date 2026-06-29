@@ -229,7 +229,7 @@ img { display:block; }
 }
 
 .verified-badge {
-    height: 1em;
+    height: 1.2em;
     width: auto;
     display: inline-block;
 }
