@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contacto - Dude 3D">
+    <title>Contacto · Dude 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        body {
+            background: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url('./assets/contacto/fondo_1.png') center/cover no-repeat;
+            filter: blur(3px);
+            z-index: -1;
+        }
+        .contact-page {
+            width: 100%;
+            max-width: 560px;
+            background: rgba(18,18,18,.92);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(44,186,178,.25);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 8px 40px rgba(0,0,0,.5);
+        }
+        .contact-page h1 {
+            font-family: var(--bebas);
+            font-size: 2.8rem;
+            letter-spacing: 3px;
+            color: var(--teal);
+            text-align: center;
+            margin-bottom: .3rem;
+        }
+        .contact-page .sub {
+            text-align: center;
+            color: var(--gray);
+            font-size: .95rem;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        .form-group label {
+            display: block;
+            font-family: var(--bebas);
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+            color: var(--white);
+            margin-bottom: .4rem;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: .75rem 1rem;
+            background: rgba(10,10,10,.8);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 8px;
+            color: var(--white);
+            font-family: var(--inter);
+            font-size: .95rem;
+            transition: border-color .2s;
+            box-sizing: border-box;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--teal);
+        }
+        .form-group select {
+            cursor: pointer;
+        }
+        .form-group select option {
+            background: #1a1a1a;
+            color: var(--white);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-submit {
+            display: block;
+            width: 100%;
+            font-family: var(--bebas);
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: var(--dark);
+            background: var(--teal);
+            padding: .85rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform .2s, box-shadow .2s;
+            margin-top: .5rem;
+        }
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(44,186,178,.35);
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            font-family: var(--bebas);
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+            color: var(--gray);
+            transition: color .2s;
+        }
+        .back-link:hover {
+            color: var(--teal);
+        }
+        .success-msg {
+            display: none;
+            text-align: center;
+            padding: 1.5rem 0;
+        }
+        .success-msg .check {
+            font-size: 3rem;
+            color: var(--teal);
+            margin-bottom: .5rem;
+        }
+        .success-msg h2 {
+            font-family: var(--bebas);
+            font-size: 2rem;
+            letter-spacing: 2px;
+            color: var(--white);
+            margin-bottom: .3rem;
+        }
+        .success-msg p {
+            color: var(--gray);
+            font-size: .95rem;
+        }
+        .success-msg .back-link {
+            margin-top: 1.2rem;
+        }
+        .form-wrap { display: block; }
+        .success-msg.show { display: block; }
+        .form-wrap.hidden { display: none; }
+        .error-msg {
+            display: none;
+            color: #ef4444;
+            font-size: .9rem;
+            text-align: center;
+            margin-top: .8rem;
+            padding: .6rem;
+            border: 1px solid rgba(239,68,68,.3);
+            border-radius: 8px;
+            background: rgba(239,68,68,.08);
+        }
+        .error-msg.show { display: block; }
+        .form-submit.loading { pointer-events: none; opacity: .6; }
+    </style>
+</head>
+<body>
+    <div class="contact-page">
+        <h1>TRABAJEMOS!</h1>
+        <p class="sub">Cuéntame tu proyecto y te responderé a la brevedad</p>
+
+        <div class="success-msg" id="success-msg">
+            <div class="check">✓</div>
+            <h2>Mensaje enviado</h2>
+            <p>Gracias por contactarme. Te responderé lo antes posible.</p>
+            <a href="index.html" class="back-link">← Volver al portfolio</a>
+        </div>
+
+        <div class="form-wrap" id="form-wrap">
+            <form id="contact-form">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
+                </div>
+                <div class="form-group">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" name="email" required placeholder="tu@correo.com">
+                </div>
+                <div class="form-group">
+                    <label for="servicio">Servicio que necesitas</label>
+                    <select id="servicio" name="servicio">
+                        <option value="">Selecciona una opción</option>
+                        <option value="Miniatura">Miniatura / Thumbnail</option>
+                        <option value="Edicion de video">Edición de video</option>
+                        <option value="Identidad visual">Identidad visual / Branding</option>
+                        <option value="Plugin PresetGold">Plugin PresetGold</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="mensaje">Mensaje</label>
+                    <textarea id="mensaje" name="mensaje" required placeholder="Describe tu proyecto..."></textarea>
+                </div>
+                <div class="error-msg" id="error-msg"></div>
+                <button type="submit" class="form-submit" id="submit-btn">ENVIAR MENSAJE</button>
+            </form>
+        </div>
+
+        <a href="index.html" class="back-link" id="back-link">← Volver al portfolio</a>
+    </div>
+
+    <script>
+        /* ── CAMBIA ESTA URL por la de tu Google Apps Script desplegado ── */
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLQh4AxX78pllKyYzF8diVolsbEjpYARnTqm-XokBWcfMkpder2xkhUZj7HFOn5Vwn_Q/exec';
+
+        const form = document.getElementById('contact-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const formWrap = document.getElementById('form-wrap');
+        const successMsg = document.getElementById('success-msg');
+        const errorMsg = document.getElementById('error-msg');
+        const backLink = document.getElementById('back-link');
+
+        /* ── Pre-fill desde Project Builder ── */
+        const workflow = localStorage.getItem('dude_workflow');
+        if (workflow) {
+            const msgField = document.getElementById('mensaje');
+            if (msgField) msgField.value = workflow;
+            localStorage.removeItem('dude_workflow');
+        }
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            errorMsg.classList.remove('show');
+            submitBtn.classList.add('loading');
+            submitBtn.textContent = 'ENVIANDO...';
+
+            const fd = new URLSearchParams(new FormData(form));
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: fd });
+                const json = await res.json();
+
+                if (json.success) {
+                    formWrap.classList.add('hidden');
+                    successMsg.classList.add('show');
+                    backLink.style.display = 'none';
+                } else {
+                    throw new Error(json.error || 'Error al enviar');
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Hubo un error al enviar. Intenta de nuevo o escríbeme directamente a playerdude901@gmail.com';
+                errorMsg.classList.add('show');
+                submitBtn.classList.remove('loading');
+                submitBtn.textContent = 'ENVIAR MENSAJE';
+            }
+        });
+    </script>
+</body>
+</html>

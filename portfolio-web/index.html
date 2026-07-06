@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio de Dude 3D - diseño gráfico, edición de videos y miniaturas para YouTube">
+    <title>Dude! Portfolio's</title>
+
+    <meta property="og:title" content="Dude! Portfolio's">
+    <meta property="og:description" content="Diseño gráfico, edición de video y miniaturas para YouTube">
+    <meta property="og:image" content="./assets/logo.jpeg">
+    <meta property="og:type" content="website">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <div id="global-bg"></div>
+
+    <!-- ══════════ LIGHTBOX ══════════ -->
+    <div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Galería de imágenes">
+        <div class="lb-header">
+            <span class="lb-title" id="lb-title">CATEGORÍA</span>
+            <button class="lb-close" id="lb-close" aria-label="Cerrar galería">✕</button>
+        </div>
+        <div class="lb-main">
+            <button class="lb-btn" id="lb-prev" aria-label="Imagen anterior">&#8249;</button>
+            <div class="lb-img-wrap">
+                <img id="lb-img" src="" alt="Miniatura">
+            </div>
+            <button class="lb-btn" id="lb-next" aria-label="Imagen siguiente">&#8250;</button>
+        </div>
+        <div class="lb-footer">
+            <div class="lb-strip" id="lb-strip"></div>
+            <span class="lb-counter" id="lb-counter">1 / 1</span>
+        </div>
+    </div>
+
+    <!-- ══════════ GALLERY MODAL ══════════ -->
+    <div class="gallery-modal" id="gallery-modal" role="dialog" aria-modal="true" aria-label="Galería de videos">
+        <div class="gallery-modal-inner">
+            <div class="gallery-modal-header">
+                <span class="gallery-modal-title" id="gallery-title">CLIENTE</span>
+                <button class="gallery-modal-close" id="gallery-close" aria-label="Cerrar">✕</button>
+            </div>
+
+            <div class="gallery-view" id="gallery-view">
+                <div class="gallery-grid" id="gallery-grid"></div>
+            </div>
+
+            <div class="player-view" id="player-view" style="display:none">
+                <div class="player-wrapper">
+                    <iframe id="player-iframe" src="" frameborder="0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="gallery-modal-footer">
+                <button class="gallery-back-btn" id="gallery-back" style="display:none">← Volver</button>
+                <a class="btn-youtube" id="gallery-youtube" href="#" target="_blank" rel="noopener" style="display:none">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    Ver completo en YouTube
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════ SITE ══════════ -->
+    <div class="site-wrapper">
+
+        <header class="site-header" id="site-header">
+            <div class="nav-pill">
+                <a href="#inicio" class="nav-logo" aria-label="Inicio">
+                    <img src="./assets/logo.jpeg" alt="Dude 3D">
+                </a>
+                <img src="./assets/verified/verified.png" alt="" class="nav-verified">
+                <nav class="nav-links" aria-label="Navegación principal">
+                    <a href="#inicio"    class="nav-item active" id="nav-home">INICIO</a>
+                    <a href="#clientes"  class="nav-item" id="nav-clientes">CLIENTES</a>
+                    <a href="#portfolio" class="nav-item" id="nav-miniaturas">MINIATURAS</a>
+                    <a href="#gold" class="nav-item nav-gold" id="nav-suitegold"><span class="gold-shine">SUITEGOLD</span></a>
+                </nav>
+                <a href="contacto.html" target="_blank" rel="noopener" class="nav-cta" id="nav-contacto">TRABAJEMOS!</a>
+                <a href="proyecto.html" target="_blank" rel="noopener" class="nav-proyecto" id="nav-proyecto">CREA TU PROYECTO</a>
+            </div>
+        </header>
+
+        <section class="hero" id="inicio" aria-label="Presentación">
+            <video class="hero-video" id="hero-video" src="./assets/videos/video_header.mp4" loop muted playsinline autoplay></video>
+            <div class="hero-overlay"></div>
+            <button class="hero-mute" id="hero-mute" aria-label="Activar sonido">
+                <svg class="mute-icon mute-off" viewBox="0 0 24 24" width="20" height="20">
+                    <path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8.5v7a4.49 4.49 0 0 0 2.5-3.5zM14 3.23v2.06a7.007 7.007 0 0 1 0 13.42v2.06A9.01 9.01 0 0 0 14 3.23z"/>
+                </svg>
+                <svg class="mute-icon mute-on" viewBox="0 0 24 24" width="20" height="20" style="display:none">
+                    <path fill="currentColor" d="M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.796 8.796 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                </svg>
+            </button>
+            <div class="hero-inner">
+                <h1 class="hero-title">SOY DUDE</h1>
+                <p class="hero-sub">y a esto me dedico...</p>
+                <div class="hero-divider"></div>
+            </div>
+        </section>
+
+        <section class="presentation-section" id="presentacion" aria-label="Presentación de Dude">
+            <div class="presentation-inner">
+                <div class="presentation-copy">
+                    <p class="presentation-kicker">DISEÑO GRÁFICO · EDICIÓN · MINIATURAS</p>
+                    <p class="presentation-lead">
+                        Soy Christian Lee Charles Chávez, mejor conocido como DUDE!, diseñador gráfico, editor audiovisual y creador de contenido visual especializado en video, miniaturas para YouTube, identidad visual y contenido digital. Mi enfoque combina creatividad, estrategia y análisis para desarrollar piezas visuales de alto impacto que captan la atención, aumentan el engagement y ayudan al crecimiento de marcas, creadores y negocios. En este portafolio encontrarás una selección de mis proyectos más destacados, reflejando mi capacidad para transformar ideas en contenido atractivo, profesional y competitivo para plataformas digitales.
+                    </p>
+                </div>
+                <div class="presentation-portrait">
+                    <img src="./assets/perfil/imagen_de_perfil.jpeg" alt="Foto de perfil de Dude" loading="lazy">
+                </div>
+            </div>
+        </section>
+
+        <img src="./assets/habilidades_assets.jpg" alt="" class="skills-banner">
+
+        <section class="clientes-section" id="clientes" aria-label="Clientes">
+            <h2 class="section-title">CLIENTES</h2>
+            <div class="clientes-panels-row">
+                <div class="cliente-panel" data-client="galaxito" data-verified="true" tabindex="0" role="button" aria-label="Ver videos de Galaxito">
+                    <div class="cliente-panel-bg">
+                        <img src="./assets/clientes/galaxito/Galaxito_Logo.jpg" alt="" class="panel-bg-img">
+                    </div>
+                    <div class="cliente-panel-overlay">
+                        <h3 class="panel-client-name">Galaxito<img src="./assets/verified/verified.png" alt="" class="verified-badge"></h3>
+                        <span class="panel-client-cta">4 videos →</span>
+                    </div>
+                </div>
+                <div class="cliente-panel" data-client="playerdude" tabindex="0" role="button" aria-label="Ver videos de PlayerDude">
+                    <div class="cliente-panel-bg">
+                        <img src="./assets/clientes/playerdude/PlayerDude_Logo.jpg" alt="" class="panel-bg-img">
+                    </div>
+                    <div class="cliente-panel-overlay">
+                        <h3 class="panel-client-name">PlayerDude</h3>
+                        <span class="panel-client-cta">4 videos →</span>
+                    </div>
+                </div>
+                <div class="cliente-panel" data-client="masfax" tabindex="0" role="button" aria-label="Ver videos de MasFax">
+                    <div class="cliente-panel-bg">
+                        <img src="./assets/clientes/masfax/MasFax_Logo.jpg" alt="" class="panel-bg-img">
+                    </div>
+                    <div class="cliente-panel-overlay">
+                        <h3 class="panel-client-name">MasFax</h3>
+                        <span class="panel-client-cta">1 video →</span>
+                    </div>
+                </div>
+                <div class="cliente-panel" data-client="megazote" data-verified="true" tabindex="0" role="button" aria-label="Ver videos de Megazote">
+                    <div class="cliente-panel-bg">
+                        <img src="./assets/clientes/megazote/Megazote_Logo.jpg" alt="" class="panel-bg-img">
+                    </div>
+                    <div class="cliente-panel-overlay">
+                        <h3 class="panel-client-name">Megazote<img src="./assets/verified/verified.png" alt="" class="verified-badge"></h3>
+                        <span class="panel-client-cta">1 video →</span>
+                    </div>
+                </div>
+                <div class="cliente-panel" data-client="maog" data-verified="true" tabindex="0" role="button" aria-label="Ver videos de Maog">
+                    <div class="cliente-panel-bg">
+                        <img src="./assets/clientes/maog/Maog_Logo.jpg" alt="" class="panel-bg-img">
+                    </div>
+                    <div class="cliente-panel-overlay">
+                        <h3 class="panel-client-name">Maog<img src="./assets/verified/verified.png" alt="" class="verified-badge"></h3>
+                        <span class="panel-client-cta">1 video →</span>
+                    </div>
+                </div>
+                <div class="cliente-panel" data-client="strike" data-verified="true" tabindex="0" role="button" aria-label="Ver videos de ElStrike">
+                    <div class="cliente-panel-bg">
+                        <img src="./assets/clientes/strike/Strike_Logo.jpg" alt="" class="panel-bg-img">
+                    </div>
+                    <div class="cliente-panel-overlay">
+                        <h3 class="panel-client-name">ElStrike<img src="./assets/verified/verified.png" alt="" class="verified-badge"></h3>
+                        <span class="panel-client-cta">3 shorts →</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="portfolio-section" id="portfolio" aria-label="Trabajos">
+            <h2 class="section-title">MIS TRABAJOS</h2>
+            <div class="portfolio-grid" id="portfolio-grid"></div>
+        </section>
+
+        <!-- ══════════ PRESETGOLD DIVIDER ══════════ -->
+        <div class="page-divider">
+            <img src="./assets/presetgold/nubes_salto_de_pagina.png" alt="" loading="lazy">
+        </div>
+
+        <!-- ══════════ PRODUCTOS GOLD ══════════ -->
+        <section class="gold-section" id="gold" aria-label="Plugins y herramientas Gold">
+            <div class="gold-inner">
+                <img class="gold-section-title" src="./assets/presetgold/suite_gold.png" alt="SUITE GOLD" loading="lazy">
+                <p class="gold-intro">
+                    <strong>SuiteGold</strong> es un conjunto de herramientas diseñadas para <strong>optimizar y acelerar</strong> el flujo de trabajo de editores de video. Cada programa fue creado para solucionar problemas reales del día a día, eliminando procesos manuales repetitivos y permitiéndote concentrarte en lo que realmente importa: crear contenido de calidad.
+                </p>
+                <div class="gold-grid">
+
+                    <!-- ── PresetGold ── -->
+                    <div class="gold-card">
+                        <img class="gold-card-title" src="./assets/presetgold/presetgold_titulo.png" alt="PresetGold" loading="lazy">
+                        <p class="gold-card-desc">
+                            <strong>PresetGold</strong> es un plugin para Adobe Premiere Pro que optimiza y acelera el flujo de trabajo de editores de video. Incluye una barra de búsqueda inteligente de Custom Presets y efectos de video y audio, permitiéndote encontrar y aplicar ajustes al instante sin perder tiempo navegando entre paneles.
+                        </p>
+                        <div class="gold-card-image">
+                            <img src="./assets/presetgold/presetgold_review.png" alt="Vista previa PresetGold" loading="lazy">
+                        </div>
+                        <a href="https://github.com/playerdude901-design/PresetGold" target="_blank" rel="noopener" class="btn-github">
+                            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                            DESCARGAR DE GITHUB
+                        </a>
+                    </div>
+
+                    <!-- ── AurumGold ── -->
+                    <div class="gold-card">
+                        <img class="gold-card-title" src="./assets/aurumgold/aurum_titulo.png" alt="AurumGold" loading="lazy">
+                        <p class="gold-card-desc">
+                            <strong>AurumGold</strong> es un programa para edición y conversión de formato horizontal a vertical sin necesidad de pasar por otros programas. Extrae clips en formato vertical con manejo de múltiples cámaras y formas de las mismas, optimizando tu flujo de trabajo para contenido vertical y redes sociales.
+                        </p>
+                        <div class="gold-card-image">
+                            <img src="./assets/aurumgold/preview_4.png" alt="Vista previa AurumGold" loading="lazy">
+                        </div>
+                        <a href="https://github.com/playerdude901-design/AurumGold-Clip-editor" target="_blank" rel="noopener" class="btn-github">
+                            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                            DESCARGAR DE GITHUB
+                        </a>
+                    </div>
+
+                    <!-- ── CutterGold ── -->
+                    <div class="gold-card">
+                        <img class="gold-card-title" src="./assets/cuttergold/cutter_titulo.png" alt="CutterGold" loading="lazy">
+                        <p class="gold-card-desc">
+                            <strong>CutterGold</strong> es un editor de clips en masa. Puedes marcar y extraer múltiples clips definiendo la entrada y salida de cada uno, creándolos simultáneamente sin perder tiempo en procesos manuales repetitivos.
+                        </p>
+                        <div class="gold-card-image">
+                            <img src="./assets/cuttergold/image_cutter.png" alt="Vista previa CutterGold" loading="lazy">
+                        </div>
+                        <a href="https://github.com/playerdude901-design/CutterGold" target="_blank" rel="noopener" class="btn-github">
+                            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                            DESCARGAR DE GITHUB
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <span>DUDE 3D</span> &nbsp;·&nbsp; Portfolio © 2024 &nbsp;·&nbsp; Todos los derechos reservados
+        </footer>
+
+    </div>
+
+    <script src="./script.js"></script>
+    <script>
+        (function(){
+            const video = document.getElementById('hero-video');
+            const btn = document.getElementById('hero-mute');
+            const offIcon = btn.querySelector('.mute-off');
+            const onIcon = btn.querySelector('.mute-on');
+            let userUnmuted = false;
+
+            btn.addEventListener('click', function(){
+                if (video.muted) {
+                    video.muted = false;
+                    userUnmuted = true;
+                    offIcon.style.display = 'none';
+                    onIcon.style.display = 'block';
+                    btn.setAttribute('aria-label', 'Silenciar video');
+                } else {
+                    video.muted = true;
+                    userUnmuted = false;
+                    offIcon.style.display = 'block';
+                    onIcon.style.display = 'none';
+                    btn.setAttribute('aria-label', 'Activar sonido');
+                }
+            });
+
+            window.addEventListener('scroll', function(){
+                if (window.scrollY > window.innerHeight * 0.8) {
+                    if (!video.muted) {
+                        video.muted = true;
+                        offIcon.style.display = 'block';
+                        onIcon.style.display = 'none';
+                        btn.setAttribute('aria-label', 'Activar sonido');
+                    }
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

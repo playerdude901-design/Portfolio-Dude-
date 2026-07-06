@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Builder · Dude 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: #0B1324;
+            background-image: radial-gradient(ellipse at 50% 40%, rgba(11,19,36,.3) 0%, rgba(11,19,36,.97) 80%),
+                url('./assets/degradado_4_puntos.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        :root {
+            --blue: #3B82F6;
+            --purple: #8B5CF6;
+            --teal: #2cbab2;
+            --pink: #EC4899;
+            --amber: #F59E0B;
+        }
+
+        /* ── HEADER ── */
+        .builder-header {
+            position: sticky; top:0; z-index:100;
+            display:flex; align-items:center; justify-content:space-between;
+            padding:.75rem 1.8rem;
+            background:rgba(11,19,36,.88); backdrop-filter:blur(18px);
+            border-bottom:1px solid rgba(148,163,184,.06);
+        }
+        .builder-header .left { display:flex; align-items:center; gap:.5rem; }
+        .builder-header h1 { font-weight:700; font-size:1rem; letter-spacing:-.02em; }
+        .builder-header h1 span { color:var(--blue); }
+        .builder-header h1 .hd-icon { display:inline-block; width:16px; height:16px; vertical-align:-2px; margin-left:2px; }
+        .builder-header .hint { font-size:.7rem; color:#8899aa; }
+        .builder-header .close-btn {
+            background:rgba(148,163,184,.06); border:1px solid rgba(148,163,184,.1);
+            color:#b0baca; width:30px; height:30px; border-radius:8px;
+            display:flex; align-items:center; justify-content:center;
+            text-decoration:none; font-size:.85rem; transition:background .2s,color .2s;
+        }
+        .builder-header .close-btn:hover { background:rgba(148,163,184,.12); color:#fff; }
+
+        /* ── WELCOME OVERLAY ── */
+        .welcome-overlay {
+            position:fixed; inset:0; z-index:500;
+            background:rgba(6,10,22,.92); backdrop-filter:blur(20px);
+            display:flex; align-items:center; justify-content:center;
+            padding:1.5rem; opacity:0; pointer-events:none;
+            transition:opacity .4s;
+        }
+        .welcome-overlay.open { opacity:1; pointer-events:auto; }
+        .welcome-card {
+            background:linear-gradient(145deg,#1a2440,#141d30);
+            border:1px solid rgba(148,163,184,.1);
+            border-radius:24px; padding:2.2rem 2.2rem 1.8rem;
+            max-width:600px; width:100%; box-shadow:0 40px 100px rgba(0,0,0,.6);
+            position:relative; overflow:hidden;
+        }
+        .welcome-card::before {
+            content:''; position:absolute; top:-60px; right:-60px; width:180px; height:180px;
+            background:radial-gradient(circle,rgba(59,130,246,.08),transparent 70%);
+            pointer-events:none;
+        }
+        .welcome-card .w-title {
+            font-weight:800; font-size:1.15rem; margin-bottom:.15rem;
+            display:flex; align-items:center; gap:.35rem;
+        }
+        .welcome-card .w-title svg { width:18px; height:18px; color:var(--blue); }
+        .welcome-card .w-sub { font-size:.8rem; color:#8899aa; margin-bottom:1.2rem; }
+        .w-step-indicator { display:flex; gap:.35rem; margin-bottom:1.5rem; align-items:center; }
+        .w-step-dot {
+            width:7px; height:7px; border-radius:50%;
+            background:rgba(148,163,184,.15); transition:all .3s;
+        }
+        .w-step-dot.active { width:24px; border-radius:4px; background:var(--blue); box-shadow:0 0 12px rgba(59,130,246,.3); }
+        .w-step-dot.done { background:var(--blue); opacity:.5; }
+
+        .w-step { display:none; }
+        .w-step.active { display:block; animation:wStepIn .35s cubic-bezier(.16,1,.3,1); }
+        @keyframes wStepIn { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:translateX(0); } }
+
+        .w-step .w-q { font-size:.9rem; font-weight:600; margin-bottom:.8rem; }
+        .w-options { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; }
+        .w-opt {
+            background:rgba(148,163,184,.04); border:1px solid rgba(148,163,184,.08);
+            border-radius:12px; padding:.7rem .8rem; cursor:pointer;
+            transition:all .25s; text-align:left; font-family:inherit; color:#b0baca;
+            font-size:.82rem; font-weight:500; position:relative; overflow:hidden;
+        }
+        .w-opt::before {
+            content:''; position:absolute; inset:0; opacity:0;
+            background:radial-gradient(circle at center,rgba(59,130,246,.08),transparent 70%);
+            transition:opacity .3s;
+        }
+        .w-opt:hover { background:rgba(59,130,246,.08); border-color:rgba(59,130,246,.2); color:#fff; transform:translateY(-1px); }
+        .w-opt:hover::before { opacity:1; }
+        .w-opt.selected { background:rgba(59,130,246,.12); border-color:var(--blue); color:#fff; box-shadow:0 0 24px rgba(59,130,246,.1); }
+        .w-opt .w-opt-label { display:block; font-weight:600; }
+        .w-opt .w-opt-desc { display:block; font-size:.7rem; color:#8899aa; font-weight:400; margin-top:.1rem; }
+        .w-opt.selected .w-opt-desc { color:rgba(255,255,255,.4); }
+
+        .w-nav { display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem; }
+        .w-nav button {
+            padding:.4rem 1.2rem; border-radius:9px; font-size:.8rem;
+            font-weight:600; font-family:inherit; cursor:pointer; transition:all .2s; border:none;
+        }
+        .w-back { background:rgba(148,163,184,.06); color:#99aabb; }
+        .w-back:hover { background:rgba(148,163,184,.1); color:#b0baca; }
+        .w-next { background:linear-gradient(135deg,var(--blue),#2563eb); color:#fff; }
+        .w-next:hover { filter:brightness(1.08); }
+        .w-next:disabled { opacity:.35; cursor:default; filter:none; }
+        .w-skip { background:none; color:#8899aa; border:none; font-size:.75rem; cursor:pointer; }
+        .w-skip:hover { color:#b0baca; }
+
+        /* ── BUILDER LAYOUT ── */
+        .builder { display:flex; gap:0; min-height:calc(100vh - 53px); }
+
+        /* ── LEFT COLUMN ── */
+        .services-col {
+            flex:1; padding:1.5rem 1.8rem 2rem; overflow-y:auto;
+        }
+        .sc-title { font-weight:700; font-size:1.05rem; margin-bottom:.1rem; }
+        .sc-sub { font-size:.9rem; color:#e2e8f0; margin-bottom:1.2rem; font-weight:500; }
+
+        /* ── SERVICE GRID ── */
+        .sg-title { font-size:.95rem; font-weight:700; color:#e2e8f0; margin-bottom:.6rem; }
+        .service-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:.7rem; margin-bottom:.8rem; }
+
+        .svc-card {
+            background:linear-gradient(145deg,#141d30,#0f1625);
+            border:1px solid rgba(148,163,184,.08); border-radius:14px;
+            padding:1rem; transition:all .35s cubic-bezier(.16,1,.3,1);
+            position:relative; overflow:hidden;
+        }
+        .svc-card::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:3px;
+            background:var(--svc-accent,var(--blue)); opacity:.5; transition:opacity .3s;
+        }
+        .svc-card::after {
+            content:''; position:absolute; inset:0; border-radius:14px; opacity:0;
+            box-shadow:inset 0 0 40px var(--svc-accent,var(--blue));
+            transition:opacity .4s; pointer-events:none;
+        }
+        .svc-card:hover { transform:translateY(-4px); border-color:rgba(148,163,184,.15); box-shadow:0 12px 40px rgba(0,0,0,.3); }
+        .svc-card:hover::before { opacity:1; }
+        .svc-card:hover::after { opacity:.06; }
+
+        .svc-card .svc-top { display:flex; align-items:flex-start; gap:.6rem; margin-bottom:.4rem; }
+        .svc-card .svc-icon {
+            width:40px; height:40px; border-radius:10px; flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;
+            background:linear-gradient(135deg, var(--svc-accent,var(--blue))22, var(--svc-accent,var(--blue))06);
+            color:var(--svc-accent,var(--blue));
+        }
+        .svc-card .svc-icon svg { width:19px; height:19px; }
+        .svc-card .svc-mid { flex:1; min-width:0; }
+        .svc-card .svc-name { font-weight:700; font-size:.85rem; }
+        .svc-card .svc-desc { font-size:.72rem; color:#8899aa; line-height:1.4; }
+        .svc-card .svc-price { font-size:.75rem; color:#99aabb; margin:.35rem 0 .5rem; }
+        .svc-card .svc-price strong { color:#b0baca; font-weight:600; }
+        .add-btn {
+            width:100%; padding:.4rem 0; border-radius:8px; font-weight:600;
+            font-size:.75rem; font-family:inherit; cursor:pointer; transition:all .25s;
+            border:1px solid rgba(59,130,246,.15); background:rgba(59,130,246,.08);
+            color:var(--blue);
+        }
+        .add-btn:hover { background:rgba(59,130,246,.16); }
+        .add-btn.added { background:rgba(34,197,94,.1); border-color:rgba(34,197,94,.2); color:#22c55e; cursor:default; }
+        .svc-qty { display:flex; align-items:center; gap:2px; margin:.35rem 0 .4rem; }
+        .svc-qty button {
+            width:22px; height:22px; border-radius:5px; border:1px solid rgba(148,163,184,.1);
+            background:rgba(148,163,184,.04); color:#b0baca; cursor:pointer;
+            font-size:.75rem; font-family:inherit; display:flex; align-items:center; justify-content:center;
+            transition:all .15s;
+        }
+        .svc-qty button:hover { background:rgba(59,130,246,.1); border-color:rgba(59,130,246,.15); color:var(--blue); }
+        .svc-qty .sq-num { min-width:20px; text-align:center; font-size:.8rem; font-weight:600; color:#fff; }
+
+        /* ── MONTHLY PLANS ── */
+        .plans-section { margin-bottom:1.5rem; }
+        .plans-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.7rem; }
+        .plan-card {
+            background:rgba(8,12,24,.65);
+            backdrop-filter:blur(8px);
+            border:1px solid rgba(148,163,184,.08); border-radius:16px;
+            padding:1.2rem 1rem 1rem; text-align:center; position:relative;
+            transition:all .35s cubic-bezier(.16,1,.3,1);
+        }
+        .plan-card:hover { transform:translateY(-4px); border-color:rgba(59,130,246,.15); box-shadow:0 12px 40px rgba(0,0,0,.3); }
+        .plan-card.popular {
+            transform:scale(1.05); z-index:2;
+        }
+        .plan-card.popular:hover { transform:scale(1.05) translateY(-4px); }
+        .plan-card .p-badge {
+            position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+            font-size:.58rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+            background:linear-gradient(135deg,var(--blue),#2563eb); color:#fff;
+            padding:.15rem .6rem; border-radius:20px; white-space:nowrap;
+            z-index:3;
+        }
+        .plan-card .p-sub-badge {
+            font-size:.56rem; font-weight:700; color:#22c55e;
+            background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.15);
+            padding:.08rem .45rem; border-radius:20px; display:inline-block;
+            margin-top:.25rem; letter-spacing:.03em;
+        }
+        .plan-card .p-savings-pct { display:none; }
+        .plan-card .p-savings-hero { display:none; }
+        .plan-card .p-savings-sub { display:none; }
+        .plan-card .p-savings { display:none; }
+        .plan-card .p-label { font-size:.65rem; color:#8899aa; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:.35rem; font-weight:500; }
+        .plan-card .p-name { font-weight:700; font-size:1.1rem; }
+        .plan-card .p-price { font-weight:700; font-size:1.8rem; color:#fff; margin:.1rem 0 0; line-height:1.2; }
+        .plan-card .p-price span { font-size:.7rem; font-weight:400; color:#99aabb; }
+        .plan-card .p-price-row { display:flex; align-items:center; justify-content:center; gap:.5rem; margin:.2rem 0 .15rem; flex-wrap:wrap; }
+        .plan-card .p-old-price { font-size:.8rem; color:#8899aa; text-decoration:line-through; }
+        .plan-card .p-save-tag {
+            font-size:.65rem; font-weight:700; color:#22c55e;
+            background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.15);
+            padding:.08rem .45rem; border-radius:20px; white-space:nowrap;
+        }
+        .plan-card .p-perunit {
+            font-size:.68rem; color:#8899aa; margin:.05rem 0 .4rem;
+        }
+        .plan-card .p-perunit span { color:#8a9aae; }
+        .plan-card .p-features { list-style:none; text-align:left; margin:0 0 .8rem; }
+        .plan-card .p-features li {
+            font-size:.75rem; color:#b0baca; padding:.2rem 0 .2rem 1.2rem;
+            position:relative; line-height:1.5;
+        }
+        .plan-card .p-features li::before { content:'✓'; position:absolute; left:0; color:var(--blue); font-weight:700; }
+        .plan-card .p-btn {
+            display:block; width:100%; padding:.45rem 0; border-radius:8px;
+            font-size:.78rem; font-weight:600; font-family:inherit; cursor:pointer; border:none;
+            background:rgba(59,130,246,.1); color:var(--blue); transition:all .25s; text-decoration:none;
+            text-align:center;
+        }
+        .plan-card .p-btn:hover { background:rgba(59,130,246,.2); filter:brightness(1.08); }
+        .plan-card.popular .p-btn { background:rgba(59,130,246,.15); }
+        .plan-card.applied { border-color:rgba(34,197,94,.2); box-shadow:inset 0 0 0 1px rgba(34,197,94,.15); }
+        .plan-card.applied .p-btn { background:rgba(34,197,94,.12); color:#22c55e; cursor:default; }
+
+        /* ── Plan examples grid ── */
+        .p-examples { display:grid; grid-template-columns:repeat(3,1fr); gap:.3rem; margin:.5rem 0 .6rem; }
+        .p-example {
+            border-radius:8px; overflow:hidden; cursor:pointer; position:relative;
+            background:#0a1322; border:1px solid rgba(148,163,184,.08);
+            transition:border-color .2s,transform .2s; aspect-ratio:16/9;
+            min-height:52px;
+        }
+        .p-example:hover { border-color:var(--blue); transform:scale(1.04); }
+        .p-example video, .p-example img {
+            position:absolute; inset:0; width:100%; height:100%;
+            object-fit:cover; display:block;
+        }
+        .p-example video { pointer-events:none; }
+        .pex-overlay {
+            position:absolute; inset:0;
+            display:flex; align-items:center; justify-content:center;
+            opacity:0; transition:opacity .2s;
+            background:rgba(0,0,0,.1);
+        }
+        .p-example:hover .pex-overlay { opacity:1; }
+        .pex-icon-wrap {
+            width:28px; height:28px; border-radius:50%;
+            background:rgba(0,0,0,.55); backdrop-filter:blur(4px);
+            display:flex; align-items:center; justify-content:center;
+            color:#fff; transition:transform .2s;
+        }
+        .p-example:hover .pex-icon-wrap { transform:scale(1.1); }
+        .pex-icon-wrap svg { width:12px; height:12px; }
+        .pex-duration {
+            position:absolute; top:3px; right:3px;
+            font-size:.45rem; font-weight:600; color:#fff;
+            background:rgba(0,0,0,.6); padding:1px 4px; border-radius:3px;
+            line-height:1.2; display:none;
+        }
+        .pex-duration.visible { display:block; }
+        .pex-label {
+            position:absolute; bottom:0; left:0; right:0;
+            font-size:.48rem; padding:.2rem .25rem .18rem;
+            background:linear-gradient(transparent,rgba(0,0,0,.75));
+            color:#d0d8e0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+            line-height:1.3;
+        }
+        .p-examples-btn {
+            font-size:.6rem; font-weight:600; color:#8899aa; cursor:pointer; background:none; border:none;
+            font-family:inherit; padding:.2rem 0; margin-bottom:.3rem; display:inline-flex; align-items:center; gap:.2rem;
+            transition:color .2s;
+        }
+        .p-examples-btn:hover { color:var(--blue); }
+        .p-examples-btn svg { width:12px; height:12px; }
+
+        /* ── Plan glow borders ── */
+        .plan-card[data-plan="starter"] {
+            border-color: rgba(255,255,255,.25);
+            box-shadow: 0 0 25px rgba(255,255,255,.15), 0 0 50px rgba(255,255,255,.06);
+        }
+        .plan-card[data-plan="starter"]:hover {
+            border-color: rgba(255,255,255,.5);
+            box-shadow: 0 0 40px rgba(255,255,255,.25), 0 0 80px rgba(255,255,255,.1), 0 12px 40px rgba(0,0,0,.3);
+        }
+        .plan-card[data-plan="starter"].applied {
+            border-color: rgba(255,255,255,.5);
+            box-shadow: 0 0 35px rgba(255,255,255,.25), inset 0 0 0 1px rgba(255,255,255,.15);
+        }
+
+        @keyframes growthGlow {
+            0%   { border-color: #ff0040; box-shadow: 0 0 25px rgba(255,0,64,.2), 0 0 50px rgba(255,0,64,.08); }
+            14%  { border-color: #ff8800; box-shadow: 0 0 25px rgba(255,136,0,.2), 0 0 50px rgba(255,136,0,.08); }
+            28%  { border-color: #88ff00; box-shadow: 0 0 25px rgba(136,255,0,.2), 0 0 50px rgba(136,255,0,.08); }
+            42%  { border-color: #00ff88; box-shadow: 0 0 25px rgba(0,255,136,.2), 0 0 50px rgba(0,255,136,.08); }
+            57%  { border-color: #00aaff; box-shadow: 0 0 25px rgba(0,170,255,.2), 0 0 50px rgba(0,170,255,.08); }
+            71%  { border-color: #6644ff; box-shadow: 0 0 25px rgba(102,68,255,.2), 0 0 50px rgba(102,68,255,.08); }
+            85%  { border-color: #ff00aa; box-shadow: 0 0 25px rgba(255,0,170,.2), 0 0 50px rgba(255,0,170,.08); }
+            100% { border-color: #ff0040; box-shadow: 0 0 25px rgba(255,0,64,.2), 0 0 50px rgba(255,0,64,.08); }
+        }
+        .plan-card[data-plan="growth"] {
+            border-color: rgba(255,0,64,.2);
+            animation: growthGlow 3s linear infinite;
+        }
+        .plan-card[data-plan="growth"]:hover {
+            border-color: rgba(255,0,64,.35);
+            box-shadow: 0 0 35px rgba(255,0,64,.25), 0 12px 40px rgba(0,0,0,.3);
+        }
+        .plan-card[data-plan="growth"].applied {
+            box-shadow: 0 0 30px rgba(255,0,64,.25), inset 0 0 0 1px rgba(255,0,64,.15);
+        }
+
+        .plan-card[data-plan="pro"] {
+            border-color: rgba(255,215,0,.3);
+            box-shadow: 0 0 25px rgba(255,215,0,.18), 0 0 50px rgba(255,215,0,.08);
+        }
+        .plan-card[data-plan="pro"]:hover {
+            border-color: rgba(255,215,0,.5);
+            box-shadow: 0 0 45px rgba(255,215,0,.3), 0 0 80px rgba(255,215,0,.12), 0 12px 40px rgba(0,0,0,.3);
+        }
+        .plan-card[data-plan="pro"].applied {
+            border-color: rgba(255,215,0,.5);
+            box-shadow: 0 0 40px rgba(255,215,0,.3), inset 0 0 0 1px rgba(255,215,0,.2);
+        }
+
+        .plan-card .p-price-row { display:flex; align-items:baseline; justify-content:center; gap:.5rem; flex-wrap:wrap; margin:.15rem 0; }
+        .plan-card .p-old-price { font-size:.85rem; color:#99aabb; text-decoration:line-through; }
+        .plan-card .p-savings {
+            display:inline-block; font-size:.62rem; font-weight:700;
+            background:rgba(34,197,94,.12); color:#22c55e;
+            padding:.1rem .45rem; border-radius:20px; white-space:nowrap;
+        }
+        .plan-card .p-perunit { font-size:.68rem; color:#8899aa; margin:.1rem 0 .4rem; }
+        .plan-card .p-perunit span { color:#8a9aae; }
+        .plan-card .p-compare {
+            font-size:.65rem; color:#7a8a9e; margin-top:.6rem; padding:.35rem .5rem;
+            background:rgba(59,130,246,.06); border-radius:8px; line-height:1.4;
+        }
+        .plan-card .p-compare strong { color:var(--blue); }
+
+        .svc-loss-frame {
+            font-size:.73rem; color:#8899aa; line-height:1.5; margin:0 0 -.4rem; padding:.65rem .75rem;
+            background:linear-gradient(135deg,rgba(34,197,94,.04),rgba(59,130,246,.04));
+            border-radius:10px; border:1px solid rgba(148,163,184,.06);
+        }
+        .svc-loss-frame strong { color:#b0baca; }
+        .svc-loss-frame .lf-green { color:#22c55e; font-weight:600; }
+        .savings-badge { display:inline-block; background:#22c55e; color:#0a0a0f; font-size:.65rem; font-weight:700; padding:.1rem .35rem; border-radius:4px; margin-left:.25rem; vertical-align:middle; }
+        .svc-hint {
+            font-size:.72rem; color:#8899aa; margin:.5rem 0 .2rem; padding:.5rem .65rem;
+            background:rgba(251,191,36,.06); border:1px solid rgba(251,191,36,.1);
+            border-radius:8px; line-height:1.5; display:none; text-align:center;
+        }
+        .svc-hint.visible { display:block; }
+        .svc-hint .hint-badge {
+            font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+            color:#f59e0b; margin-bottom:.15rem;
+        }
+        .svc-hint .hint-name { font-weight:700; font-size:.85rem; color:#f0f4f8; }
+        .svc-hint .hint-price { font-weight:700; font-size:1.2rem; color:#fff; margin:.1rem 0; }
+        .svc-hint .hint-price span { font-size:.6rem; font-weight:400; color:#8899aa; }
+        .svc-hint .hint-save { color:#22c55e; font-size:.75rem; }
+        .svc-hint .hint-save strong { color:#22c55e; font-weight:700; }
+        .svc-hint .hint-old { font-size:.6rem; color:#8899aa; text-decoration:line-through; }
+
+        /* ── BOOKING CALENDAR ── */
+        .cal-overlay {
+            position:fixed; inset:0; z-index:600;
+            background:rgba(6,10,22,.92); backdrop-filter:blur(16px);
+            display:flex; align-items:center; justify-content:center;
+            padding:1.5rem; opacity:0; pointer-events:none;
+            transition:opacity .35s;
+        }
+        .cal-overlay.open { opacity:1; pointer-events:auto; }
+        .cal-card {
+            background:linear-gradient(145deg,#1a2440,#141d30);
+            border:1px solid rgba(148,163,184,.1); border-radius:20px;
+            padding:1.5rem; max-width:460px; width:100%; max-height:90vh;
+            overflow-y:auto;
+        }
+        .cal-card .cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+        .cal-card .cal-title { font-weight:700; font-size:1rem; }
+        .cal-card .cal-close {
+            width:30px; height:30px; border-radius:8px; border:1px solid rgba(148,163,184,.12);
+            background:transparent; color:#b0baca; cursor:pointer; font-size:1rem;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .cal-card .cal-close:hover { background:rgba(148,163,184,.08); color:#fff; }
+        .cal-confirm-row { margin-top:1rem; display:flex; gap:.5rem; justify-content:flex-end; align-items:center; }
+        .cal-btn {
+            padding:.4rem 1rem; border-radius:8px; font-size:.75rem; font-weight:600;
+            font-family:inherit; cursor:pointer; border:none; transition:all .2s;
+        }
+        .cal-btn.primary { background:var(--blue); color:#fff; }
+        .cal-btn.primary:hover { filter:brightness(1.15); }
+        .cal-btn.primary:disabled { opacity:.3; cursor:default; filter:none; }
+        .cal-btn.secondary { background:rgba(148,163,184,.08); color:#b0baca; }
+        .cal-btn.secondary:hover { background:rgba(148,163,184,.14); }
+
+        /* ── LIGHTBOX ── */
+        .lb-overlay {
+            position:fixed; inset:0; z-index:700;
+            background:rgba(0,0,0,.92); backdrop-filter:blur(20px);
+            display:flex; align-items:center; justify-content:center;
+            padding:1.5rem; opacity:0; pointer-events:none;
+            transition:opacity .3s;
+        }
+        .lb-overlay.open { opacity:1; pointer-events:auto; }
+        .lb-close {
+            position:absolute; top:1rem; right:1rem; z-index:2;
+            width:36px; height:36px; border-radius:50%; border:none;
+            background:rgba(255,255,255,.08); color:#fff; cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            transition:background .2s; font-size:1.1rem;
+        }
+        .lb-close:hover { background:rgba(255,255,255,.16); }
+        .lb-nav {
+            position:absolute; top:50%; transform:translateY(-50%); z-index:2;
+            width:36px; height:36px; border-radius:50%; border:none;
+            background:rgba(255,255,255,.06); color:#fff; cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            transition:background .2s; opacity:0;
+        }
+        .lb-overlay:hover .lb-nav { opacity:1; }
+        .lb-nav:hover { background:rgba(255,255,255,.14); }
+        .lb-nav.lb-prev { left:1rem; }
+        .lb-nav.lb-next { right:1rem; }
+        .lb-body {
+            max-width:90vw; max-height:85vh; position:relative;
+            display:flex; flex-direction:column; align-items:center;
+            animation:lbIn .3s cubic-bezier(.16,1,.3,1);
+        }
+        @keyframes lbIn { from { opacity:0; transform:scale(.93); } to { opacity:1; transform:scale(1); } }
+        .lb-body video, .lb-body img {
+            max-width:100%; max-height:80vh; border-radius:12px;
+            box-shadow:0 20px 60px rgba(0,0,0,.5); display:block;
+        }
+        .lb-body video { width:100%; background:#000; }
+        .lb-info {
+            text-align:center; margin-top:.8rem; color:#b0baca;
+            font-size:.8rem;
+        }
+        .lb-info strong { color:#e2e8f0; }
+
+        /* ── TIMELINE ── */
+        .cal-tl-summary { font-size:.78rem; margin-bottom:.8rem; line-height:1.5; }
+        .cal-tl-summary strong { color:var(--blue); }
+        .cal-tl { display:flex; flex-direction:column; gap:3px; }
+        .cal-tl-day {
+            display:flex; align-items:center; gap:.4rem; padding:.35rem .5rem;
+            border-radius:8px; font-size:.72rem; background:rgba(148,163,184,.03);
+        }
+        .cal-tl-day .tl-date { min-width:105px; color:#b0baca; font-weight:500; }
+        .cal-tl-day .tl-bar-wrap { flex:1; height:6px; background:rgba(148,163,184,.06); border-radius:4px; overflow:hidden; }
+        .cal-tl-day .tl-bar { height:100%; border-radius:4px; transition:width .4s; }
+        .cal-tl-day .tl-hours { min-width:48px; text-align:right; color:#8899aa; font-size:.65rem; }
+        .cal-tl-day.tl-active { background:rgba(59,130,246,.06); }
+        .cal-tl-day.tl-active .tl-date { color:var(--blue); }
+        .cal-tl-day.tl-done { background:rgba(34,197,94,.04); }
+        .cal-tl-day.tl-done .tl-date { color:#22c55e; }
+        .cal-tl-day.tl-done .tl-bar { background:#22c55e; }
+        .cal-tl-day.tl-last { background:rgba(34,197,94,.08); }
+        .cal-tl-day.tl-last .tl-date { color:#22c55e; font-weight:700; }
+        .cal-tl-day.tl-last .tl-bar { background:linear-gradient(90deg,#22c55e,var(--blue)); }
+        .cal-tl-empty { font-size:.72rem; color:#8899aa; text-align:center; padding:1rem 0; line-height:1.5; }
+        .cal-tl-empty a { color:var(--blue); }
+
+        /* ── ADMIN PANEL ── */
+        .admin-overlay {
+            position:fixed; inset:0; z-index:700;
+            background:rgba(6,10,22,.96); backdrop-filter:blur(20px);
+            display:flex; align-items:center; justify-content:center;
+            padding:1.5rem; opacity:0; pointer-events:none;
+            transition:opacity .4s; overflow-y:auto;
+        }
+        .admin-overlay.open { opacity:1; pointer-events:auto; }
+        .admin-card {
+            background:linear-gradient(145deg,#1a2440,#141d30);
+            border:1px solid rgba(148,163,184,.1); border-radius:20px;
+            padding:1.5rem; max-width:700px; width:100%; max-height:90vh; overflow-y:auto;
+        }
+        .admin-card .ad-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+        .admin-card .ad-title { font-weight:700; font-size:1rem; }
+        .admin-card .ad-login { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+        .admin-card .ad-login input {
+            background:rgba(148,163,184,.06); border:1px solid rgba(148,163,184,.1);
+            border-radius:8px; padding:.35rem .6rem; font-size:.75rem; color:#fff;
+            font-family:inherit; outline:none; width:140px;
+        }
+        .admin-card .ad-login input:focus { border-color:rgba(59,130,246,.3); }
+        .admin-card .ad-content { display:none; }
+        .admin-card .ad-content.open { display:block; }
+        .admin-card .ad-section { margin-bottom:1.2rem; }
+        .admin-card .ad-section h3 { font-size:.8rem; font-weight:600; color:#b0baca; margin-bottom:.5rem; }
+        .admin-card .ad-table { width:100%; border-collapse:collapse; font-size:.72rem; }
+        .admin-card .ad-table th { text-align:left; color:#8899aa; font-weight:600; padding:.3rem .4rem; border-bottom:1px solid rgba(148,163,184,.06); }
+        .admin-card .ad-table td { padding:.3rem .4rem; border-bottom:1px solid rgba(148,163,184,.04); }
+        .admin-card .ad-table .ad-cancelled { text-decoration:line-through; opacity:.4; }
+        .admin-card .ad-table .ad-status { font-size:.6rem; padding:.08rem .35rem; border-radius:4px; }
+        .admin-card .ad-table .ad-status.confirmed { background:rgba(34,197,94,.1); color:#22c55e; }
+        .admin-card .ad-table .ad-status.cancelled { background:rgba(239,68,68,.1); color:#ef4444; }
+        .admin-card .ad-block-row { display:flex; gap:.4rem; align-items:center; flex-wrap:wrap; margin-bottom:.4rem; }
+        .admin-card .ad-block-row input, .admin-card .ad-block-row select {
+            background:rgba(148,163,184,.06); border:1px solid rgba(148,163,184,.1);
+            border-radius:6px; padding:.25rem .45rem; font-size:.72rem; color:#fff;
+            font-family:inherit; outline:none;
+        }
+        .admin-card .ad-block-row input:focus { border-color:rgba(59,130,246,.3); }
+        .admin-btn {
+            padding:.25rem .65rem; border-radius:6px; font-size:.68rem; font-weight:600;
+            font-family:inherit; cursor:pointer; border:none; transition:all .2s;
+        }
+        .admin-btn.danger { background:rgba(239,68,68,.12); color:#ef4444; }
+        .admin-btn.danger:hover { background:rgba(239,68,68,.2); }
+        .admin-btn.primary { background:var(--blue); color:#fff; }
+        .admin-btn.primary:hover { filter:brightness(1.15); }
+        .admin-btn.secondary { background:rgba(148,163,184,.08); color:#b0baca; }
+        .admin-btn.secondary:hover { background:rgba(148,163,184,.14); }
+        .admin-btn:disabled { opacity:.3; cursor:default; }
+        #ad-ov-list > div > div:hover { background:rgba(148,163,184,.08) !important; }
+
+        /* ── TERMS ── */
+        .terms-section { margin-top:1.5rem; border-top:1px solid rgba(148,163,184,.06); padding-top:1rem; }
+        .terms-section .t-title {
+            font-size:.85rem; font-weight:700; color:#e2e8f0; text-transform:uppercase; letter-spacing:.04em;
+            cursor:pointer; display:flex; align-items:center; justify-content:space-between;
+            padding:.2rem 0; user-select:none;
+        }
+        .terms-section .t-title .t-arrow { font-size:.6rem; color:#8899aa; transition:transform .25s; }
+        .terms-section .t-title.open .t-arrow { transform:rotate(180deg); }
+        .terms-section .t-body { display:none; margin-top:.5rem; }
+        .terms-section .t-body.open { display:block; }
+        .terms-section .t-item { margin-bottom:.25rem; }
+        .terms-section .t-trigger {
+            width:100%; display:flex; justify-content:space-between; align-items:center;
+            background:none; border:none; color:#99aabb; font-size:.72rem; font-weight:500;
+            font-family:inherit; cursor:pointer; padding:.3rem 0; text-align:left;
+            transition:color .2s;
+        }
+        .terms-section .t-trigger:hover { color:#b0baca; }
+        .terms-section .t-trigger .tarr { font-size:.55rem; transition:transform .25s; }
+        .terms-section .t-item.open .t-trigger .tarr { transform:rotate(180deg); }
+        .terms-section .t-content {
+            max-height:0; overflow:hidden; transition:max-height .3s ease;
+            font-size:.7rem; color:#e2e8f0; line-height:1.6;
+            background:rgba(0,0,0,.3); border-radius:8px; padding:0 .65rem;
+        }
+        .terms-section .t-item.open .t-content { max-height:120px; padding:.5rem .65rem; }
+
+        /* ── RIGHT COLUMN ── */
+        .project-col {
+            width:420px; min-width:420px;
+            padding:1.5rem 1.5rem 1.5rem;
+            background:rgba(14,21,34,.6);
+            border-left:1px solid rgba(148,163,184,.06);
+            overflow-y:auto;
+            position:sticky; top:53px; height:calc(100vh - 53px);
+            display:flex; flex-direction:column;
+        }
+        .proposal {
+            flex:1; display:flex; flex-direction:column;
+            background:rgba(16,24,39,.4); border:1px solid rgba(148,163,184,.06);
+            border-radius:18px; padding:1.2rem 1.2rem 1rem;
+            box-shadow:0 4px 30px rgba(0,0,0,.15);
+        }
+
+        .proposal-header { border-bottom:1px solid rgba(148,163,184,.06); padding-bottom:.7rem; margin-bottom:.7rem; }
+        .proposal-header .p-title-row {
+            display:flex; align-items:center; justify-content:space-between; margin-bottom:.1rem;
+        }
+        .proposal-header .p-title {
+            font-size:.7rem; text-transform:uppercase; letter-spacing:.06em;
+            color:#8899aa; font-weight:600;
+        }
+        .p-header-actions { display:flex; gap:.15rem; }
+        .p-header-actions button {
+            background:none; border:none; width:20px; height:20px; border-radius:4px;
+            color:#8899aa; cursor:pointer; display:flex; align-items:center; justify-content:center;
+            transition:color .2s,background .2s; font-size:.6rem;
+        }
+        .p-header-actions button:hover { color:#b0baca; background:rgba(148,163,184,.08); }
+        .p-header-actions button:disabled { opacity:.2; cursor:default; background:none; }
+        .p-reset-btn {
+            background:none; border:none; color:#8899aa; font-size:.65rem;
+            font-weight:500; font-family:inherit; cursor:pointer;
+            padding:.1rem .3rem; border-radius:4px; transition:color .2s,background .2s;
+            display:none; line-height:1;
+        }
+        .p-reset-btn:hover { color:#ef4444; background:rgba(239,68,68,.08); }
+        .p-reset-btn.visible { display:inline; }
+        .proposal-header .p-name {
+            width:100%; background:none; border:none; color:#fff;
+            font-size:1.05rem; font-weight:700; font-family:inherit;
+            outline:none; padding:.1rem 0; transition:border-color .2s;
+        }
+        .proposal-header .p-name::placeholder { color:rgba(255,255,255,.2); }
+        .proposal-header .p-name:focus { border-bottom:1px solid rgba(59,130,246,.15); }
+
+        .proposal-body { flex:1; overflow-y:auto; }
+
+        .p-empty {
+            text-align:center; padding:2.5rem 1rem; color:#8899aa; font-size:.82rem; line-height:1.6;
+        }
+        .p-empty svg { width:32px; height:32px; color:rgba(148,163,184,.15); margin-bottom:.5rem; }
+        .p-group-hdr {
+            font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+            color:#5a6a7e; padding:.4rem .3rem .2rem; margin-top:.2rem;
+            border-bottom:1px solid rgba(148,163,184,.04);
+        }
+        .p-group-hdr:first-child { margin-top:0; padding-top:0; }
+
+        /* ── PROJECT ITEM ── */
+        .p-item {
+            border-radius:12px; margin-bottom:.5rem; overflow:hidden;
+            animation:pItemIn .35s cubic-bezier(.16,1,.3,1);
+            background:rgba(148,163,184,.02); position:relative;
+        }
+        .p-item::before {
+            content:''; position:absolute; left:0; top:2px; bottom:2px; width:3px;
+            border-radius:0 3px 3px 0;
+            background:var(--p-accent,var(--blue)); opacity:.5;
+            transition:opacity .3s;
+        }
+        .p-item:hover::before { opacity:1; }
+        @keyframes pItemIn {
+            from { opacity:0; transform:translateY(8px); }
+            to { opacity:1; transform:translateY(0); }
+        }
+        .p-item.removing { animation:pItemOut .28s ease forwards; }
+        @keyframes pItemOut {
+            to { opacity:0; transform:scale(.95); max-height:0; margin-bottom:0; border-width:0; padding:0; overflow:hidden; }
+        }
+
+        .p-item-main {
+            display:flex; align-items:center; gap:.5rem;
+            padding:.4rem .6rem .4rem .5rem; cursor:pointer;
+        }
+        .p-item-main .pi-preview {
+            width:30px; height:30px; border-radius:8px; flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;
+            color:#fff;
+        }
+        .p-item-main .pi-preview svg { width:14px; height:14px; }
+        .p-item-main .pi-info { flex:1; min-width:0; }
+        .p-item-main .pi-name { font-weight:600; font-size:.78rem; }
+        .p-item-main .pi-config { font-size:.66rem; color:#8899aa; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .p-item-main .pi-price { font-size:.78rem; font-weight:600; color:var(--blue); white-space:nowrap; }
+        .p-item-main .pi-price.pi-included { color:#22c55e; font-size:.7rem; font-weight:500; }
+        .p-item-main .pi-toggle { font-size:.6rem; color:#8899aa; transition:transform .25s; }
+        .p-item-main .pi-toggle.open { transform:rotate(180deg); }
+
+        .p-item-options {
+            display:none; padding:0 .6rem .5rem .5rem;
+            border-top:1px solid rgba(148,163,184,.04); padding-top:.4rem;
+        }
+        .p-item-options.open { display:block; }
+        .p-item-options .po-actions { display:flex; gap:.25rem; margin-bottom:.4rem; flex-wrap:wrap; }
+        .p-item-options .po-actions button {
+            background:rgba(148,163,184,.05); border:none; color:#99aabb;
+            padding:.15rem .5rem; border-radius:5px; font-size:.66rem; font-weight:500;
+            cursor:pointer; font-family:inherit; transition:all .2s;
+        }
+        .p-item-options .po-actions button:hover { background:rgba(148,163,184,.1); color:#b0baca; }
+        .p-item-options .po-actions .po-del:hover { background:rgba(239,68,68,.12); color:#ef4444; }
+        .p-item-options .po-actions .po-move { font-size:.7rem; }
+
+        .po-opt-group { margin-bottom:.35rem; }
+        .po-opt-group .po-label { font-size:.63rem; font-weight:600; color:#8899aa; text-transform:uppercase; letter-spacing:.04em; margin-bottom:.2rem; }
+        .po-opt-group .po-choices { display:flex; flex-wrap:wrap; gap:.2rem; }
+        .po-choice {
+            padding:.2rem .45rem; border-radius:5px; font-size:.66rem; font-weight:500;
+            font-family:inherit; background:rgba(148,163,184,.04); border:1px solid rgba(148,163,184,.06);
+            color:#99aabb; cursor:pointer; transition:all .2s; text-align:center;
+        }
+        .po-choice:hover { background:rgba(148,163,184,.08); border-color:rgba(148,163,184,.1); color:#b0baca; }
+        .po-choice.selected {
+            background:rgba(59,130,246,.12); border-color:var(--blue); color:#fff;
+        }
+
+        /* ── TEMPLATES ── */
+        .tmpl-bar {
+            display:none; margin-bottom:.5rem; padding:.35rem .5rem;
+            background:rgba(148,163,184,.03); border:1px solid rgba(148,163,184,.06);
+            border-radius:8px; gap:.3rem; align-items:center; flex-wrap:wrap;
+        }
+        .tmpl-bar.visible { display:flex; }
+        .tmpl-bar .tmpl-label { font-size:.62rem; color:#8899aa; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+        .tmpl-bar select {
+            flex:1; min-width:80px; background:rgba(11,19,36,.5); border:1px solid rgba(148,163,184,.08);
+            border-radius:5px; color:#b0baca; font-size:.68rem; font-family:inherit;
+            padding:.15rem .25rem; outline:none; cursor:pointer;
+        }
+        .tmpl-bar button {
+            background:rgba(148,163,184,.05); border:none; color:#99aabb;
+            padding:.15rem .45rem; border-radius:5px; font-size:.65rem; font-weight:500;
+            cursor:pointer; font-family:inherit; transition:all .2s; white-space:nowrap;
+        }
+        .tmpl-bar button:hover { background:rgba(148,163,184,.1); color:#b0baca; }
+        .tmpl-bar .tmpl-del:hover { background:rgba(239,68,68,.12); color:#ef4444; }
+
+        /* ── PROPOSAL FOOTER ── */
+        .proposal-footer { border-top:1px solid rgba(148,163,184,.06); padding-top:.6rem; margin-top:.5rem; }
+        .p-notes {
+            width:100%; background:rgba(148,163,184,.03); border:1px solid rgba(148,163,184,.06);
+            border-radius:8px; padding:.4rem .6rem; font-size:.73rem; font-family:inherit;
+            color:#b0baca; resize:none; outline:none; transition:border-color .2s;
+        }
+        .p-notes:focus { border-color:rgba(59,130,246,.15); }
+        .p-notes::placeholder { color:#8899aa; }
+
+        .p-delivery {
+            display:flex; align-items:center; gap:.35rem;
+            font-size:.7rem; color:#8899aa; margin:.3rem 0;
+        }
+        .p-delivery svg { width:13px; height:13px; flex-shrink:0; }
+        .p-delivery strong { color:#22c55e; font-weight:600; }
+        .p-cal-row { display:flex; align-items:center; gap:.35rem; font-size:.7rem; color:#8899aa; margin:.3rem 0; }
+        .p-cal-btn {
+            background:rgba(59,130,246,.08); border:1px solid rgba(59,130,246,.12);
+            color:var(--blue); padding:.2rem .6rem; border-radius:6px; font-size:.65rem;
+            font-weight:600; font-family:inherit; cursor:pointer; transition:all .2s;
+        }
+        .p-cal-btn:hover { background:rgba(59,130,246,.16); }
+        .p-selected-date { display:none; font-size:.65rem; color:#8899aa; line-height:1.3; }
+
+        .p-total-wrap {
+            background:linear-gradient(135deg,rgba(59,130,246,.06),rgba(37,99,235,.03));
+            border:1px solid rgba(59,130,246,.08); border-radius:10px;
+            padding:.5rem .7rem; margin:.35rem 0 .5rem;
+        }
+        .p-total-row { display:flex; justify-content:space-between; align-items:center; }
+        .p-total-row .pt-label { font-weight:600; font-size:.78rem; color:#b0baca; }
+        .p-total-row .pt-value { font-weight:800; font-size:1.15rem; color:var(--blue); font-variant-numeric:tabular-nums; }
+        .p-total-row .pt-value.counting { opacity:.7; }
+
+        .p-actions-row { display:flex; gap:.4rem; }
+        .p-actions-row button {
+            flex:1; padding:.5rem 0; border-radius:10px; font-weight:700;
+            font-size:.8rem; font-family:inherit; cursor:pointer; transition:all .25s; border:none;
+        }
+        .p-cta {
+            background:linear-gradient(135deg,var(--blue),#2563eb);
+            color:#fff; box-shadow:0 4px 25px rgba(59,130,246,.25);
+        }
+        .p-cta:hover { transform:translateY(-2px); box-shadow:0 8px 35px rgba(59,130,246,.4); filter:brightness(1.08); }
+        .p-print {
+            background:rgba(148,163,184,.06); color:#99aabb; border:1px solid rgba(148,163,184,.08) !important;
+        }
+        .p-print:hover { background:rgba(148,163,184,.1); color:#b0baca; }
+
+        /* ── TIMELINE (vertical) ── */
+        .timeline { position:relative; padding:0 0 .3rem; }
+        .timeline::before {
+            content:''; position:absolute; left:11px; top:14px; bottom:14px;
+            width:2px; background:rgba(148,163,184,.08); border-radius:1px;
+        }
+        .tl-node { position:relative; padding:0 0 .6rem 2.2rem; }
+        .tl-node:last-child { padding-bottom:0; }
+        .tl-dot {
+            position:absolute; left:0; top:3px; width:24px; height:24px;
+            border-radius:50%; display:flex; align-items:center; justify-content:center;
+            border:2px solid; z-index:1; background:#0e1522;
+        }
+        .tl-dot svg { width:12px; height:12px; }
+        .tl-dot.tl-dot-today {
+            border-color:var(--blue); color:var(--blue);
+            box-shadow:0 0 12px rgba(59,130,246,.15);
+        }
+        .tl-dot.tl-dot-service { border-color:rgba(148,163,184,.15); color:#8899aa; }
+        .tl-dot.tl-dot-delivery {
+            border-color:#22c55e; color:#22c55e;
+            box-shadow:0 0 12px rgba(34,197,94,.15);
+        }
+        .tl-title { font-size:.78rem; font-weight:600; color:#e2e8f0; }
+        .tl-qty { color:#8899aa; font-weight:500; margin-left:.15rem; }
+        .tl-sub { font-size:.64rem; color:#8899aa; margin-top:1px; }
+        .tl-sub strong { color:#b0baca; font-weight:500; }
+        .tl-hours { font-size:.6rem; color:#5a6a7e; margin-top:1px; }
+
+        .tl-opts { display:none; margin-top:.35rem; border-top:1px solid rgba(148,163,184,.06); padding-top:.3rem; }
+        .tl-opts.open { display:block; }
+        .tl-opt-row { padding:.25rem 0; border-bottom:1px solid rgba(148,163,184,.03); }
+        .tl-opt-row:last-child { border-bottom:none; }
+        .tl-opt-hdr { display:flex; align-items:center; gap:.3rem; font-size:.65rem; color:#8899aa; margin-bottom:.2rem; }
+        .tl-opt-hdr .tl-opt-n { color:#5a6a7e; font-weight:600; min-width:1rem; }
+        .tl-opt-hdr .tl-opt-config { flex:1; color:#8899aa; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .tl-opt-del {
+            background:none; border:none; color:#5a6a7e; font-size:.6rem; font-weight:500;
+            font-family:inherit; cursor:pointer; padding:.1rem .3rem; border-radius:3px; transition:all .2s;
+        }
+        .tl-opt-del:hover { color:#ef4444; background:rgba(239,68,68,.08); }
+        .tl-opt-group { margin-bottom:.2rem; }
+        .tl-opt-group .tl-opt-label { font-size:.6rem; font-weight:600; color:#5a6a7e; text-transform:uppercase; letter-spacing:.03em; margin-bottom:.15rem; }
+        .tl-opt-group .tl-opt-choices { display:flex; flex-wrap:wrap; gap:.15rem; }
+        .tl-opt-choice {
+            padding:.15rem .4rem; border-radius:4px; font-size:.62rem; font-weight:500;
+            font-family:inherit; background:rgba(148,163,184,.04); border:1px solid rgba(148,163,184,.06);
+            color:#99aabb; cursor:pointer; transition:all .2s; text-align:center;
+        }
+        .tl-opt-choice:hover { background:rgba(148,163,184,.08); border-color:rgba(148,163,184,.1); color:#b0baca; }
+        .tl-opt-choice.selected { background:rgba(59,130,246,.12); border-color:var(--blue); color:#fff; }
+
+        .plan-ribbon {
+            background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(139,92,246,.06));
+            border:1px solid rgba(59,130,246,.12); border-radius:10px;
+            padding:.4rem .6rem; margin-bottom:.6rem;
+        }
+        .plan-ribbon .pr-name { font-size:.78rem; font-weight:600; color:var(--blue); }
+        .plan-ribbon .pr-sub { font-size:.65rem; color:#8899aa; margin-top:1px; }
+        .plan-ribbon .pr-price {
+            font-size:.68rem; color:#b0baca; margin-top:2px;
+            display:flex; gap:.25rem; align-items:center; flex-wrap:wrap;
+        }
+        .plan-ribbon .pr-price strong { color:var(--blue); }
+        .plan-ribbon .pr-price .pr-old { color:#5a6a7e; text-decoration:line-through; }
+        .plan-ribbon .pr-price .pr-save { color:#22c55e; font-weight:600; }
+
+        .tl-title { font-size:.78rem; font-weight:600; color:#e2e8f0; cursor:pointer; display:flex; align-items:center; gap:.25rem; }
+        .tl-title:hover { color:#fff; }
+        .tl-title.tl-title-open { color:var(--blue); }
+        .tl-rm {
+            margin-left:auto; cursor:pointer; font-size:.55rem; color:#5a6a7e;
+            opacity:0; transition:opacity .2s,color .2s; line-height:1; padding:2px 3px; border-radius:3px;
+        }
+        .tl-node:hover .tl-rm { opacity:1; }
+        .tl-rm:hover { color:#ef4444; background:rgba(239,68,68,.1); }
+        .tl-qty { color:#8899aa; font-weight:500; margin-left:.15rem; }
+
+        /* ── QUOTE OVERLAY ── */
+        .q-overlay {
+            display:none; position:fixed; inset:0; z-index:200;
+            background:rgba(0,0,0,.6); backdrop-filter:blur(6px);
+            align-items:center; justify-content:center; padding:1rem;
+        }
+        .q-overlay.open { display:flex; }
+        .q-card {
+            background:#172033; border:1px solid rgba(148,163,184,.12);
+            border-radius:18px; padding:1.8rem; max-width:520px; width:100%;
+            box-shadow:0 30px 80px rgba(0,0,0,.5);
+            animation:qIn .3s cubic-bezier(.16,1,.3,1);
+        }
+        @keyframes qIn { from { opacity:0; transform:scale(.95) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+        .q-card h2 { font-weight:700; font-size:1rem; margin-bottom:.05rem; }
+        .q-card .q-sub { font-size:.75rem; color:#8899aa; margin-bottom:.7rem; }
+        .q-card .q-body {
+            background:rgba(11,19,36,.5); border:1px solid rgba(148,163,184,.06);
+            border-radius:10px; padding:.8rem; font-size:.75rem; color:#b0baca;
+            line-height:1.6; white-space:pre-wrap; font-family:'Inter',sans-serif;
+            margin-bottom:.7rem; user-select:all; max-height:260px; overflow-y:auto;
+        }
+        .q-actions { display:flex; gap:.4rem; flex-wrap:wrap; }
+        .q-actions button {
+            flex:1; min-width:100px; padding:.45rem .7rem; border-radius:8px;
+            font-size:.75rem; font-weight:500; cursor:pointer; transition:all .2s;
+            font-family:inherit; border:none;
+        }
+        .q-copy { background:var(--blue); color:#fff; }
+        .q-copy:hover { background:#2563eb; }
+        .q-wa { background:#25D366; color:#fff; }
+        .q-wa:hover { background:#1da851; }
+        .q-mail { background:rgba(148,163,184,.08); color:#b0baca; }
+        .q-mail:hover { background:rgba(148,163,184,.14); color:#fff; }
+        .q-form { background:rgba(59,130,246,.08); color:var(--blue); border:1px solid rgba(59,130,246,.12) !important; }
+        .q-form:hover { background:rgba(59,130,246,.16); }
+        .q-close { background:rgba(148,163,184,.04); color:#8899aa; }
+        .q-close:hover { background:rgba(148,163,184,.1); color:#b0baca; }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width:4px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:rgba(148,163,184,.08); border-radius:10px; }
+
+        /* ── PRINT ── */
+        @media print {
+            body { background:#fff !important; color:#000 !important; background-image:none !important; }
+            .builder-header, .welcome-overlay, .services-col,
+            .q-overlay, .p-item-options, .po-actions, .p-print,
+            .close-btn, .hint, .p-reset-btn, .p-header-actions, .p-cal-btn, .p-selected-date, .cal-overlay, .admin-overlay, .svc-qty { display:none !important; }
+            .builder { display:block !important; min-height:auto !important; }
+            .project-col {
+                width:100% !important; min-width:0 !important; position:static !important;
+                height:auto !important; border:none !important; padding:1.5rem !important;
+                background:none !important;
+            }
+            .proposal { border:none !important; box-shadow:none !important; padding:0 !important; background:none !important; }
+            .proposal-header { border-bottom-color:#ddd !important; }
+            .proposal-header .p-name { color:#000 !important; }
+            .p-item { border:1px solid #ddd !important; background:#f8f8f8 !important; }
+            .p-item::before { display:none !important; }
+            .p-item-main { cursor:default !important; }
+            .p-item-main .pi-price { color:#2563eb !important; }
+            .p-empty { color:#999 !important; }
+            .p-total-wrap { background:#f0f4ff !important; border-color:#2563eb !important; }
+            .p-total-row .pt-value { color:#2563eb !important; }
+            .p-delivery strong { color:#22c55e !important; }
+            .p-cta { background:#2563eb !important; color:#fff !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+            .p-notes { border-color:#ddd !important; color:#333 !important; }
+            .po-choice.selected { background:#2563eb !important; color:#fff !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+            .po-opt-group { margin-bottom:.2rem !important; }
+            .tmpl-bar { display:none !important; }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media(max-width:920px) {
+            .builder { flex-direction:column; }
+            .project-col {
+                width:100%; min-width:0; position:static; height:auto;
+                border-left:none; border-top:1px solid rgba(148,163,184,.06);
+            }
+            .services-col { padding:1.2rem 1rem; }
+            .project-col { padding:1.2rem 1rem; }
+            .plans-grid { grid-template-columns:repeat(2,1fr); }
+        }
+        @media(max-width:560px) {
+            .service-grid { grid-template-columns:1fr; }
+            .w-options { grid-template-columns:1fr; }
+            .builder-header .hint { display:none; }
+            .welcome-card { padding:1.5rem 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="builder-header">
+        <div class="left">
+            <h1>Project <span>Builder</span>
+                <svg class="hd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+            </h1>
+        </div>
+        <span class="hint">Diseña tu proyecto paso a paso</span>
+        <span style="display:flex;align-items:center;gap:.3rem">
+            <a href="#" onclick="event.preventDefault();openAdmin()" style="font-size:.6rem;color:#3a4a5e;text-decoration:none">admin</a>
+            <a href="index.html" class="close-btn">✕</a>
+        </span>
+    </header>
+
+    <!-- WELCOME OVERLAY -->
+    <div class="welcome-overlay" id="welcome-overlay">
+        <div class="welcome-card">
+            <div class="w-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                Project Builder
+            </div>
+            <div class="w-sub">Diseña tu proyecto en 3 pasos</div>
+            <div class="w-step-indicator" id="w-dots">
+                <div class="w-step-dot active"></div>
+                <div class="w-step-dot"></div>
+                <div class="w-step-dot"></div>
+            </div>
+            <div id="w-step-container"></div>
+            <div class="w-nav">
+                <button class="w-back" id="w-back" style="visibility:hidden">Atrás</button>
+                <button class="w-next" id="w-next">Siguiente</button>
+                <button class="w-skip" id="w-skip">Saltar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BUILDER -->
+    <div class="builder">
+        <div class="services-col">
+            <div class="sc-title">Planes Mensuales</div>
+            <div class="sc-sub">Ahorra más mientras creces</div>
+            <div class="plans-section">
+                <div class="plans-grid" id="plans-grid"></div>
+            </div>
+            <div class="sg-title">Servicios Individuales</div>
+            <div class="svc-hint" id="svc-hint"></div>
+            <div class="svc-loss-frame" id="svc-loss-frame"></div>
+            <div class="service-grid" id="service-grid"></div>
+            <div class="terms-section" id="terms-section">
+                <div class="t-title" onclick="this.classList.toggle('open');document.getElementById('terms-body').classList.toggle('open')">
+                    Términos de Servicio <span class="t-arrow">▼</span>
+                </div>
+                <div class="t-body" id="terms-body">
+                    <div class="t-item"><button class="t-trigger" onclick="this.parentElement.classList.toggle('open')">Comunicación <span class="tarr">▼</span></button><div class="t-content"><p>Toda la comunicación del proyecto se realizará a través del medio acordado (Discord, correo electrónico o WhatsApp). Se recomienda mantener una comunicación clara para evitar retrasos.</p></div></div>
+                    <div class="t-item"><button class="t-trigger" onclick="this.parentElement.classList.toggle('open')">Revisiones <span class="tarr">▼</span></button><div class="t-content"><p>Todos los servicios incluyen las revisiones especificadas en cada plan. Las revisiones contemplan ajustes y mejoras; un cambio completo de concepto puede considerarse un nuevo proyecto.</p></div></div>
+                    <div class="t-item"><button class="t-trigger" onclick="this.parentElement.classList.toggle('open')">Tiempos de entrega <span class="tarr">▼</span></button><div class="t-content"><p>Los tiempos de entrega comienzan una vez recibido todo el material necesario. Los tiempos pueden variar según la complejidad del proyecto.</p></div></div>
+                    <div class="t-item"><button class="t-trigger" onclick="this.parentElement.classList.toggle('open')">Material proporcionado <span class="tarr">▼</span></button><div class="t-content"><p>El cliente es responsable de contar con los derechos de uso del material enviado. No se aceptará material que infrinja derechos de autor.</p></div></div>
+                    <div class="t-item"><button class="t-trigger" onclick="this.parentElement.classList.toggle('open')">Pagos <span class="tarr">▼</span></button><div class="t-content"><p>Los proyectos comienzan únicamente después de confirmar el pago o el anticipo acordado. Los pagos no son reembolsables una vez iniciada la edición.</p></div></div>
+                    <div class="t-item"><button class="t-trigger" onclick="this.parentElement.classList.toggle('open')">Cancelaciones <span class="tarr">▼</span></button><div class="t-content"><p>Si un proyecto es cancelado después de haber iniciado, se cobrará el trabajo realizado hasta ese momento.</p></div></div>
+                    <div class="t-item"><button class="t-trigger" onclick="this.parentElement.classList.toggle('open')">Entregas <span class="tarr">▼</span></button><div class="t-content"><p>Los archivos finales se entregarán en el formato acordado. Los archivos editables no están incluidos, salvo que se acuerde previamente.</p></div></div>
+                    <div class="t-item"><button class="t-trigger" onclick="this.parentElement.classList.toggle('open')">Disponibilidad <span class="tarr">▼</span></button><div class="t-content"><p>Los clientes con planes mensuales tienen prioridad sobre proyectos individuales. Los tiempos de respuesta pueden variar durante fines de semana o días festivos.</p></div></div>
+                    <div class="t-item"><button class="t-trigger" onclick="this.parentElement.classList.toggle('open')">Calidad del servicio <span class="tarr">▼</span></button><div class="t-content"><p>Cada proyecto recibe el mismo nivel de atención y calidad, independientemente de su tamaño o presupuesto.</p></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="project-col" id="project-col">
+            <div class="proposal">
+                <div class="proposal-header">
+                    <div class="p-title-row">
+                        <div class="p-title">Propuesta de Proyecto</div>
+                        <div class="p-header-actions">
+                            <button onclick="undo()" id="undo-btn" title="Deshacer (Ctrl+Z)">↩</button>
+                            <button onclick="redo()" id="redo-btn" title="Rehacer (Ctrl+Shift+Z)">↪</button>
+                            <button class="p-reset-btn" id="p-reset-btn" onclick="resetProject()">Limpiar</button>
+                        </div>
+                    </div>
+                    <input class="p-name" id="p-name" placeholder="Nombre de tu proyecto" value="Mi Proyecto Creativo">
+                </div>
+                <div class="tmpl-bar" id="tmpl-bar">
+                    <span class="tmpl-label">Plantilla:</span>
+                    <select id="tmpl-select"></select>
+                    <button onclick="saveTemplate()">Guardar</button>
+                    <button class="tmpl-del" onclick="delTemplate()">Eliminar</button>
+                </div>
+                <div class="proposal-body" id="proposal-body">
+                    <div class="p-empty" id="p-empty">
+                        Selecciona un paquete o agrega servicios para empezar.
+                    </div>
+                </div>
+                <div class="proposal-footer" id="proposal-footer" style="display:none">
+                    <textarea class="p-notes" id="p-notes" rows="1" placeholder="Agrega cualquier detalle o requisito especial..."></textarea>
+                    <div class="p-delivery" id="p-delivery">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        <span id="p-delivery-text">Entrega estimada: <strong>&mdash;</strong></span>
+                    </div>
+                    <div class="p-cal-row">
+                        <button class="p-cal-btn" onclick="openCalendar()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Seleccionar Fecha</button>
+                        <span class="p-selected-date" id="p-selected-date"></span>
+                    </div>
+                    <div class="p-total-wrap">
+                        <div class="p-total-row">
+                            <span class="pt-label">Total estimado</span>
+                            <span class="pt-value" id="p-total">$0</span>
+                        </div>
+                    </div>
+                    <div class="p-actions-row">
+                        <button class="p-cta" id="p-cta">Solicitar Cotización</button>
+                        <button class="p-print" onclick="window.print()">Imprimir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUOTE OVERLAY -->
+    <div class="q-overlay" id="q-overlay">
+        <div class="q-card">
+            <h2>Tu Cotización</h2>
+            <div class="q-sub">Copia el mensaje o envíalo directamente</div>
+            <div class="q-body" id="q-body"></div>
+            <div class="q-actions">
+                <button class="q-copy" onclick="copyQuote()">Copiar</button>
+                <button class="q-wa" onclick="sendWA()">WhatsApp</button>
+                <button class="q-mail" onclick="sendMail()">Correo</button>
+                <button class="q-form" onclick="sendToContact()">Formulario</button>
+                <button class="q-close" onclick="closeQuote()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX (examples viewer) -->
+    <div class="lb-overlay" id="lb-overlay" onclick="if(event.target===this)closeLightbox()">
+        <button class="lb-close" onclick="closeLightbox()">✕</button>
+        <button class="lb-nav lb-prev" id="lb-prev" onclick="event.stopPropagation();lightboxNav(-1)">‹</button>
+        <button class="lb-nav lb-next" id="lb-next" onclick="event.stopPropagation();lightboxNav(1)">›</button>
+        <div class="lb-body" id="lb-body"></div>
+    </div>
+
+    <!-- CALENDAR OVERLAY -->
+    <div class="cal-overlay" id="cal-overlay">
+        <div class="cal-card">
+            <div class="cal-header">
+                <div class="cal-title">Cronograma de Entrega</div>
+                <button class="cal-close" onclick="closeCalendar()">✕</button>
+            </div>
+            <div id="cal-body"></div>
+            <div class="cal-confirm-row" id="cal-confirm-row" style="display:none">
+                <button class="cal-btn secondary" onclick="closeCalendar()">Cancelar</button>
+                <button class="cal-btn primary" id="cal-confirm-btn" onclick="confirmCalendarDate()">Confirmar Fecha</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN OVERLAY -->
+    <div class="admin-overlay" id="admin-overlay">
+        <div class="admin-card">
+            <div class="ad-hdr">
+                <div class="ad-title"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33"/><path d="M15 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06"/><path d="M4.6 15a1.65 1.65 0 0 0-.33 1.82l-.06.06a2 2 0 1 0 2.83 2.83l.06-.06"/><path d="M9 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06"/></svg> Admin · Reservas</div>
+                <div class="ad-login" id="ad-login">
+                    <input type="password" id="ad-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')adminAuth()">
+                    <button class="admin-btn primary" onclick="adminAuth()">Ingresar</button>
+                </div>
+                <button class="cal-close" onclick="document.getElementById('admin-overlay').classList.remove('open')">✕</button>
+            </div>
+            <div class="ad-content" id="ad-content">
+                <div class="ad-section">
+                    <h3>Próximas Reservas</h3>
+                    <table class="ad-table"><thead><tr><th>Fecha</th><th>Servicios</th><th>Horas</th><th>Cliente</th><th>Estado</th><th></th></tr></thead><tbody id="ad-bookings-body"></tbody></table>
+                </div>
+                <div class="ad-section">
+                    <h3>Gestionar Días</h3>
+                    <div class="ad-block-row">
+                        <input type="date" id="ad-ov-date">
+                        <input type="number" id="ad-ov-hours" placeholder="Horas" step="0.5" min="0" style="width:80px">
+                        <button class="admin-btn primary" onclick="adminSetOverride()">Aplicar</button>
+                        <button class="admin-btn secondary" onclick="document.getElementById('ad-ov-hours').value='0';adminSetOverride()">Bloquear día</button>
+                    </div>
+                    <div style="font-size:.65rem;color:#8899aa;margin:.3rem 0" id="ad-ov-status"></div>
+                    <div id="ad-ov-list"></div>
+                    <div style="margin-top:.5rem;display:flex;gap:.4rem;flex-wrap:wrap">
+                        <button class="admin-btn secondary" onclick="adminClearAllOverrides()" id="ad-clear-btn" style="display:none;color:#ef4444;background:rgba(239,68,68,.08)">Limpiar todos los ajustes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── SVG Icons ──
+        const ICONS = {
+            video: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 3l14 9-14 9V3z"/></svg>',
+            gaming: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>',
+            shorts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M10 9l5 3-5 3V9z"/></svg>',
+            thumbnail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="10" r="2.5"/><path d="M2 16l5-5 2.5 2.5L13 10l9 9"/></svg>',
+            branding: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="15" cy="9" r="1.5" fill="currentColor"/><path d="M12 12l-2 7"/></svg>',
+        };
+
+        const ACCENTS = {
+            'video-editing':'#3B82F6','gaming-editing':'#8B5CF6','shorts-editing':'#2cbab2',
+            'thumbnail-design':'#EC4899','channel-branding':'#F59E0B',
+        };
+
+        // ── PLANS ──
+        const PLANS = [
+            { id:'starter', name:'Starter Creator', label:'Getting Started', badge:'', price:119,
+              videoCount:2, thumbCount:2, shortCount:0,
+              features:['2 Edited Videos (5-10 min)','2 Custom Thumbnails','48-Hour Delivery','Unlimited Revisions'],
+              examples:[
+                { type:'video', title:'Avance de Edición', file:'./assets/assets_tarjetas/avance_starter.mp4', desc:'Edición básica con transiciones y corrección de color' },
+                { type:'thumbnail', title:'Miniatura', file:'./assets/assets_tarjetas/thumbnail_starter.png', desc:'Diseño simple de alto impacto' },
+              ], services:[
+                {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'10min',level:'basic',thumbnail:'no',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+              ], btn:'Get Started' },
+            { id:'growth', name:'Growth Pack', label:'Consistent Growth', badge:'RECOMENDADO', price:299,
+              videoCount:4, thumbCount:4, shortCount:2,
+              features:['4 Edited Videos (10-20 min)','4 Custom Thumbnails','2 Shorts','Priority Workflow','Direct Communication','Unlimited Revisions'],
+              examples:[
+                { type:'video', title:'Avance de Edición', file:'./assets/assets_tarjetas/avance_growth.mp4', desc:'Edición estándar con efectos, transiciones y SFX' },
+                { type:'shorts', title:'Short', file:'./assets/assets_tarjetas/short_growth.mp4', desc:'Edición rápida para Shorts y Reels' },
+                { type:'thumbnail', title:'Miniatura', file:'./assets/assets_tarjetas/thumbnail_growth.png', desc:'Diseño con tipografía y jerarquía visual' },
+              ], services:[
+                {id:'gaming-editing',opts:{duration:'20min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'20min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+              ], btn:'Get Started' },
+            { id:'pro', name:'Creator Partner', label:'Dedicated Partner', badge:'', price:549,
+              videoCount:8, thumbCount:8, shortCount:4,
+              features:['8 Edited Videos (>20 min)','8 Custom Thumbnails','4 Shorts','Highest Priority','Direct Communication','Unlimited Revisions','YouTube Branding Support*'],
+              examples:[
+                { type:'video', title:'Avance de Edición', file:'./assets/assets_tarjetas/avance_partner.mp4', desc:'Edición premium con narrativa, color grading y motion' },
+                { type:'shorts', title:'Short', file:'./assets/assets_tarjetas/short_partner.mp4', desc:'Edición avanzada con gráficos animados' },
+                { type:'thumbnail', title:'Miniatura', file:'./assets/assets_tarjetas/thumbnail_partner.jpg', desc:'Diseño profesional con branding integrado' },
+              ], services:[
+                {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'gaming-editing',opts:{duration:'30min',level:'standard',thumbnail:'yes','thumb-qty':'1',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'shorts-editing',opts:{quantity:'1',thumbnail:'yes',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+                {id:'thumbnail-design',opts:{quantity:'1',delivery:'standard'}},
+              ], btn:'Get Started' },
+        ];
+
+        // ── SERVICE DEFINITIONS ──
+        const SERVICES = [
+            { id:'video-editing',name:'Video Editing',icon:'video',desc:'Edición profesional para YouTube, vlogs y contenido informativo.',basePrice:50,baseTime:3,accent:'#3B82F6',
+                options:[
+                    {key:'duration',label:'Duración',choices:[{l:'<5 min',v:'5min',p:0,t:0},{l:'5-10 min',v:'10min',p:15,t:1},{l:'10-20 min',v:'20min',p:25,t:2},{l:'>20 min',v:'30min',p:50,t:3}]},
+                    {key:'level',label:'Nivel',choices:[{l:'Básico',v:'basic',p:0,t:0},{l:'Estándar',v:'standard',p:20,t:1},{l:'Premium',v:'premium',p:40,t:2}]},
+                    {key:'thumbnail',label:'Miniatura',choices:[{l:'Incluir',v:'yes',p:10,t:1},{l:'No',v:'no',p:0,t:0}]},
+                    {key:'thumb-qty',label:'Cant. miniaturas',depends:{key:'thumbnail',val:'yes'},choices:[{l:'1',v:'1',p:0,t:0},{l:'3',v:'3',p:5,t:1},{l:'5',v:'5',p:10,t:1}]},
+                    {key:'delivery',label:'Entrega',choices:[{l:'Standard 3d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}]},
+                ]},
+            { id:'gaming-editing',name:'Gaming Editing',icon:'gaming',desc:'Perfecto para gameplays, highlights y contenido de gaming.',basePrice:50,baseTime:3,accent:'#8B5CF6',
+                options:[
+                    {key:'duration',label:'Duración',choices:[{l:'<5 min',v:'5min',p:0,t:0},{l:'5-10 min',v:'10min',p:15,t:1},{l:'10-20 min',v:'20min',p:25,t:2},{l:'>20 min',v:'30min',p:50,t:3}]},
+                    {key:'level',label:'Nivel',choices:[{l:'Básico',v:'basic',p:0,t:0},{l:'Estándar',v:'standard',p:20,t:1},{l:'Premium',v:'premium',p:40,t:2}]},
+                    {key:'thumbnail',label:'Miniatura',choices:[{l:'Incluir',v:'yes',p:10,t:1},{l:'No',v:'no',p:0,t:0}]},
+                    {key:'thumb-qty',label:'Cant. miniaturas',depends:{key:'thumbnail',val:'yes'},choices:[{l:'1',v:'1',p:0,t:0},{l:'3',v:'3',p:5,t:1},{l:'5',v:'5',p:10,t:1}]},
+                    {key:'delivery',label:'Entrega',choices:[{l:'Standard 3d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}]},
+                ]},
+            { id:'shorts-editing',name:'Shorts Editing',icon:'shorts',desc:'Edición dinámica para Shorts, Reels y TikTok.',basePrice:10,baseTime:2,accent:'#2cbab2',
+                options:[
+                    {key:'quantity',label:'Cantidad',choices:[{l:'1',v:'1',p:10,t:0},{l:'2',v:'2',p:20,t:0},{l:'3',v:'3',p:30,t:1},{l:'5',v:'5',p:50,t:1},{l:'10',v:'10',p:100,t:2}]},
+                    {key:'level',label:'Nivel',choices:[{l:'Básico',v:'basic',p:0,t:0},{l:'Estándar',v:'standard',p:10,t:1},{l:'Premium',v:'premium',p:20,t:2}]},
+                    {key:'thumbnail',label:'Miniatura',choices:[{l:'Incluir',v:'yes',p:5,t:1},{l:'No',v:'no',p:0,t:0}]},
+                    {key:'delivery',label:'Entrega',choices:[{l:'Standard 2d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}]},
+                ]},
+            { id:'thumbnail-design',name:'Thumbnail Design',icon:'thumbnail',desc:'Miniaturas profesionales diseñadas para alto CTR.',basePrice:10,baseTime:2,accent:'#EC4899',
+                options:[
+                    {key:'quantity',label:'Cantidad',choices:[{l:'1',v:'1',p:10,t:0},{l:'3 Variantes',v:'3',p:25,t:1},{l:'5',v:'5',p:40,t:1}]},
+                    {key:'delivery',label:'Entrega',choices:[{l:'Standard 2d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}]},
+                ]},
+            { id:'channel-branding',name:'Channel Branding',icon:'branding',desc:'Identidad visual completa: banner, logo, paleta de colores.',basePrice:120,baseTime:5,accent:'#F59E0B',
+                options:[
+                    {key:'delivery',label:'Entrega',choices:[{l:'Standard 5d',v:'standard',p:0,t:0},{l:'Priority +50%',v:'priority',p:null,t:0}]},
+                ]},
+        ];
+
+        // ── SUPABASE ──
+        // 1. Create a Supabase project at https://supabase.com
+        // 2. Run the SQL from supabase_schema.sql in the SQL Editor
+        // 3. Copy your anon key and project URL here:
+        const SUPABASE_URL = 'https://udoweummgspppeslqnhk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkb3dldW1tZ3NwcHBlc2xxbmhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NDcxMDQsImV4cCI6MjA5ODAyMzEwNH0.QhBdphmwW_t3XtyYVghimtUhf9mIYdIQ1bsdKGi0GnI';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Admin password (change this!)
+        const ADMIN_PASS = 'dude3d-admin-2026';
+
+        // Service hours lookup
+        const SERVICE_HOURS = {
+            'video-editing': 2.5, 'gaming-editing': 2.0,
+            'shorts-editing': 0.75, 'thumbnail-design': 0.6, 'channel-branding': 5.0,
+        };
+
+        // ── CALENDAR STATE ──
+
+        // ── CALENDAR AVAILABILITY ──
+        function getWeekday(date) { return date.getDay(); }
+        function toDateStr(date) { return date.toISOString().slice(0,10); }
+        function addDays(date, n) { const d = new Date(date); d.setDate(d.getDate()+n); return d; }
+
+        async function fetchCalendarData_() {
+            const today = new Date(); today.setHours(0,0,0,0);
+            const end = addDays(today, 28);
+            const s = toDateStr(today), e = toDateStr(end);
+
+            const [capRes, ovRes, shRes, bkRes] = await Promise.all([
+                _supabase.from('weekly_capacity').select('*'),
+                _supabase.from('day_overrides').select('*').gte('date', s).lte('date', e),
+                _supabase.from('service_hours').select('*'),
+                _supabase.from('bookings').select('*').gte('booking_date', s).lte('booking_date', e).in('status', ['confirmed','rescheduled']),
+            ]);
+            if (capRes.error) { console.error('supabase weekly_capacity error', capRes.error); return null; }
+            if (ovRes.error) console.error('supabase day_overrides error', ovRes.error);
+            if (shRes.error) console.error('supabase service_hours error', shRes.error);
+            if (bkRes.error) console.error('supabase bookings error', bkRes.error);
+
+            const weekly = {};
+            (capRes.data || []).forEach(r => weekly[r.day_of_week] = r.hours);
+
+            const overrides = {};
+            (ovRes.data || []).forEach(r => overrides[r.date] = r.hours);
+
+            const serviceHoursMap = {};
+            (shRes.data || []).forEach(r => serviceHoursMap[r.service_id] = r.hours);
+
+            const bookingsByDate = {};
+            (bkRes.data || []).forEach(r => {
+                if (!bookingsByDate[r.booking_date]) bookingsByDate[r.booking_date] = 0;
+                bookingsByDate[r.booking_date] += Number(r.hours_used);
+            });
+
+            return { weekly, overrides, serviceHoursMap, bookingsByDate, today, end };
+        }
+
+        // ── REFRESH CALENDAR CACHE ──
+        async function refreshCalendarData() {
+            const data = await fetchCalendarData_();
+            if (data) {
+                _calData = data;
+                renderAll();
+            }
+        }
+
+        // ── SCHEDULE COMPUTATION ──
+        function computeSchedule() {
+            if (project.length===0) return { groups:[], finalDay:0, totalBusinessDays:0 };
+
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const cutoffHour = 17;
+            const offset = now.getHours()>=cutoffHour ? 1 : 0;
+
+            // Group consecutive same serviceId items
+            const groups = [];
+            let cur = null;
+            project.forEach((e,i)=>{
+                const s = getSvc(e.serviceId);
+                if (!s) return;
+                const r = calcItem(i);
+                const hrs = r.time;
+                if (cur && cur.serviceId===e.serviceId) { cur.hours+=hrs; cur.qty++; cur.indices.push(i); }
+                else { cur = { serviceId:e.serviceId, name:s.name, accent:s.accent, qty:1, hours:hrs, indices:[i] }; groups.push(cur); }
+            });
+
+            let dayIdx = offset;
+            groups.forEach(g => {
+                let rem = g.hours;
+                let started = false;
+                while (rem > 0.001) {
+                    const d = addDays(today, dayIdx);
+                    const dow = d.getDay();
+
+                    if (dow===0 || dow===6) { dayIdx++; continue; }
+
+                    if (!started) { g.dateStart = dayIdx; started = true; }
+                    const consume = Math.min(rem, 1);
+                    rem -= consume;
+                    g.dateEnd = dayIdx;
+                    dayIdx++;
+                }
+                if (!started) { g.dateStart = dayIdx; g.dateEnd = dayIdx; dayIdx++; }
+            });
+
+            return { groups, finalDay: dayIdx, totalBusinessDays: dayIdx - offset };
+        }
+
+        // ── SERVICE HOURS NEEDED ──
+        function calcHoursNeeded(services) {
+            let total = 0;
+            services.forEach(e => {
+                const sid = e.serviceId || e.id;
+                const h = SERVICE_HOURS[sid] || SERVICE_HOURS[getSvc(sid)?.id] || 2;
+                total += h;
+            });
+            return Math.round(total * 100) / 100;
+        }
+
+        function getProjectServices() {
+            if (appliedPlan) {
+                const p = PLANS.find(x => x.id === appliedPlan);
+                if (p) return p.services;
+                return [];
+            }
+            return project;
+        }
+
+        // ── DELIVERY DATE CALCULATOR ──
+        // Counts business days forward based on calcTotal().maxTime
+        function calcBusinessDays() {
+            const total = calcTotal();
+            return total.maxTime || 0;
+        }
+
+        async function calculateDeliveryDate() {
+            const data = await fetchCalendarData_();
+            if (!data) { alert('Error al conectar con la base de datos. Verifica las credenciales de Supabase.'); return; }
+
+            const businessDays = calcBusinessDays();
+            if (businessDays <= 0) return null;
+
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const cutoffHour = 17;
+            const offset = now.getHours() >= cutoffHour ? 1 : 0;
+
+            const days = [];
+            let counted = 0;
+
+            for (let i = offset; i < 90 && counted < businessDays; i++) {
+                const d = addDays(today, i);
+                const dateStr = toDateStr(d);
+                const dow = d.getDay();
+                const baseCap = data.overrides[dateStr] !== undefined ? data.overrides[dateStr] : (data.weekly[dow] || 2);
+                const usedHrs = data.bookingsByDate[dateStr] || 0;
+                const available = Math.round((baseCap - usedHrs) * 100) / 100;
+
+                if (dow === 0 || dow === 6) {
+                    days.push({ dateStr, dow, available, used: 0, status: 'weekend' });
+                    continue;
+                }
+                if (data.overrides[dateStr] === 0 || available <= 0) {
+                    days.push({ dateStr, dow, available, used: 0, status: 'blocked' });
+                    continue;
+                }
+
+                const consume = Math.min(businessDays - counted, 1);
+                counted += consume;
+                days.push({ dateStr, dow, available, used: consume, status: 'work' });
+            }
+
+            const deliveryDate = counted >= businessDays && days.length > 0 ? days[days.length - 1].dateStr : null;
+            return { businessDays, days, deliveryDate, canDeliver: !!deliveryDate };
+        }
+
+        async function openCalendar() {
+            const result = await calculateDeliveryDate();
+            if (!result) return;
+
+            document.getElementById('cal-overlay').classList.add('open');
+
+            if (!result.canDeliver) {
+                document.getElementById('cal-body').innerHTML = `
+                    <div class="cal-tl-empty">
+                        No hay suficiente capacidad disponible en los próximos 60 días para completar este pedido.<br>
+                        <a href="contacto.html" target="_blank" rel="noopener">Contáctame directamente</a> para coordinar una entrega personalizada.
+                    </div>`;
+                document.getElementById('cal-confirm-row').style.display = 'none';
+                return;
+            }
+
+            const bDays = result.businessDays;
+            const totalWorkDays = result.days.filter(d => d.status === 'work').length;
+            const dateObj = new Date(result.deliveryDate + 'T12:00:00');
+            const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const formattedDate = dateObj.toLocaleDateString('es-ES', opts);
+
+            let tlHtml = `<div class="cal-tl-summary">
+                <strong>${bDays} día${bDays !== 1 ? 's' : ''} hábil${bDays !== 1 ? 'es' : ''}</strong> de trabajo · ${totalWorkDays} día${totalWorkDays !== 1 ? 's' : ''} calendario · Entrega: <strong>${formattedDate}</strong>
+            </div><div class="cal-tl">`;
+
+            let cumulative = 0;
+            result.days.forEach(d => {
+                if (d.status !== 'work') return;
+                cumulative += d.used;
+                const pct = Math.min(100, (cumulative / bDays) * 100);
+                const dayOpts = { weekday: 'short', day: 'numeric', month: 'short' };
+                const label = new Date(d.dateStr + 'T12:00:00').toLocaleDateString('es-ES', dayOpts);
+                const isLast = cumulative >= bDays;
+                const barColor = isLast ? 'linear-gradient(90deg,#22c55e,var(--blue))' : '#3B82F6';
+                tlHtml += `<div class="cal-tl-day ${isLast ? 'tl-last' : 'tl-active'}">
+                    <span class="tl-date">${label}</span>
+                    <div class="tl-bar-wrap"><div class="tl-bar" style="width:${pct}%;background:${barColor}"></div></div>
+                    <span class="tl-hours">${d.available}h disp.</span>
+                </div>`;
+            });
+
+            tlHtml += '</div>';
+
+            document.getElementById('cal-body').innerHTML = tlHtml;
+            window._pendingDelivery = result.deliveryDate;
+            document.getElementById('cal-confirm-row').style.display = 'flex';
+            document.getElementById('cal-confirm-btn').disabled = false;
+        }
+
+        window.openCalendar = openCalendar;
+        window.closeCalendar = function() {
+            document.getElementById('cal-overlay').classList.remove('open');
+            window._pendingDelivery = null;
+        };
+
+        window.confirmCalendarDate = function() {
+            const date = window._pendingDelivery;
+            if (!date) return;
+            window.selectedDeliveryDate = date;
+
+            const el = document.getElementById('p-selected-date');
+            if (el) {
+                const dateObj = new Date(date + 'T12:00:00');
+                const opts = { weekday: 'long', day: 'numeric', month: 'long' };
+                el.textContent = 'Entrega: ' + dateObj.toLocaleDateString('es-ES', opts);
+                el.style.display = 'block';
+            }
+            closeCalendar();
+        };
+
+        // ── BOOKING ON QUOTE CONFIRM ──
+        async function createBooking() {
+            const services = getProjectServices();
+            if (!services.length) return null;
+            const neededHours = calcHoursNeeded(services);
+            const date = window.selectedDeliveryDate;
+            if (!date) return null;
+
+            const serviceIds = services.map(s => s.serviceId || s.id);
+            const orderId = 'D3D-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,5).toUpperCase();
+
+            const { data, error } = await _supabase.from('bookings').insert({
+                booking_date: date,
+                service_ids: serviceIds,
+                hours_used: neededHours,
+                project_name: document.getElementById('p-name')?.value || 'Proyecto',
+                order_id: orderId,
+                status: 'confirmed',
+                notes: document.getElementById('p-notes')?.value || '',
+            }).select().single();
+
+            if (error) {
+                console.error('Error creating booking:', error);
+                return null;
+            }
+            return { orderId, booking: data };
+        }
+
+        // ── ADMIN ──
+        let adminAuthed = false;
+
+        window.adminAuth = function() {
+            const pass = document.getElementById('ad-pass').value;
+            if (pass !== ADMIN_PASS) { alert('Contraseña incorrecta'); return; }
+            adminAuthed = true;
+            document.getElementById('ad-login').style.display = 'none';
+            document.getElementById('ad-content').classList.add('open');
+            loadAdminBookings();
+            loadAdminOverrides();
+        };
+
+        async function loadAdminBookings() {
+            const { data, error } = await _supabase.from('bookings')
+                .select('*').gte('booking_date', toDateStr(new Date()))
+                .order('booking_date', { ascending: true }).limit(50);
+            if (error) { console.error(error); return; }
+
+            const body = document.getElementById('ad-bookings-body');
+            if (!data || !data.length) { body.innerHTML = '<tr><td colspan="6" style="color:#8899aa;text-align:center">Sin reservas próximas</td></tr>'; return; }
+
+            body.innerHTML = data.map(b => {
+                const cls = b.status === 'cancelled' ? 'ad-cancelled' : '';
+                return `<tr class="${cls}">
+                    <td>${b.booking_date}</td>
+                    <td style="font-size:.65rem">${(b.service_ids||[]).join(', ')}</td>
+                    <td>${b.hours_used}h</td>
+                    <td>${b.client_name||b.client_email||'—'}</td>
+                    <td><span class="ad-status ${b.status}">${b.status}</span></td>
+                    <td>
+                        ${b.status !== 'cancelled' ? `<button class="admin-btn danger" onclick="adminCancelBooking(${b.id})">Cancelar</button>` : ''}
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        window.adminCancelBooking = async function(id) {
+            if (!confirm('¿Cancelar esta reserva?')) return;
+            const { error } = await _supabase.from('bookings').update({ status:'cancelled', updated_at: new Date().toISOString() }).eq('id', id);
+            if (error) { alert('Error: '+error.message); return; }
+            loadAdminBookings();
+        };
+
+        async function loadAdminOverrides() {
+            const today = toDateStr(new Date());
+            const end = toDateStr(addDays(new Date(), 60));
+            const { data, error } = await _supabase.from('day_overrides').select('*').gte('date', today).lte('date', end).order('date');
+            if (error) { console.error(error); return; }
+            const el = document.getElementById('ad-ov-list');
+            const clearBtn = document.getElementById('ad-clear-btn');
+            if (!data || !data.length) {
+                el.innerHTML = '<div style="font-size:.65rem;color:#8899aa">Sin ajustes activos.</div>';
+                clearBtn.style.display = 'none';
+                return;
+            }
+            clearBtn.style.display = 'inline-block';
+            el.innerHTML = '<div style="display:flex;flex-direction:column;gap:3px;margin-top:4px">' +
+                data.map(o => {
+                    const isBlocked = o.hours === 0;
+                    return `<div style="display:flex;align-items:center;gap:4px;font-size:.68rem;padding:2px 4px;border-radius:4px;${isBlocked?'background:rgba(239,68,68,.06)':'background:rgba(148,163,184,.04)'}">
+                        <span style="min-width:90px;color:#b0baca">${o.date}</span>
+                        <span style="font-weight:600;${isBlocked?'color:#ef4444':'color:var(--blue)'}">${o.hours}h</span>
+                        ${o.reason?`<span style="color:#8899aa;font-size:.6rem">${o.reason}</span>`:''}
+                        <button onclick="adminEditOverride('${o.date}',${o.hours})" style="background:none;border:none;color:#8899aa;cursor:pointer;font-size:.6rem;padding:0 2px" title="Editar">✎</button>
+                        <button onclick="adminDeleteOverride(${o.id})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:.6rem;padding:0 2px" title="Eliminar">✕</button>
+                    </div>`;
+                }).join('') + '</div>';
+        }
+
+        window.adminEditOverride = function(date, hours) {
+            document.getElementById('ad-ov-date').value = date;
+            document.getElementById('ad-ov-hours').value = hours;
+            document.getElementById('ad-ov-date').focus();
+            document.getElementById('ad-ov-status').textContent = `Editando ${date} — ajusta las horas y presiona "Aplicar".`;
+        };
+
+        window.adminDeleteOverride = async function(id) {
+            if (!confirm('¿Eliminar este ajuste?')) return;
+            const { error } = await _supabase.from('day_overrides').delete().eq('id', id);
+            if (error) { alert('Error: '+error.message); return; }
+            loadAdminOverrides();
+            document.getElementById('ad-ov-status').textContent = 'Ajuste eliminado.';
+        };
+
+        window.adminClearAllOverrides = async function() {
+            if (!confirm('¿Eliminar TODOS los ajustes de días? Esta acción no afecta las reservas.')) return;
+            const { error } = await _supabase.from('day_overrides').delete().gte('date', toDateStr(new Date()));
+            if (error) { alert('Error: '+error.message); return; }
+            loadAdminOverrides();
+            document.getElementById('ad-ov-status').textContent = 'Todos los ajustes fueron eliminados.';
+        };
+
+        window.adminSetOverride = async function() {
+            const date = document.getElementById('ad-ov-date').value;
+            const hours = parseFloat(document.getElementById('ad-ov-hours').value);
+            if (!date || isNaN(hours)) { alert('Selecciona una fecha y escribe las horas'); return; }
+            const statusEl = document.getElementById('ad-ov-status');
+            const { error } = await _supabase.from('day_overrides').upsert(
+                { date, hours, reason: hours === 0 ? 'Bloqueado' : 'Ajuste manual' },
+                { onConflict: 'date' }
+            );
+            if (error) { alert('Error: '+error.message); return; }
+            statusEl.textContent = hours === 0 ? `✅ ${date} bloqueado` : `✅ ${date} → ${hours}h`;
+            loadAdminOverrides();
+            document.getElementById('ad-ov-date').value = '';
+            document.getElementById('ad-ov-hours').value = '';
+        };
+
+        window.openAdmin = function() {
+            document.getElementById('admin-overlay').classList.add('open');
+            if (!adminAuthed) {
+                document.getElementById('ad-login').style.display = 'flex';
+                document.getElementById('ad-content').classList.remove('open');
+            }
+        };
+        const WSTEPS = [
+            {q:'¿Qué tipo de contenido creas?',
+             opts:[
+                {label:'Gaming',desc:'Gameplays, streams, highlights',val:'gaming'},
+                {label:'Educación',desc:'Tutoriales, cursos, guías',val:'education'},
+                {label:'Entretenimiento',desc:'Vlogs, sketches, variedad',val:'entertainment'},
+                {label:'Negocios',desc:'Branding, corporativo, producto',val:'business'},
+                {label:'Variedad',desc:'Un poco de todo',val:'variety'},
+                {label:'Música / Arte',desc:'MVs, showcases, portfolios',val:'music'},
+             ]},
+            {q:'¿Cuál es tu objetivo principal?',
+             opts:[
+                {label:'Crecer audiencia',desc:'Atraer más suscriptores y views',val:'grow'},
+                {label:'Profesionalizar',desc:'Mejorar la calidad del canal',val:'pro'},
+                {label:'Consistencia',desc:'Publicar con regularidad',val:'consistent'},
+                {label:'Monetizar',desc:'Maximizar ingresos del canal',val:'monetize'},
+             ]},
+            {q:'¿Cuántos videos publicas al mes?',
+             opts:[
+                {label:'1-2 videos',desc:'Ritmo inicial',val:'1-2'},
+                {label:'3-5 videos',desc:'Ritmo constante',val:'3-5'},
+                {label:'6-10 videos',desc:'Alta producción',val:'6-10'},
+                {label:'10+ videos',desc:'Producción intensiva',val:'10+'},
+             ]},
+        ];
+
+        // ── STATE ──
+        const project = []; // { serviceId, opts:{} }
+        let appliedPlan = null;
+        let serviceQtys = {}; // { serviceId: quantity } for the service grid
+        let welcomeDone = false;
+        let wAnswers = [];
+        const undoStack = [];
+        const redoStack = [];
+        const MAX_HISTORY = 40;
+        let suppressHistory = false;
+        let _calData = null; // cached calendar data for timeline scheduling
+
+        // ── DOM refs ──
+        const wOverlay=document.getElementById('welcome-overlay');
+        const wDots=document.getElementById('w-dots');
+        const wContainer=document.getElementById('w-step-container');
+        const wBack=document.getElementById('w-back');
+        const wNext=document.getElementById('w-next');
+        const wSkip=document.getElementById('w-skip');
+        const svcGrid=document.getElementById('service-grid');
+        const svcHint=document.getElementById('svc-hint');
+        const svcLoss=document.getElementById('svc-loss-frame');
+        const plansGridEl=document.getElementById('plans-grid');
+        const pBody=document.getElementById('proposal-body');
+        const pEmpty=document.getElementById('p-empty');
+        const pFooter=document.getElementById('proposal-footer');
+        const pTotal=document.getElementById('p-total');
+        const pDelivery=document.getElementById('p-delivery-text');
+        const pCta=document.getElementById('p-cta');
+        const pName=document.getElementById('p-name');
+        const pNotes=document.getElementById('p-notes');
+        const pReset=document.getElementById('p-reset-btn');
+        const undoBtn=document.getElementById('undo-btn');
+        const redoBtn=document.getElementById('redo-btn');
+        const tmplBar=document.getElementById('tmpl-bar');
+        const tmplSelect=document.getElementById('tmpl-select');
+        const qOverlay=document.getElementById('q-overlay');
+        const qBody=document.getElementById('q-body');
+
+        // ── HELPERS ──
+        function getSvc(id){return SERVICES.find(s=>s.id===id);}
+        function getIcon(n){return ICONS[n]||'';}
+        function accentId(id){return ACCENTS[id]||'#3B82F6';}
+
+        // ── HISTORY (Undo/Redo) ──
+        function pushHistory() {
+            if (suppressHistory) return;
+            redoStack.length = 0;
+            undoStack.push(JSON.stringify({ project, appliedPlan, pName:pName?.value }));
+            if (undoStack.length > MAX_HISTORY) undoStack.shift();
+            updateUndoButtons();
+        }
+        function restoreState(stateStr) {
+            const s = JSON.parse(stateStr);
+            project.length = 0;
+            s.project.forEach(p => project.push(p));
+            appliedPlan = s.appliedPlan;
+            if (s.pName && pName) pName.value = s.pName;
+            renderAll();
+        }
+        window.undo = function() {
+            if (undoStack.length < 2) return;
+            const cur = undoStack.pop();
+            redoStack.push(cur);
+            const prev = undoStack[undoStack.length-1];
+            suppressHistory = true;
+            restoreState(prev);
+            suppressHistory = false;
+            updateUndoButtons();
+        };
+        window.redo = function() {
+            if (!redoStack.length) return;
+            const next = redoStack.pop();
+            undoStack.push(next);
+            suppressHistory = true;
+            restoreState(next);
+            suppressHistory = false;
+            updateUndoButtons();
+        };
+        function updateUndoButtons() {
+            undoBtn.disabled = undoStack.length < 2;
+            redoBtn.disabled = !redoStack.length;
+        }
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.shiftKey && e.key==='z') { e.preventDefault(); redo(); }
+            else if (e.ctrlKey && e.key==='z') { e.preventDefault(); undo(); }
+        });
+
+        // ── TEMPLATES ──
+        function loadTemplates() {
+            try { return JSON.parse(localStorage.getItem('dude_templates')||'{}'); } catch { return {}; }
+        }
+        function saveTemplates(t) { localStorage.setItem('dude_templates',JSON.stringify(t)); }
+        function renderTemplates() {
+            const t = loadTemplates();
+            const keys = Object.keys(t);
+            tmplBar.classList.toggle('visible', keys.length>0);
+            tmplSelect.innerHTML = keys.map(k => `<option value="${k}">${k}</option>`).join('');
+        }
+        window.saveTemplate = function() {
+            const name = prompt('Nombre para esta plantilla:');
+            if (!name) return;
+            const t = loadTemplates();
+            t[name] = { project:JSON.parse(JSON.stringify(project)), appliedPlan, pName:pName.value };
+            saveTemplates(t);
+            renderTemplates();
+        };
+        window.delTemplate = function() {
+            const name = tmplSelect.value;
+            if (!name) return;
+            const t = loadTemplates();
+            delete t[name];
+            saveTemplates(t);
+            renderTemplates();
+        };
+        tmplSelect?.addEventListener('change', function() {
+            const t = loadTemplates();
+            const data = t[this.value];
+            if (!data) return;
+            project.length = 0;
+            data.project.forEach(p => project.push(p));
+            appliedPlan = data.appliedPlan;
+            if (data.pName) pName.value = data.pName;
+            pushHistory();
+            renderAll();
+        });
+
+        // ── DRAFT AUTO-SAVE ──
+        function saveDraft() {
+            try {
+                localStorage.setItem('dude_builder_draft', JSON.stringify({
+                    project, appliedPlan, pName:pName?.value, pNotes:pNotes?.value
+                }));
+            } catch {}
+        }
+        function loadDraft() {
+            try {
+                const raw = localStorage.getItem('dude_builder_draft');
+                if (!raw) return false;
+                const d = JSON.parse(raw);
+                if (!d.project || !d.project.length) return false;
+                d.project.forEach(p => project.push(p));
+                appliedPlan = d.appliedPlan || null;
+                if (d.pName && pName) pName.value = d.pName;
+                if (d.pNotes && pNotes) pNotes.value = d.pNotes;
+                return true;
+            } catch { return false; }
+        }
+        function clearDraft() { localStorage.removeItem('dude_builder_draft'); }
+
+        // ── WELCOME FLOW ──
+        let wStep = 0;
+        function renderWelcome() {
+            const s = WSTEPS[wStep];
+            wContainer.innerHTML = `<div class="w-step active"><div class="w-q">${s.q}</div>
+                <div class="w-options">${s.opts.map((o,i)=>{
+                    const sel = wAnswers[wStep]===i;
+                    return `<button class="w-opt${sel?' selected':''}" onclick="pickWelcome(${i})">
+                        <span class="w-opt-label">${o.label}</span>
+                        <span class="w-opt-desc">${o.desc}</span>
+                    </button>`;
+                }).join('')}</div></div>`;
+            wDots.innerHTML = WSTEPS.map((_,i)=>`<div class="w-step-dot${i===wStep?' active':''}${i<wStep?' done':''}"></div>`).join('');
+            wBack.style.visibility = wStep===0 ? 'hidden' : 'visible';
+            wNext.textContent = wStep===WSTEPS.length-1 ? 'Comenzar' : 'Siguiente';
+            wNext.disabled = wAnswers[wStep]===undefined || wAnswers[wStep]===null;
+        }
+        window.pickWelcome = function(i) { wAnswers[wStep] = i; renderWelcome(); };
+        wBack.addEventListener('click', ()=>{ if(wStep>0){ wStep--; renderWelcome(); } });
+        wNext.addEventListener('click', ()=>{
+            if (wAnswers[wStep]===undefined) return;
+            if (wStep < WSTEPS.length-1) { wStep++; renderWelcome(); }
+            else closeWelcome();
+        });
+        wSkip.addEventListener('click', closeWelcome);
+
+        function closeWelcome() {
+            wOverlay.classList.remove('open');
+            welcomeDone = true;
+            if (!loadDraft()) suggestPlan();
+            else renderAll();
+        }
+
+        function suggestPlan() {
+            const vol = wAnswers[2], goal = wAnswers[1];
+            let rec = 'growth';
+            if (vol===0) rec = 'starter';
+            else if (vol===1) rec = 'growth';
+            else rec = 'pro';
+            if (goal===1 || goal===3) rec = 'pro';
+            applyPlan(rec);
+            renderPlanCards();
+        }
+
+        // ── PLAN PRICES ──
+
+        function calcularAhorro(precioIndividual, precioPaquete) {
+            const ahorro = precioIndividual - precioPaquete;
+            const porcentaje = Math.round((ahorro / precioIndividual) * 100);
+            return { ahorro, porcentaje };
+        }
+
+        function calcPlanPrices(plan) {
+            const individualTotal = plan.services.reduce((sum, s) => sum + calcServicePrice(s).price, 0);
+            const planPrice = plan.price;
+            const { ahorro, porcentaje } = calcularAhorro(individualTotal, planPrice);
+            return { individualTotal, planPrice, ahorro, porcentaje };
+        }
+
+        // ── PLAN CARDS ──
+        function renderPlanCards() {
+            plansGridEl.innerHTML = PLANS.map(p => {
+                const prices = calcPlanPrices(p);
+                const isApp = appliedPlan===p.id;
+                const isRec = !appliedPlan && p.id==='growth';
+                const badgeText = isRec ? 'Recomendado' : (p.badge || '');
+                const perUnit = p.videoCount ? Math.round(prices.planPrice / p.videoCount) : 0;
+
+                let compareHtml = '';
+                if (isRec && PLANS.length > 1) {
+                    const starter = PLANS.find(x => x.id === 'starter');
+                    if (starter) {
+                        const stPrices = calcPlanPrices(starter);
+                        const diff = prices.planPrice - stPrices.planPrice;
+                        const extraSavings = prices.ahorro - stPrices.ahorro;
+                        compareHtml = `Solo <strong>$${diff}/mes</strong> más que Starter — ahorras <strong>$${extraSavings} adicionales</strong>.`;
+                    }
+                }
+
+                const savingsHero = prices.ahorro > 0 ? prices.ahorro : 0;
+
+                return `<div class="plan-card${isRec?' popular':''}${isApp?' applied':''}" data-plan="${p.id}" onclick="if(!event.target.closest('.p-examples,.p-examples-btn,.p-example'))applyPlan('${p.id}')">
+                    ${badgeText?`<div class="p-badge">${badgeText}</div>`:''}
+                    ${isRec?`<div class="p-sub-badge">MEJOR RELACIÓN COSTO-BENEFICIO</div>`:''}
+                    <div class="p-label">${p.label}</div>
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">$${prices.planPrice} <span>/mes</span></div>
+                    <div class="p-price-row">
+                        <span class="p-old-price">$${prices.individualTotal}</span>
+                        <span class="p-save-tag">Ahorras $${savingsHero}/mes</span>
+                    </div>
+                    <div class="p-perunit">≈ $${perUnit}/video</div>
+                    ${compareHtml ? `<div class="p-compare">${compareHtml}</div>` : ''}
+                    <div class="p-divider"></div>
+                    <ul class="p-features">${p.features.map(f => {
+                        if (f.includes('*')) return `<li>${f.replace('*',' <span style="font-size:.6rem;color:#8899aa">(bonus)</span>')}</li>`;
+                        return `<li>${f}</li>`;
+                    }).join('')}</ul>
+                    ${p.examples ? `<div class="p-examples">
+                        ${p.examples.map((ex, ei) => {
+                            const isVid = ex.type==='video' || ex.type==='shorts';
+                            const playIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+                            const zoomIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M8 11h6M11 8v6"/></svg>';
+                            const icon = isVid ? playIcon : zoomIcon;
+                            return `<div class="p-example" onclick="event.stopPropagation();openLightbox('${p.id}',${ei})" title="${ex.desc}" data-file="${ex.file}" data-type="${ex.type}">
+                                ${isVid ? `<video src="${ex.file}" preload="metadata" muted loop playsinline></video>` : `<img src="${ex.file}" alt="${ex.title}" loading="lazy">`}
+                                <div class="pex-overlay"><div class="pex-icon-wrap">${icon}</div></div>
+                                <span class="pex-duration"></span>
+                                <span class="pex-label">${ex.title}</span>
+                            </div>`;
+                        }).join('')}
+                    </div>` : ''}
+                    <button class="p-examples-btn" onclick="event.stopPropagation();openLightbox('${p.id}')" data-examples="${p.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg> Ver ejemplos</button>
+                    <div class="p-btn" onclick="event.stopPropagation();applyPlan('${p.id}')">${isApp?'Aplicado':p.btn}</div>
+                </div>`;
+            }).join('');
+        }
+
+        // ── LIGHTBOX ──
+        let _lbPlanId = null;
+
+        function openLightbox(planId, idx) {
+            const p = PLANS.find(x => x.id === planId);
+            if (!p || !p.examples || !p.examples.length) return;
+            _lbPlanId = planId;
+            renderLightbox(idx !== undefined ? idx : 0);
+            document.getElementById('lb-overlay').classList.add('open');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lb-overlay').classList.remove('open');
+            // Pause any playing video
+            const v = document.querySelector('#lb-body video');
+            if (v) v.pause();
+            _lbPlanId = null;
+        }
+
+        function renderLightbox(idx) {
+            const p = PLANS.find(x => x.id === _lbPlanId);
+            if (!p || !p.examples || !p.examples[idx]) return;
+            const ex = p.examples[idx];
+            const isVid = ex.type==='video' || ex.type==='shorts';
+            const body = document.getElementById('lb-body');
+            const prevBtn = document.getElementById('lb-prev');
+            const nextBtn = document.getElementById('lb-next');
+            prevBtn.style.display = idx > 0 ? 'flex' : 'none';
+            nextBtn.style.display = idx < p.examples.length-1 ? 'flex' : 'none';
+            body.innerHTML = ex.file
+                ? (isVid
+                    ? `<video src="${ex.file}" controls autoplay></video>`
+                    : `<img src="${ex.file}" alt="${ex.title}">`)
+                : '<div style="color:#5a6a7e;padding:2rem">Archivo no disponible</div>';
+            body.innerHTML += `<div class="lb-info"><strong>${ex.title}</strong> &middot; ${ex.desc}</div>`;
+        }
+
+        function lightboxNav(dir) {
+            const p = PLANS.find(x => x.id === _lbPlanId);
+            if (!p || !p.examples) return;
+            const current = document.querySelector('#lb-body video, #lb-body img');
+            if (!current) return;
+            // Find current index by matching src
+            const src = current.getAttribute('src');
+            const curIdx = p.examples.findIndex(ex => ex.file === src);
+            const newIdx = curIdx + dir;
+            if (newIdx < 0 || newIdx >= p.examples.length) return;
+            renderLightbox(newIdx);
+        }
+
+        // ── CHIP HOVER (video preview) ──
+        document.addEventListener('mouseover', e => {
+            const chip = e.target.closest('.p-example');
+            if (!chip) return;
+            const vid = chip.querySelector('video');
+            if (vid) { vid.play().catch(()=>{}); }
+        });
+        document.addEventListener('mouseout', e => {
+            const chip = e.target.closest('.p-example');
+            if (!chip) return;
+            const vid = chip.querySelector('video');
+            if (vid) { vid.pause(); vid.currentTime = 0; }
+        });
+
+        // ── DURATION BADGE ──
+        document.addEventListener('loadedmetadata', e => {
+            if (e.target.tagName !== 'VIDEO') return;
+            const chip = e.target.closest('.p-example');
+            if (!chip) return;
+            const dur = e.target.duration;
+            if (!dur || !isFinite(dur)) return;
+            const m = Math.floor(dur / 60);
+            const s = Math.floor(dur % 60);
+            const badge = chip.querySelector('.pex-duration');
+            if (badge) { badge.textContent = `${m}:${s.toString().padStart(2,'0')}`; badge.classList.add('visible'); }
+        }, true);
+
+        window.applyPlan = function(pId) {
+            const p = PLANS.find(x=>x.id===pId);
+            if (!p) return;
+            if (appliedPlan===pId) return;
+            pushHistory();
+            appliedPlan = pId;
+            project.length = 0;
+            p.services.forEach(s => {
+                const entry = { serviceId:s.id, opts:{...s.opts} };
+                const sv = getSvc(s.id);
+                if (sv) {
+                    sv.options.forEach(o => {
+                        if (!entry.opts[o.key] && !o.depends && o.choices.length) entry.opts[o.key] = o.choices[0].v;
+                        if (!entry.opts[o.key] && o.depends && entry.opts[o.depends.key]===o.depends.val && o.choices.length) entry.opts[o.key] = o.choices[0].v;
+                    });
+                }
+                project.push(entry);
+            });
+            renderAll();
+        };
+
+        // ── SERVICES ──
+        function renderServices() {
+            svcGrid.innerHTML = SERVICES.map(s => {
+                const added = project.some(p => p.serviceId === s.id);
+                const qty = serviceQtys[s.id] || 1;
+                return `<div class="svc-card" style="--svc-accent:${s.accent}">
+                    <div class="svc-top">
+                        <div class="svc-icon">${getIcon(s.icon)}</div>
+                        <div class="svc-mid">
+                            <div class="svc-name">${s.name}</div>
+                            <div class="svc-desc">${s.desc}</div>
+                        </div>
+                    </div>
+                    <div class="svc-price">Desde <strong>$${s.basePrice} USD</strong></div>
+                    <div class="svc-qty">
+                        <button onclick="event.stopPropagation();adjQty('${s.id}',-1)" ${qty<=1?'disabled':''}>−</button>
+                        <span class="sq-num">${qty}</span>
+                        <button onclick="event.stopPropagation();adjQty('${s.id}',1)">+</button>
+                    </div>
+                    <button class="add-btn${added?' added':''}" onclick="${added?'':'addServiceQty(\''+s.id+'\')'}"
+                        ${added?'disabled':''}>${added?'Agregado':'Agregar al Proyecto'}</button>
+                </div>`;
+            }).join('');
+
+            // Dynamic plan comparison
+            const total = calcTotal();
+            svcLoss.style.display = 'none';
+            svcHint.classList.remove('visible');
+
+            if (!appliedPlan && total.total > 0) {
+                let bestPlan = null, bestSavings = 0;
+                PLANS.forEach(p => {
+                    const pp = calcPlanPrices(p);
+                    if (total.total > pp.planPrice) {
+                        const s = total.total - pp.planPrice;
+                        if (s > bestSavings) { bestSavings = s; bestPlan = p; }
+                    }
+                });
+
+                svcLoss.innerHTML = `Individual: <strong>$${total.total} USD</strong>`;
+                svcLoss.style.display = 'block';
+
+                if (bestPlan) {
+                    const pp = calcPlanPrices(bestPlan);
+                    svcHint.innerHTML = `
+                        <div class="hint-badge">✧ Better Option</div>
+                        <div class="hint-name">${bestPlan.name}</div>
+                        <div class="hint-price">$${pp.planPrice} <span>/mes</span></div>
+                        <div class="hint-save">You save <strong>$${bestSavings} USD</strong></div>
+                        <div class="hint-old">$${total.total} individual</div>
+                    `;
+                    svcHint.classList.add('visible');
+                }
+            }
+        }
+
+        window.adjQty = function(svcId, delta) {
+            if (!serviceQtys[svcId]) serviceQtys[svcId] = 1;
+            serviceQtys[svcId] = Math.max(1, serviceQtys[svcId] + delta);
+            renderServices();
+        };
+
+        window.addServiceQty = function(svcId) {
+            const s = getSvc(svcId);
+            if (!s) return;
+            const qty = serviceQtys[svcId] || 1;
+            pushHistory();
+            appliedPlan = null;
+            for (let n = 0; n < qty; n++) {
+                const entry = { serviceId:svcId, opts:{} };
+                s.options.forEach(o => {
+                    if (!o.depends && o.choices.length) entry.opts[o.key] = o.choices[0].v;
+                });
+                s.options.forEach(o => {
+                    if (o.depends && entry.opts[o.depends.key]===o.depends.val && o.choices.length) entry.opts[o.key] = o.choices[0].v;
+                });
+                project.push(entry);
+            }
+            serviceQtys[svcId] = 1;
+            renderAll();
+        };
+
+        window.removeService = function(idx) {
+            const el = document.querySelector(`.p-item[data-idx="${idx}"]`);
+            if (el) el.classList.add('removing');
+            setTimeout(() => {
+                pushHistory();
+                project.splice(idx, 1);
+                appliedPlan = null;
+                renderAll();
+            }, 280);
+        };
+
+        window.moveService = function(idx, dir) {
+            const to = idx + dir;
+            if (to < 0 || to >= project.length) return;
+            pushHistory();
+            [project[idx], project[to]] = [project[to], project[idx]];
+            appliedPlan = null;
+            renderAll();
+        };
+
+        // ── OPTION UPDATE ──
+        window.updateOpt = function(idx, key, val) {
+            const e = project[idx];
+            if (!e) return;
+            const s = getSvc(e.serviceId);
+            if (!s) return;
+            pushHistory();
+            e.opts[key] = val;
+            s.options.forEach(o => {
+                if (o.depends && o.depends.key===key) {
+                    if (val===o.depends.val && o.choices.length) e.opts[o.key] = o.choices[0].v;
+                    else delete e.opts[o.key];
+                }
+            });
+            appliedPlan = null;
+            renderAll();
+        };
+
+        // ── CALCULATE ──
+        // ── PRICE CALCULATORS ──
+        function calcServicePrice(entry) {
+            const s = getSvc(entry.serviceId || entry.id);
+            if (!s) return { price:0, time:0 };
+            let price = s.basePrice, time = 0, priority = false;
+            s.options.forEach(o => {
+                const val = entry.opts[o.key];
+                if (!val) return;
+                const c = o.choices.find(ch=>ch.v===val);
+                if (!c) return;
+                if (o.key==='delivery') { if (val==='priority') priority=true; return; }
+                if (c.p!==null && c.p!==undefined) price += c.p;
+                if (c.t) time += c.t;
+            });
+            if (priority) { price = Math.round(price*1.5); time = Math.ceil((s.baseTime+time)*0.5); }
+            else time = s.baseTime + time;
+            return { price, time };
+        }
+
+        function calcDeliveryDays(entry) {
+            const s = getSvc(entry.serviceId || entry.id);
+            if (!s) return 0;
+            const isVid = s.id==='video-editing'||s.id==='gaming-editing';
+            const isShort = s.id==='shorts-editing';
+            const isThumb = s.id==='thumbnail-design';
+            let days = 0, priority = false;
+
+            if (isVid) {
+                days = 3;
+                const dur = entry.opts['duration'];
+                if (dur==='10min') days = 5;
+                else if (dur==='20min') days = 7;
+                else if (dur==='30min') days = 9;
+                const lvl = entry.opts['level'];
+                if (lvl==='standard') days += 1;
+                else if (lvl==='premium') days += 2;
+                if (entry.opts['thumbnail']==='yes') {
+                    const tq = entry.opts['thumb-qty'];
+                    if (tq==='3') days += 1.5;
+                    else if (tq==='5') days += 2;
+                }
+                if (entry.opts['delivery']==='priority') priority = true;
+            } else if (isShort) {
+                const qty = parseInt(entry.opts['quantity']||'1');
+                if (qty===1) days = 1.5;
+                else if (qty===2) days = 2;
+                else if (qty===3) days = 2.5;
+                else if (qty===4) days = 3;
+                else if (qty===5) days = 3.5;
+                else days = 7;
+                if (entry.opts['thumbnail']==='yes') days += 1;
+                const lvl = entry.opts['level'];
+                if (lvl==='standard'||lvl==='premium') days += 1;
+                if (entry.opts['delivery']==='priority') priority = true;
+            } else if (isThumb) {
+                const qty = parseInt(entry.opts['quantity']||'1');
+                days = 0.5 + (qty-1)*0.5;
+                if (entry.opts['delivery']==='priority') priority = true;
+            }
+            if (priority) days = Math.ceil(days * 1.5);
+            return Math.round(days*100)/100;
+        }
+
+        function calcItem(idx) {
+            const e = project[idx];
+            const r = calcServicePrice(e);
+            const dDays = calcDeliveryDays(e);
+            const s = getSvc(e.serviceId);
+            const items = [];
+            if (s) {
+                s.options.forEach(o => {
+                    const val = e.opts[o.key];
+                    if (!val) return;
+                    const c = o.choices.find(ch=>ch.v===val);
+                    if (!c) return;
+                    if (o.key==='delivery' || o.key==='thumb-qty' || o.key==='thumbnail') return;
+                    if (c.l) items.push(c.l);
+                });
+                const thumbVal = e.opts['thumbnail'];
+                if (thumbVal==='yes') {
+                    const tq = e.opts['thumb-qty'];
+                    if (tq && tq!=='1') items.push(tq==='3'?'3 Variantes':'5 Miniaturas');
+                    else items.push('Miniatura incluida');
+                }
+            }
+            return { ...r, time: dDays, items };
+        }
+
+        function calcTotal() {
+            if (appliedPlan) {
+                const p = PLANS.find(x => x.id === appliedPlan);
+                if (p) {
+                    const prices = calcPlanPrices(p);
+                    return {
+                        total: prices.planPrice,
+                        maxTime: 0,
+                        allItems: p.services.map(s => {
+                            const sv = getSvc(s.id);
+                            return { icon: sv ? getIcon(sv.icon) : '', name: sv ? sv.name : s.id, details: [], price: 0, accent: sv ? sv.accent : '#666' };
+                        }),
+                        planPrice: prices.planPrice,
+                        individualTotal: prices.individualTotal,
+                        isPlan: true,
+                        planName: p.name
+                    };
+                }
+            }
+            let total=0, maxTime=0, allItems=[];
+            project.forEach((e,i)=>{
+                const r = calcItem(i);
+                total += r.price;
+                if (r.time > maxTime) maxTime = r.time;
+                const s = getSvc(e.serviceId);
+                allItems.push({ icon:getIcon(s.icon), name:s.name, details:r.items, price:r.price, accent:s.accent });
+            });
+            return { total, maxTime, allItems, isPlan:false };
+        }
+
+        // ── COUNT-UP ──
+        function animateCountUp(el, target) {
+            const dur = 400, start = performance.now();
+            function tick(now) {
+                const t = Math.min((now-start)/dur, 1);
+                el.textContent = '$' + Math.round(target * (1-Math.pow(1-t,3)));
+                if (t<1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        // ── RENDER ──
+        function renderAll() {
+            renderPlanCards();
+            renderServices();
+            renderProposal();
+            saveDraft();
+            renderTemplates();
+            updateUndoButtons();
+        }
+        const rOptsSel = new Map();
+
+        // ── TIMELINE UX ──
+        window.toggleTimelineNode = function(el) {
+            const parent = el.closest('.tl-node') || el.parentElement?.closest?.('.tl-node');
+            if (!parent) return;
+            const opts = parent.querySelector('.tl-opts');
+            if (opts) opts.classList.toggle('open');
+            el.classList.toggle('tl-title-open');
+        };
+        window.removeTimelineGroup = function(startIdx, count) {
+            if (!confirm('Eliminar este grupo de servicios?')) return;
+            pushHistory();
+            project.splice(startIdx, count);
+            appliedPlan = null;
+            renderAll();
+        };
+
+        function renderPOpts(s, opts, idx) {
+            const vis = s.options.filter(o => !o.depends || opts[o.depends.key]===o.depends.val);
+            return vis.map(o => {
+                const sel = opts[o.key]||'';
+                return `<div class="tl-opt-group">
+                    <div class="tl-opt-label">${o.label}</div>
+                    <div class="tl-opt-choices">
+                        ${o.choices.map(c =>
+                            `<button class="tl-opt-choice${sel===c.v?' selected':''}"
+                                onclick="event.stopPropagation();updateOpt(${idx},'${o.key}','${c.v}')">${c.l}</button>`
+                        ).join('')}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderProposal() {
+            const total = calcTotal();
+
+            if (project.length===0 && !appliedPlan) {
+                pEmpty.style.display='block'; pBody.innerHTML=''; pFooter.style.display='none';
+                pReset.classList.remove('visible');
+                pEmpty.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6M12 9v6"/></svg>
+                    <div>Agrega un servicio o un plan para ver tu l\u00ednea de tiempo.</div>`;
+                return;
+            }
+            pEmpty.style.display='none'; pFooter.style.display='block'; pReset.classList.add('visible');
+
+            let html = '';
+
+            // Plan ribbon
+            if (total.isPlan) {
+                const savings = total.individualTotal - total.total;
+                html += `<div class="plan-ribbon">
+                    <div class="pr-name">${total.planName}</div>
+                    <div class="pr-sub">Entregas recurrentes durante el mes</div>
+                    <div class="pr-price">
+                        <span class="pr-old">$${total.individualTotal}</span>
+                        <strong>$${total.total}/mes</strong>
+                        <span class="pr-save">Ahorras $${savings}/mes</span>
+                    </div>
+                </div>`;
+            }
+
+            // Timeline for individual services
+            if (project.length>0 && !total.isPlan) {
+                const schedule = computeSchedule();
+                const opts = { weekday:'short', day:'numeric', month:'short' };
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const todayStr = today.toLocaleDateString('es-ES', opts);
+
+                html += `<div class="timeline">`;
+
+                // Today node
+                html += `<div class="tl-node">
+                    <div class="tl-dot tl-dot-today">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <div class="tl-content">
+                        <div class="tl-title">Hoy</div>
+                        <div class="tl-sub">${todayStr}</div>
+                    </div>
+                </div>`;
+
+                // Service nodes
+                schedule.groups.forEach(g => {
+                    const qtyText = g.qty>1 ? `\u00d7${g.qty}` : '';
+                    const ds = addDays(today, g.dateStart);
+                    let dateText;
+                    if (g.dateStart===g.dateEnd) {
+                        dateText = ds.toLocaleDateString('es-ES', opts);
+                    } else {
+                        const de = addDays(today, g.dateEnd);
+                        dateText = `${ds.toLocaleDateString('es-ES', opts)} \u2013 ${de.toLocaleDateString('es-ES', opts)}`;
+                    }
+                    const idxStr = g.indices.join(',');
+                    html += `<div class="tl-node" data-indices="${idxStr}">
+                        <div class="tl-dot tl-dot-service" style="border-color:${g.accent}40;color:${g.accent}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>
+                        </div>
+                        <div class="tl-content">
+                            <div class="tl-title" onclick="toggleTimelineNode(this)">
+                                ${g.name}<span class="tl-qty">${qtyText}</span>
+                                <span class="tl-rm" onclick="event.stopPropagation();removeTimelineGroup(${g.indices[0]},${g.qty})" title="Eliminar grupo">\u2715</span>
+                            </div>
+                            <div class="tl-sub"><strong>${dateText}</strong></div>
+                            <div class="tl-hours">${Math.round(g.hours*10)/10}h</div>
+                            <div class="tl-opts">
+                                ${g.indices.map((idx,i)=>{
+                                    const e = project[idx];
+                                    const s = getSvc(e.serviceId);
+                                    if (!s) return '';
+                                    const r = calcItem(idx);
+                                    const confStr = r.items.slice(0,3).join(' \u00b7 ');
+                                    return `<div class="tl-opt-row">
+                                        <div class="tl-opt-hdr">
+                                            <span class="tl-opt-n">${i+1}.</span>
+                                            <span class="tl-opt-config">${confStr||'Opciones predeterminadas'}</span>
+                                            <button class="tl-opt-del" onclick="event.stopPropagation();removeService(${idx})">Eliminar</button>
+                                        </div>
+                                        <div class="tl-opt-body">${renderPOpts(s,e.opts,idx)}</div>
+                                    </div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>`;
+                });
+
+                // Delivery node
+                const delDate = addDays(today, schedule.finalDay);
+                const delStr = delDate.toLocaleDateString('es-ES', opts);
+                html += `<div class="tl-node">
+                    <div class="tl-dot tl-dot-delivery">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="tl-content">
+                        <div class="tl-title">Entrega final</div>
+                        <div class="tl-sub"><strong>${delStr}</strong></div>
+                    </div>
+                </div>`;
+
+                html += `</div>`;
+
+                // Footer delivery text
+                const bDays = schedule.totalBusinessDays;
+                pDelivery.innerHTML = `Entrega estimada: <strong>${bDays} d\u00eda${bDays!==1?'s':''} h\u00e1biles</strong> \u00b7 <strong style="color:var(--blue)">${delStr}</strong>`;
+            }
+
+            // Footer for plan
+            if (total.isPlan) {
+                const savings = total.individualTotal - total.total;
+                pDelivery.innerHTML = `Plan <strong>${total.planName}</strong> &middot; <span style="color:#94a3b8;text-decoration:line-through">$${total.individualTotal}</span> <strong style="color:var(--blue)">$${total.total}/mes</strong> <span class="p-save-tag" style="font-size:.65rem">Ahorras $${savings}/mes</span>`;
+            }
+
+            pBody.innerHTML = html;
+            animateCountUp(pTotal, total.total);
+
+            const calRow = document.querySelector('.p-cal-row');
+            if (calRow) calRow.style.display = appliedPlan ? 'none' : 'flex';
+        }
+
+        // ── QUOTE ──
+        function generateQuote() {
+            const total = calcTotal();
+            const projName = pName.value.trim() || 'Mi Proyecto Creativo';
+            let lines = ['Hola Christian,',''];
+            lines.push('Me interesa cotizar el siguiente proyecto:');
+            lines.push(`"${projName}"`); lines.push('');
+
+            if (total.isPlan) {
+                lines.push(`Plan: ${total.planName} — $${total.total} USD/mes`);
+                lines.push(''); lines.push('Incluye:'); lines.push('');
+                project.forEach((e,i)=>{
+                    const s = getSvc(e.serviceId);
+                    if (!s) return;
+                    const r = calcItem(i);
+                    lines.push(`• ${s.name}`);
+                    r.items.forEach(d => lines.push(`  · ${d}`));
+                });
+                lines.push('');
+                lines.push(`Ahorro: $${total.individualTotal - total.total} USD/mes (comprando por separado: $${total.individualTotal} USD)`); lines.push('');
+            } else {
+                project.forEach((e,i)=>{
+                    const s = getSvc(e.serviceId);
+                    if (!s) return;
+                    const r = calcItem(i);
+                    lines.push(`• ${s.name}`);
+                    r.items.forEach(d => lines.push(`  · ${d}`));
+                    lines.push('');
+                });
+                lines.push('Precio total estimado:'); lines.push(`$${total.total} USD`); lines.push('');
+                if (total.maxTime) { lines.push(`Entrega estimada: ${total.maxTime} día${total.maxTime!==1?'s':''} hábiles`); lines.push(''); }
+                if (window.selectedDeliveryDate) {
+                    const dateObj = new Date(window.selectedDeliveryDate + 'T12:00:00');
+                    const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
+                    lines.push(`Fecha de entrega seleccionada: ${dateObj.toLocaleDateString('es-ES', opts)}`); lines.push('');
+                }
+            }
+            const notes = pNotes.value.trim();
+            if (notes) { lines.push(`Notas adicionales: ${notes}`); lines.push(''); }
+            lines.push('Quedo atento a tu disponibilidad.');
+            return lines.join('\n');
+        }
+
+        pCta.addEventListener('click', async () => {
+            if (window.selectedDeliveryDate && !appliedPlan) {
+                const booking = await createBooking();
+                if (!booking) {
+                    alert('No se pudo reservar la fecha. Intenta de nuevo o contáctame directamente.');
+                    return;
+                }
+                window.lastOrderId = booking.orderId;
+                localStorage.setItem('dude_booking', JSON.stringify(booking));
+            }
+            qBody.innerHTML = generateQuote().replace(/\n/g,'<br>');
+            qOverlay.classList.add('open');
+        });
+        window.copyQuote = function() {
+            const text = qBody.textContent;
+            navigator.clipboard.writeText(text).then(()=>{
+                const btn = document.querySelector('.q-copy');
+                btn.textContent = 'Copiado'; setTimeout(()=>btn.textContent='Copiar', 2000);
+            });
+        };
+        window.sendWA = function() {
+            window.open(`https://wa.me/51987654321?text=${encodeURIComponent(qBody.textContent)}`,'_blank');
+        };
+        window.sendMail = function() {
+            window.open(`mailto:dude3d@example.com?subject=Cotización Project Builder&body=${encodeURIComponent(qBody.textContent)}`,'_blank');
+        };
+        window.sendToContact = function() {
+            localStorage.setItem('dude_workflow', qBody.textContent);
+            window.open('contacto.html','_blank');
+        };
+        window.closeQuote = function() { qOverlay.classList.remove('open'); };
+        window.resetProject = function() {
+            if (!project.length) return;
+            if (!confirm('¿Limpiar todo el proyecto?')) return;
+            pushHistory();
+            project.length = 0;
+            appliedPlan = null;
+            window.selectedDeliveryDate = null;
+            const sd = document.getElementById('p-selected-date');
+            if (sd) { sd.style.display = 'none'; sd.textContent = ''; }
+            clearDraft();
+            renderAll();
+        };
+        qOverlay.addEventListener('click', e => { if (e.target===qOverlay) closeQuote(); });
+
+        // ── INIT ──
+        pushHistory();
+        renderPlanCards();
+        renderServices();
+        renderProposal();
+        renderWelcome();
+        renderTemplates();
+        updateUndoButtons();
+        refreshCalendarData(); // fetch capacity/bookings for timeline
+        setTimeout(() => {
+            if (!welcomeDone && !loadDraft()) wOverlay.classList.add('open');
+            else { welcomeDone = true; renderAll(); }
+        }, 300);
+    </script>
+</body>
+</html>
