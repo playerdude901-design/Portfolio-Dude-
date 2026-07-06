@@ -89,14 +89,18 @@
         </header>
 
         <section class="hero" id="inicio" aria-label="Presentación">
-            <div class="hero-bg" id="hero-bg"></div>
+            <video class="hero-video" id="hero-video" src="./assets/videos/video_header.mp4" loop muted playsinline autoplay></video>
+            <div class="hero-overlay"></div>
+            <button class="hero-mute" id="hero-mute" aria-label="Activar sonido">
+                <svg class="mute-icon mute-off" viewBox="0 0 24 24" width="20" height="20">
+                    <path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8.5v7a4.49 4.49 0 0 0 2.5-3.5zM14 3.23v2.06a7.007 7.007 0 0 1 0 13.42v2.06A9.01 9.01 0 0 0 14 3.23z"/>
+                </svg>
+                <svg class="mute-icon mute-on" viewBox="0 0 24 24" width="20" height="20" style="display:none">
+                    <path fill="currentColor" d="M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.796 8.796 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                </svg>
+            </button>
             <div class="hero-inner">
-                <h1 class="hero-title">
-                    <picture>
-                        <source srcset="./assets/dude_gif.webp" type="image/webp">
-                        <img src="./assets/dude_gif.gif" alt="SOY DUDE" class="hero-gif">
-                    </picture>
-                </h1>
+                <h1 class="hero-title">SOY DUDE</h1>
                 <p class="hero-sub">y a esto me dedico...</p>
                 <div class="hero-divider"></div>
             </div>
@@ -253,5 +257,41 @@
     </div>
 
     <script src="./script.js"></script>
+    <script>
+        (function(){
+            const video = document.getElementById('hero-video');
+            const btn = document.getElementById('hero-mute');
+            const offIcon = btn.querySelector('.mute-off');
+            const onIcon = btn.querySelector('.mute-on');
+            let userUnmuted = false;
+
+            btn.addEventListener('click', function(){
+                if (video.muted) {
+                    video.muted = false;
+                    userUnmuted = true;
+                    offIcon.style.display = 'none';
+                    onIcon.style.display = 'block';
+                    btn.setAttribute('aria-label', 'Silenciar video');
+                } else {
+                    video.muted = true;
+                    userUnmuted = false;
+                    offIcon.style.display = 'block';
+                    onIcon.style.display = 'none';
+                    btn.setAttribute('aria-label', 'Activar sonido');
+                }
+            });
+
+            window.addEventListener('scroll', function(){
+                if (window.scrollY > window.innerHeight * 0.8) {
+                    if (!video.muted) {
+                        video.muted = true;
+                        offIcon.style.display = 'block';
+                        onIcon.style.display = 'none';
+                        btn.setAttribute('aria-label', 'Activar sonido');
+                    }
+                }
+            });
+        })();
+    </script>
 </body>
 </html>
