@@ -89,8 +89,8 @@
         </header>
 
         <section class="hero" id="inicio" aria-label="Presentación">
-            <video class="hero-video" id="hero-video" src="./assets/videos/video_header.mp4" loop muted playsinline autoplay></video>
-            <button class="hero-mute" id="hero-mute" aria-label="Activar sonido">
+            <video class="hero-video" id="hero-video" src="./assets/videos/video_header.mp4" loop playsinline autoplay></video>
+            <button class="hero-mute" id="hero-mute" aria-label="Silenciar video">
                 <svg class="mute-icon mute-off" viewBox="0 0 24 24" width="20" height="20">
                     <path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8.5v7a4.49 4.49 0 0 0 2.5-3.5zM14 3.23v2.06a7.007 7.007 0 0 1 0 13.42v2.06A9.01 9.01 0 0 0 14 3.23z"/>
                 </svg>
@@ -178,7 +178,31 @@
 
         <!-- ══════════ TESTIMONIALS ══════════ -->
         <section class="testimonials-section" id="testimonios" aria-label="Testimonios">
-            <div class="testimonials-scatter">
+            <div class="testimonials-track">
+                <div class="testimonial-card t-offset-2">
+                    <img src="./assets/pfp/BlackBull.png" alt="" class="testi-pfp">
+                    <div class="testi-bubble blue">La neta lo recomiendo un buen. Edita chido, entiende rápido lo que le pides y siempre le mete atención a los detalles. Además es buena onda y la comunicación es fácil, así que todo el proceso se hace muy tranquilo. Si ocupan a alguien para editar videos, sin pedos lo recomiendo.</div>
+                </div>
+                <div class="testimonial-card t-offset-5">
+                    <img src="./assets/pfp/JorgEditor.png" alt="" class="testi-pfp">
+                    <div class="testi-bubble green">Necesitaba una miniatura que llamara la atención y logró exactamente eso. Captó la idea desde el primer momento y prácticamente no hubo que hacer cambios</div>
+                </div>
+                <div class="testimonial-card">
+                    <img src="./assets/pfp/Megazote.png" alt="" class="testi-pfp">
+                    <div class="testi-bubble blue">La edición quedó muy profesional. El ritmo del video, los efectos y las transiciones hicieron que el contenido se sintiera mucho más dinámico</div>
+                </div>
+                <div class="testimonial-card t-offset-3">
+                    <img src="./assets/pfp/MensVa.png" alt="" class="testi-pfp">
+                    <div class="testi-bubble green">Lo que más me gustó fue la comunicación. Siempre respondía rápido, explicaba cualquier duda y mantenía informado sobre el progreso del proyecto</div>
+                </div>
+                <div class="testimonial-card t-offset-1">
+                    <img src="./assets/pfp/MitaiVT.png" alt="" class="testi-pfp">
+                    <div class="testi-bubble blue">Llevo trabajando con varios editores y este ha sido de los más organizados. Todo llegó en tiempo y con muy buena calidad</div>
+                </div>
+                <div class="testimonial-card t-offset-4">
+                    <img src="./assets/pfp/strike.gif" alt="" class="testi-pfp">
+                    <div class="testi-bubble green">Las miniaturas tienen un estilo muy limpio y profesional. Se nota que entiende cómo hacer que un video destaque sin exagerar</div>
+                </div>
                 <div class="testimonial-card t-offset-2">
                     <img src="./assets/pfp/BlackBull.png" alt="" class="testi-pfp">
                     <div class="testi-bubble blue">La neta lo recomiendo un buen. Edita chido, entiende rápido lo que le pides y siempre le mete atención a los detalles. Además es buena onda y la comunicación es fácil, así que todo el proceso se hace muy tranquilo. Si ocupan a alguien para editar videos, sin pedos lo recomiendo.</div>
@@ -287,20 +311,26 @@
             const btn = document.getElementById('hero-mute');
             const offIcon = btn.querySelector('.mute-off');
             const onIcon = btn.querySelector('.mute-on');
-            let userUnmuted = false;
+
+            video.play().then(function(){
+                video.muted = false;
+            }).catch(function(){
+                video.muted = true;
+                offIcon.style.display = 'none';
+                onIcon.style.display = 'block';
+                btn.setAttribute('aria-label', 'Activar sonido');
+            });
 
             btn.addEventListener('click', function(){
                 if (video.muted) {
                     video.muted = false;
-                    userUnmuted = true;
-                    offIcon.style.display = 'none';
-                    onIcon.style.display = 'block';
+                    offIcon.style.display = 'block';
+                    onIcon.style.display = 'none';
                     btn.setAttribute('aria-label', 'Silenciar video');
                 } else {
                     video.muted = true;
-                    userUnmuted = false;
-                    offIcon.style.display = 'block';
-                    onIcon.style.display = 'none';
+                    offIcon.style.display = 'none';
+                    onIcon.style.display = 'block';
                     btn.setAttribute('aria-label', 'Activar sonido');
                 }
             });
@@ -309,8 +339,8 @@
                 if (window.scrollY > window.innerHeight * 0.8) {
                     if (!video.muted) {
                         video.muted = true;
-                        offIcon.style.display = 'block';
-                        onIcon.style.display = 'none';
+                        offIcon.style.display = 'none';
+                        onIcon.style.display = 'block';
                         btn.setAttribute('aria-label', 'Activar sonido');
                     }
                 }

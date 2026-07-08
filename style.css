@@ -657,18 +657,20 @@ img { display:block; }
 .testimonials-section {
     width: 100%;
     background: #fff;
-    padding: 2.5rem 2rem 4rem;
+    padding: 2.5rem 0 4rem;
     overflow: hidden;
 }
 
-.testimonials-scatter {
+.testimonials-track {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 1rem 1.5rem;
-    max-width: 1100px;
-    margin: 0 auto;
+    gap: 1rem;
+    animation: scrollTestimonials 50s linear infinite;
+    width: max-content;
+    padding-bottom: 1rem;
+}
+
+.testimonials-track:hover {
+    animation-play-state: paused;
 }
 
 .testimonial-card {
@@ -680,11 +682,11 @@ img { display:block; }
     width: 100%;
 }
 
-.t-offset-1 { margin-top: 1rem; }
-.t-offset-2 { margin-top: 2rem; }
-.t-offset-3 { margin-top: 3rem; }
-.t-offset-4 { margin-top: 1.5rem; }
-.t-offset-5 { margin-top: 2.5rem; }
+.t-offset-1 { padding-top: 1rem; }
+.t-offset-2 { padding-top: 2.5rem; }
+.t-offset-3 { padding-top: 1.5rem; }
+.t-offset-4 { padding-top: 3rem; }
+.t-offset-5 { padding-top: .5rem; }
 
 .testi-pfp {
     width: 36px;
@@ -713,6 +715,11 @@ img { display:block; }
 .testi-bubble.green {
     background: #d4f7d4;
     border-bottom-left-radius: 4px;
+}
+
+@keyframes scrollTestimonials {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
 
 /* ══════════ PORTFOLIO ══════════ */
