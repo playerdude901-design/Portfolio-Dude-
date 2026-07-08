@@ -218,47 +218,6 @@ img { display:block; }
     z-index: 0;
 }
 
-.hero-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: radial-gradient(ellipse at center, rgba(8,8,8,.25) 0%, rgba(8,8,8,.7) 100%);
-}
-
-.hero-inner { position:relative; z-index:2; }
-
-.hero-title {
-    font-family: Impact, 'Arial Black', sans-serif;
-    font-size: clamp(3.5rem,8vw,7rem);
-    color: var(--white);
-    letter-spacing: 2px;
-    line-height: 1;
-    text-shadow: 0 0 30px rgba(255,255,255,.15);
-    animation: fadeUp .8s ease both;
-    margin: 0;
-}
-
-.hero-sub {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 300;
-    font-size: clamp(1rem,2.5vw,1.5rem);
-    color: var(--white);
-    letter-spacing: 2px;
-    margin-top: .6rem;
-    opacity: .85;
-    animation: fadeUp .8s .18s ease both;
-    text-transform: lowercase;
-}
-
-.hero-divider {
-    width: 60px;
-    height: 2px;
-    background: var(--white);
-    margin: .8rem auto 0;
-    border: 0;
-    animation: fadeUp .8s .35s ease both;
-}
-
 .hero-mute {
     position: absolute;
     bottom: 2rem;
@@ -287,10 +246,6 @@ img { display:block; }
     display: block;
 }
 
-@keyframes fadeUp {
-    from { opacity:0; transform:translateY(28px); }
-    to   { opacity:1; transform:translateY(0); }
-}
 
 /* ══════════ PRESENTATION ══════════ */
 .presentation-section {
@@ -698,6 +653,67 @@ img { display:block; }
     text-align: center;
 }
 
+/* ══════════ TESTIMONIALS ══════════ */
+.testimonials-section {
+    width: 100%;
+    overflow: hidden;
+    background: #fff;
+    padding: 2rem 0;
+}
+
+.testimonials-track {
+    display: flex;
+    gap: 1rem;
+    animation: scrollTestimonials 40s linear infinite;
+    width: max-content;
+}
+
+.testimonials-track:hover {
+    animation-play-state: paused;
+}
+
+.testimonial-card {
+    display: flex;
+    align-items: flex-end;
+    gap: .5rem;
+    flex-shrink: 0;
+    max-width: 340px;
+}
+
+.testi-pfp {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.testi-bubble {
+    padding: .65rem .85rem;
+    border-radius: 16px;
+    font-size: .82rem;
+    line-height: 1.45;
+    position: relative;
+    color: #000;
+    word-wrap: break-word;
+}
+
+.testi-bubble.blue {
+    background: #d4e7ff;
+    border-bottom-left-radius: 4px;
+}
+
+.testi-bubble.green {
+    background: #d4f7d4;
+    border-bottom-right-radius: 4px;
+}
+
+@keyframes scrollTestimonials {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* ══════════ PORTFOLIO ══════════ */
 .portfolio-section {
     padding: 5rem 2.5rem;
     width: 100%;
