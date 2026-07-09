@@ -1143,3 +1143,57 @@ footer span { color: var(--accent); }
     .portfolio-grid { grid-template-columns:1fr; }
     .lb-btn { width:36px; height:36px; font-size:1.4rem; }
 }
+
+/* ══════════ APPLE COMPONENTS ══════════ */
+
+/* Cards — elevación sutil, sin bordes duros */
+.card, [class*="card"]:not(.testimonial-card), [class*="plan"], [class*="service"] {
+  background: var(--surface-1);
+  border-radius: var(--radius-lg);
+  border: 0.5px solid var(--border);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--duration-base) var(--ease-apple),
+              box-shadow var(--duration-base) var(--ease-apple);
+}
+.card:hover, [class*="card"]:not(.testimonial-card):hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Botón primario — pill Apple */
+button, .btn, [class*="btn"] {
+  border-radius: 980px;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 22px;
+  border: none;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-apple);
+}
+button:hover { filter: brightness(1.06); }
+button:active { transform: scale(0.97); }
+
+/* Navbar con vidrio */
+nav, header, [class*="nav"] {
+  background: var(--surface-glass);
+  backdrop-filter: var(--blur-glass);
+  -webkit-backdrop-filter: var(--blur-glass);
+  border-bottom: 0.5px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Toggle dark/light mode */
+#theme-toggle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-apple);
+}
