@@ -373,4 +373,24 @@
         if (e.key === 'Escape') closeGallery();
     });
 
+    /* ── Scroll-triggered fade-up ── */
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.card, section, [class*="plan"], [class*="service"]')
+      .forEach(el => {
+        el.classList.add('fade-up');
+        fadeObserver.observe(el);
+      });
+
+    document.querySelectorAll('.cards-grid > *, .plans-grid > *')
+      .forEach((el, i) => {
+        el.style.transitionDelay = (i * 80) + 'ms';
+      });
+
 })();

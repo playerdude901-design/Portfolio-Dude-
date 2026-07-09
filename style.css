@@ -1144,6 +1144,19 @@ footer span { color: var(--accent); }
     .lb-btn { width:36px; height:36px; font-size:1.4rem; }
 }
 
+/* ══════════ SCROLL ANIMATIONS ══════════ */
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--duration-slow) var(--ease-apple),
+              transform var(--duration-slow) var(--ease-apple);
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ══════════ APPLE COMPONENTS ══════════ */
 
 /* Cards — elevación sutil, sin bordes duros */
