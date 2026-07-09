@@ -159,13 +159,13 @@
 
         article.innerHTML = `
             <div class="card-thumb ${cat.cls}">
-                <img class="card-cover" src="${cover}" alt="Portada ${cat.title}" loading="lazy" onerror="this.src='./assets/hero_bg.jpg'">
+                <img class="card-cover" src="${cover}" alt="Portada ${cat.title}" loading="lazy" onerror="this.style.display='none'">
                 <span class="card-thumb-label">${cat.title}</span>
             </div>
             <div class="card-body">
                 <p class="card-category">${cat.label}</p>
                 <p class="card-title">${cat.desc}</p>
-                <p class="card-count">${count} imagen${count !== 1 ? 'es' : ''} · Click para ver galería</p>
+                <p class="card-count">${count} imagen${count !== 1 ? 'es' : ''} &middot; Ver galería</p>
             </div>
         `;
 

@@ -3,186 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Contacto - Dude 3D">
-    <title>Contacto · Dude 3D</title>
+    <meta name="description" content="Contacto — Dude! Portfolio. Cuéntame tu proyecto de diseño gráfico, edición de video o miniaturas.">
+    <title>Contacto · Dude!</title>
+
+    <meta property="og:title" content="Contacto · Dude!">
+    <meta property="og:description" content="Cuéntame tu proyecto y te responderé a la brevedad.">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --bg:           #FFFFFF;
+            --bg-alt:       #F5F5F7;
+            --text-primary: #1D1D1F;
+            --text-secondary:#6E6E73;
+            --border:       #D2D2D7;
+            --border-light: #E8E8ED;
+            --accent:       #0071E3;
+            --accent-hover: #0077ED;
+            --ease-out:     cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
         body {
-            background: var(--dark);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                         "SF Pro Text", "Helvetica Neue", "Inter", Arial, sans-serif;
+            background: var(--bg-alt);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 2rem 1rem;
-            position: relative;
+            padding: 2rem 1.25rem;
+            -webkit-font-smoothing: antialiased;
         }
-        body::before {
-            content: '';
+
+        /* ── BACK BUTTON ── */
+        .back-btn {
             position: fixed;
-            inset: 0;
-            background: url('./assets/contacto/fondo_1.png') center/cover no-repeat;
-            filter: blur(3px);
-            z-index: -1;
+            top: 1.25rem;
+            left: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.86rem;
+            font-weight: 500;
+            color: var(--accent);
+            text-decoration: none;
+            padding: 0.45rem 0.9rem;
+            border-radius: 980px;
+            background: rgba(255,255,255,0.82);
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: background 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
         }
-        .contact-page {
+        .back-btn:hover {
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+        }
+        .back-btn svg {
+            width: 14px; height: 14px;
+        }
+
+        /* ── CARD ── */
+        .contact-card {
             width: 100%;
-            max-width: 560px;
-            background: rgba(18,18,18,.92);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            border: 1px solid rgba(44,186,178,.25);
-            border-radius: 16px;
-            padding: 2.5rem 2rem;
-            box-shadow: 0 8px 40px rgba(0,0,0,.5);
+            max-width: 520px;
+            background: var(--bg);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 3rem 2.5rem 2.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06),
+                        0 16px 48px rgba(0,0,0,0.06);
         }
-        .contact-page h1 {
-            font-family: var(--bebas);
-            font-size: 2.8rem;
-            letter-spacing: 3px;
-            color: var(--teal);
-            text-align: center;
-            margin-bottom: .3rem;
-        }
-        .contact-page .sub {
-            text-align: center;
-            color: var(--gray);
-            font-size: .95rem;
+
+        .card-header {
             margin-bottom: 2rem;
         }
+        .card-kicker {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        .card-title {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+        .card-sub {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* ── FORM ── */
         .form-group {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1.1rem;
         }
         .form-group label {
             display: block;
-            font-family: var(--bebas);
-            font-size: 1rem;
-            letter-spacing: 1.5px;
-            color: var(--white);
-            margin-bottom: .4rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.01em;
         }
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: .75rem 1rem;
-            background: rgba(10,10,10,.8);
-            border: 1px solid rgba(255,255,255,.1);
-            border-radius: 8px;
-            color: var(--white);
-            font-family: var(--inter);
-            font-size: .95rem;
-            transition: border-color .2s;
-            box-sizing: border-box;
+            padding: 0.72rem 0.9rem;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.2s var(--ease-out),
+                        box-shadow 0.2s var(--ease-out),
+                        background 0.2s var(--ease-out);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #aeaeb2;
         }
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            outline: none;
-            border-color: var(--teal);
+            border-color: var(--accent);
+            background: var(--bg);
+            box-shadow: 0 0 0 3px rgba(0,113,227,0.12);
         }
         .form-group select {
             cursor: pointer;
-        }
-        .form-group select option {
-            background: #1a1a1a;
-            color: var(--white);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236E6E73' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.85rem center;
+            padding-right: 2.2rem;
         }
         .form-group textarea {
             resize: vertical;
-            min-height: 120px;
+            min-height: 110px;
+            line-height: 1.55;
         }
+
+        /* ── SUBMIT BUTTON ── */
         .form-submit {
             display: block;
             width: 100%;
-            font-family: var(--bebas);
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            color: var(--dark);
-            background: var(--teal);
-            padding: .85rem;
+            font-family: inherit;
+            font-size: 0.96rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: #fff;
+            background: var(--accent);
+            padding: 0.82rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: transform .2s, box-shadow .2s;
-            margin-top: .5rem;
+            transition: transform 0.2s var(--ease-out),
+                        box-shadow 0.2s var(--ease-out),
+                        background 0.2s var(--ease-out);
+            margin-top: 0.5rem;
         }
         .form-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(44,186,178,.35);
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0,113,227,0.30);
         }
-        .back-link {
-            display: block;
+        .form-submit:active { transform: scale(0.99); }
+        .form-submit.loading {
+            pointer-events: none;
+            opacity: 0.65;
+        }
+
+        /* ── MESSAGES ── */
+        .error-msg {
+            display: none;
+            color: #c00;
+            font-size: 0.86rem;
             text-align: center;
-            margin-top: 1.5rem;
-            font-family: var(--bebas);
-            font-size: 1rem;
-            letter-spacing: 1.5px;
-            color: var(--gray);
-            transition: color .2s;
+            margin-top: 0.85rem;
+            padding: 0.65rem 1rem;
+            border: 1px solid rgba(200,0,0,0.2);
+            border-radius: 10px;
+            background: rgba(200,0,0,0.05);
+            line-height: 1.5;
         }
-        .back-link:hover {
-            color: var(--teal);
-        }
+        .error-msg.show { display: block; }
+
         .success-msg {
             display: none;
             text-align: center;
-            padding: 1.5rem 0;
+            padding: 2rem 0 1rem;
         }
-        .success-msg .check {
-            font-size: 3rem;
-            color: var(--teal);
-            margin-bottom: .5rem;
+        .success-check {
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            background: rgba(0,113,227,0.08);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.25rem;
+        }
+        .success-check svg {
+            width: 26px; height: 26px;
+            color: var(--accent);
         }
         .success-msg h2 {
-            font-family: var(--bebas);
-            font-size: 2rem;
-            letter-spacing: 2px;
-            color: var(--white);
-            margin-bottom: .3rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: 0.4rem;
         }
         .success-msg p {
-            color: var(--gray);
-            font-size: .95rem;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
         }
-        .success-msg .back-link {
-            margin-top: 1.2rem;
+        .success-back {
+            display: inline-block;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--accent);
+            text-decoration: none;
+            transition: opacity 0.2s;
         }
+        .success-back:hover { opacity: 0.75; }
+
         .form-wrap { display: block; }
         .success-msg.show { display: block; }
         .form-wrap.hidden { display: none; }
-        .error-msg {
-            display: none;
-            color: #ef4444;
-            font-size: .9rem;
-            text-align: center;
-            margin-top: .8rem;
-            padding: .6rem;
-            border: 1px solid rgba(239,68,68,.3);
-            border-radius: 8px;
-            background: rgba(239,68,68,.08);
+
+        @media (max-width: 600px) {
+            .contact-card { padding: 2.25rem 1.5rem 2rem; border-radius: 16px; }
+            .card-title { font-size: 1.7rem; }
+            .back-btn { top: 0.75rem; left: 0.75rem; }
         }
-        .error-msg.show { display: block; }
-        .form-submit.loading { pointer-events: none; opacity: .6; }
     </style>
 </head>
 <body>
-    <div class="contact-page">
-        <h1>TRABAJEMOS!</h1>
-        <p class="sub">Cuéntame tu proyecto y te responderé a la brevedad</p>
 
-        <div class="success-msg" id="success-msg">
-            <div class="check">✓</div>
-            <h2>Mensaje enviado</h2>
-            <p>Gracias por contactarme. Te responderé lo antes posible.</p>
-            <a href="index.html" class="back-link">← Volver al portfolio</a>
+    <a href="index.html" class="back-btn" id="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Volver
+    </a>
+
+    <div class="contact-card">
+        <div class="card-header">
+            <p class="card-kicker">Contáctame</p>
+            <h1 class="card-title">Trabajemos juntos</h1>
+            <p class="card-sub">Cuéntame tu proyecto y te responderé a la brevedad.</p>
         </div>
 
+        <!-- SUCCESS -->
+        <div class="success-msg" id="success-msg">
+            <div class="success-check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2>Mensaje enviado</h2>
+            <p>Gracias por contactarme.<br>Te responderé lo antes posible.</p>
+            <a href="index.html" class="success-back">← Volver al portfolio</a>
+        </div>
+
+        <!-- FORM -->
         <div class="form-wrap" id="form-wrap">
-            <form id="contact-form">
+            <form id="contact-form" novalidate>
                 <div class="form-group">
                     <label for="nombre">Nombre</label>
                     <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
@@ -207,25 +310,21 @@
                     <textarea id="mensaje" name="mensaje" required placeholder="Describe tu proyecto..."></textarea>
                 </div>
                 <div class="error-msg" id="error-msg"></div>
-                <button type="submit" class="form-submit" id="submit-btn">ENVIAR MENSAJE</button>
+                <button type="submit" class="form-submit" id="submit-btn">Enviar mensaje</button>
             </form>
         </div>
-
-        <a href="index.html" class="back-link" id="back-link">← Volver al portfolio</a>
     </div>
 
     <script>
-        /* ── CAMBIA ESTA URL por la de tu Google Apps Script desplegado ── */
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLQh4AxX78pllKyYzF8diVolsbEjpYARnTqm-XokBWcfMkpder2xkhUZj7HFOn5Vwn_Q/exec';
 
-        const form = document.getElementById('contact-form');
-        const submitBtn = document.getElementById('submit-btn');
-        const formWrap = document.getElementById('form-wrap');
+        const form       = document.getElementById('contact-form');
+        const submitBtn  = document.getElementById('submit-btn');
+        const formWrap   = document.getElementById('form-wrap');
         const successMsg = document.getElementById('success-msg');
-        const errorMsg = document.getElementById('error-msg');
-        const backLink = document.getElementById('back-link');
+        const errorMsg   = document.getElementById('error-msg');
 
-        /* ── Pre-fill desde Project Builder ── */
+        /* Pre-fill desde Project Builder */
         const workflow = localStorage.getItem('dude_workflow');
         if (workflow) {
             const msgField = document.getElementById('mensaje');
@@ -237,26 +336,25 @@
             e.preventDefault();
             errorMsg.classList.remove('show');
             submitBtn.classList.add('loading');
-            submitBtn.textContent = 'ENVIANDO...';
+            submitBtn.textContent = 'Enviando...';
 
             const fd = new URLSearchParams(new FormData(form));
 
             try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: fd });
+                const res  = await fetch(SCRIPT_URL, { method: 'POST', body: fd });
                 const json = await res.json();
 
                 if (json.success) {
                     formWrap.classList.add('hidden');
                     successMsg.classList.add('show');
-                    backLink.style.display = 'none';
                 } else {
                     throw new Error(json.error || 'Error al enviar');
                 }
             } catch (err) {
-                errorMsg.textContent = 'Hubo un error al enviar. Intenta de nuevo o escríbeme directamente a playerdude901@gmail.com';
+                errorMsg.textContent = 'Hubo un error al enviar. Intenta de nuevo o escríbeme a playerdude901@gmail.com';
                 errorMsg.classList.add('show');
                 submitBtn.classList.remove('loading');
-                submitBtn.textContent = 'ENVIAR MENSAJE';
+                submitBtn.textContent = 'Enviar mensaje';
             }
         });
     </script>
