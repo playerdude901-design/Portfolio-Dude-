@@ -388,7 +388,7 @@
         fadeObserver.observe(el);
       });
 
-    document.querySelectorAll('.gold-grid > *, .clientes-grid > *')
+    document.querySelectorAll('.gold-grid > *, .clientes-panels-row > *')
       .forEach((el, i) => {
         el.style.transitionDelay = (i * 80) + 'ms';
       });
