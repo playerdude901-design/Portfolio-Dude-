@@ -1036,7 +1036,9 @@
             margin: 0 0 2rem;
             padding: 3rem !important;
             border-radius: 24px;
-            background: linear-gradient(150deg, #FFFFFF, #F5F5F7 70%, rgba(0, 113, 227, 0.05) 100%) !important;
+            background: radial-gradient(50% 50% at 100% 0%, rgba(0, 113, 227, 0.08) 0%, rgba(255, 255, 255, 0) 100%), 
+                        radial-gradient(50% 50% at 0% 100%, rgba(88, 86, 214, 0.05) 0%, rgba(255, 255, 255, 0) 100%), 
+                        #FFFFFF !important;
             border: 1px solid var(--line) !important;
             box-shadow: var(--shadow-soft) !important;
             overflow: hidden;
@@ -1047,25 +1049,17 @@
             position: absolute;
             right: 2rem;
             top: 1rem;
-            color: rgba(0, 113, 227, 0.04);
+            color: rgba(0, 113, 227, 0.03);
             font-size: 7rem;
             font-weight: 800;
             line-height: .9;
             white-space: nowrap;
             pointer-events: none;
         }
-        .quote-eyebrow {
-            color: var(--blue);
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
-        }
         .quote-hero h2 {
             max-width: 720px;
             color: var(--ink);
-            font-size: 2.5rem;
+            font-size: 2.6rem;
             font-weight: 700;
             line-height: 1.1;
             letter-spacing: -0.02em;
@@ -1073,7 +1067,7 @@
         }
         .quote-hero p {
             max-width: 600px;
-            margin: 1rem 0 0;
+            margin: 1.2rem 0 0;
             color: var(--muted);
             font-size: 1.1rem;
             line-height: 1.55;
@@ -1116,6 +1110,11 @@
             transform: translateY(-4px);
             border-color: var(--line-strong) !important;
             box-shadow: 0 12px 30px rgba(0,0,0,0.06) !important;
+        }
+        .svc-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--blue) !important;
+            box-shadow: 0 12px 30px rgba(0,113,227,0.06) !important;
         }
         .plan-card.applied {
             border-color: var(--blue) !important;
@@ -1762,7 +1761,6 @@
     <div class="builder">
         <div class="services-col">
             <div class="quote-hero">
-                <div class="quote-eyebrow">Cotizador creativo</div>
                 <h2>Construye tu proyecto a tu ritmo.</h2>
                 <p>Elige un plan mensual o combina servicios individuales. La propuesta se actualiza al instante con precio, tiempos y detalles de entrega.</p>
             </div>
@@ -1806,12 +1804,7 @@
                     </div>
                     <input class="p-name" id="p-name" placeholder="Nombre de tu proyecto" value="Mi Proyecto Creativo">
                 </div>
-                <div class="tmpl-bar" id="tmpl-bar">
-                    <span class="tmpl-label">Plantilla:</span>
-                    <select id="tmpl-select"></select>
-                    <button onclick="saveTemplate()">Guardar</button>
-                    <button class="tmpl-del" onclick="delTemplate()">Eliminar</button>
-                </div>
+
                 <div class="proposal-body" id="proposal-body">
                     <div class="p-empty" id="p-empty">
                         Selecciona un paquete o agrega servicios para empezar.
@@ -2483,8 +2476,6 @@
         const pReset=document.getElementById('p-reset-btn');
         const undoBtn=document.getElementById('undo-btn');
         const redoBtn=document.getElementById('redo-btn');
-        const tmplBar=document.getElementById('tmpl-bar');
-        const tmplSelect=document.getElementById('tmpl-select');
         const qOverlay=document.getElementById('q-overlay');
         const qBody=document.getElementById('q-body');
 
@@ -2537,44 +2528,7 @@
             else if (e.ctrlKey && e.key==='z') { e.preventDefault(); undo(); }
         });
 
-        // ── TEMPLATES ──
-        function loadTemplates() {
-            try { return JSON.parse(localStorage.getItem('dude_templates')||'{}'); } catch { return {}; }
-        }
-        function saveTemplates(t) { localStorage.setItem('dude_templates',JSON.stringify(t)); }
-        function renderTemplates() {
-            const t = loadTemplates();
-            const keys = Object.keys(t);
-            tmplBar.classList.toggle('visible', keys.length>0);
-            tmplSelect.innerHTML = keys.map(k => `<option value="${k}">${k}</option>`).join('');
-        }
-        window.saveTemplate = function() {
-            const name = prompt('Nombre para esta plantilla:');
-            if (!name) return;
-            const t = loadTemplates();
-            t[name] = { project:JSON.parse(JSON.stringify(project)), appliedPlan, pName:pName.value };
-            saveTemplates(t);
-            renderTemplates();
-        };
-        window.delTemplate = function() {
-            const name = tmplSelect.value;
-            if (!name) return;
-            const t = loadTemplates();
-            delete t[name];
-            saveTemplates(t);
-            renderTemplates();
-        };
-        tmplSelect?.addEventListener('change', function() {
-            const t = loadTemplates();
-            const data = t[this.value];
-            if (!data) return;
-            project.length = 0;
-            data.project.forEach(p => project.push(p));
-            appliedPlan = data.appliedPlan;
-            if (data.pName) pName.value = data.pName;
-            pushHistory();
-            renderAll();
-        });
+
 
         // ── DRAFT AUTO-SAVE ──
         function saveDraft() {
@@ -3071,7 +3025,6 @@
             renderServices();
             renderProposal();
             saveDraft();
-            renderTemplates();
             updateUndoButtons();
         }
         const rOptsSel = new Map();
@@ -3328,7 +3281,6 @@
         renderServices();
         renderProposal();
         renderWelcome();
-        renderTemplates();
         updateUndoButtons();
         refreshCalendarData(); // fetch capacity/bookings for timeline
         setTimeout(() => {
