@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="dark">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +13,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="./style.css">
 </head>
@@ -78,14 +78,13 @@
                 </a>
                 <img src="./assets/verified/verified.png" alt="" class="nav-verified">
                 <nav class="nav-links" aria-label="Navegación principal">
-                    <a href="#inicio"    class="nav-item active" id="nav-home">INICIO</a>
-                    <a href="#clientes"  class="nav-item" id="nav-clientes">CLIENTES</a>
-                    <a href="#portfolio" class="nav-item" id="nav-miniaturas">MINIATURAS</a>
-                    <a href="#gold" class="nav-item nav-gold" id="nav-suitegold"><span class="gold-shine">SUITEGOLD</span></a>
+                    <a href="#inicio"    class="nav-item active" id="nav-home">Inicio</a>
+                    <a href="#clientes"  class="nav-item" id="nav-clientes">Clientes</a>
+                    <a href="#portfolio" class="nav-item" id="nav-miniaturas">Mis trabajos</a>
+                    <a href="#gold" class="nav-item nav-gold" id="nav-suitegold">SuiteGold</a>
                 </nav>
-                <a href="contacto.html" target="_blank" rel="noopener" class="nav-cta" id="nav-contacto">TRABAJEMOS!</a>
-                <a href="proyecto.html" target="_blank" rel="noopener" class="nav-proyecto" id="nav-proyecto">CREA TU PROYECTO</a>
-                <button id="theme-toggle" aria-label="Cambiar tema">&#x263E;</button>
+                <a href="contacto.html" target="_blank" rel="noopener" class="nav-cta" id="nav-contacto">Contacto</a>
+                <a href="proyecto.html" target="_blank" rel="noopener" class="nav-proyecto" id="nav-proyecto">Proyecto</a>
             </div>
         </header>
 
@@ -104,7 +103,7 @@
         <section class="presentation-section" id="presentacion" aria-label="Presentación de Dude">
             <div class="presentation-inner">
                 <div class="presentation-copy">
-                    <p class="presentation-kicker">DISEÑO GRÁFICO · EDICIÓN · MINIATURAS</p>
+                    <p class="presentation-kicker">Diseño Gráfico · Edición · Miniaturas</p>
                     <p class="presentation-lead">
                         Soy Christian Lee Charles Chávez, mejor conocido como DUDE!, diseñador gráfico, editor audiovisual y creador de contenido visual especializado en video, miniaturas para YouTube, identidad visual y contenido digital. Mi enfoque combina creatividad, estrategia y análisis para desarrollar piezas visuales de alto impacto que captan la atención, aumentan el engagement y ayudan al crecimiento de marcas, creadores y negocios. En este portafolio encontrarás una selección de mis proyectos más destacados, reflejando mi capacidad para transformar ideas en contenido atractivo, profesional y competitivo para plataformas digitales.
                     </p>
@@ -115,11 +114,18 @@
             </div>
         </section>
 
-        <img src="./assets/habilidades_assets.jpg" alt="" class="skills-banner">
+        <div class="skills-row">
+            <span class="skill-chip">Diseño Gráfico</span>
+            <span class="skill-chip">Edición de Video</span>
+            <span class="skill-chip">Miniaturas YouTube</span>
+            <span class="skill-chip">Identidad Visual</span>
+            <span class="skill-chip">Motion Graphics</span>
+            <span class="skill-chip">Contenido Digital</span>
+        </div>
 
         <section class="clientes-section" id="clientes" aria-label="Clientes">
-            <h2 class="section-title">CLIENTES</h2>
-            <div class="clientes-panels-row">
+            <h2 class="section-title">Clientes</h2>
+            <div class="clientes-grid">
                 <div class="cliente-panel" data-client="galaxito" data-verified="true" tabindex="0" role="button" aria-label="Ver videos de Galaxito">
                     <div class="cliente-panel-bg">
                         <img src="./assets/clientes/galaxito/Galaxito_Logo.jpg" alt="" class="panel-bg-img">
@@ -232,7 +238,7 @@
         </section>
 
         <section class="portfolio-section" id="portfolio" aria-label="Trabajos">
-            <h2 class="section-title">MIS TRABAJOS</h2>
+            <h2 class="section-title">Mis trabajos</h2>
             <div class="portfolio-grid" id="portfolio-grid"></div>
         </section>
 
@@ -244,7 +250,7 @@
         <!-- ══════════ PRODUCTOS GOLD ══════════ -->
         <section class="gold-section" id="gold" aria-label="Plugins y herramientas Gold">
             <div class="gold-inner">
-                <img class="gold-section-title" src="./assets/presetgold/suite_gold.png" alt="SUITE GOLD" loading="lazy">
+                <h2 class="gold-section-title"><span class="suite">Suite</span>Gold</h2>
                 <p class="gold-intro">
                     <strong>SuiteGold</strong> es un conjunto de herramientas diseñadas para <strong>optimizar y acelerar</strong> el flujo de trabajo de editores de video. Cada programa fue creado para solucionar problemas reales del día a día, eliminando procesos manuales repetitivos y permitiéndote concentrarte en lo que realmente importa: crear contenido de calidad.
                 </p>
@@ -261,7 +267,7 @@
                         </div>
                         <a href="https://github.com/playerdude901-design/PresetGold" target="_blank" rel="noopener" class="btn-github">
                             <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-                            DESCARGAR DE GITHUB
+                            Descargar de GitHub
                         </a>
                     </div>
 
@@ -276,7 +282,7 @@
                         </div>
                         <a href="https://github.com/playerdude901-design/AurumGold-Clip-editor" target="_blank" rel="noopener" class="btn-github">
                             <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-                            DESCARGAR DE GITHUB
+                            Descargar de GitHub
                         </a>
                     </div>
 
@@ -291,7 +297,7 @@
                         </div>
                         <a href="https://github.com/playerdude901-design/CutterGold" target="_blank" rel="noopener" class="btn-github">
                             <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-                            DESCARGAR DE GITHUB
+                            Descargar de GitHub
                         </a>
                     </div>
 
@@ -300,7 +306,7 @@
         </section>
 
         <footer>
-            <span>DUDE 3D</span> &nbsp;·&nbsp; Portfolio © 2024 &nbsp;·&nbsp; Todos los derechos reservados
+            &copy; 2024 Christian Lee Charles Ch&aacute;vez &middot; Dude! Portfolio
         </footer>
 
     </div>

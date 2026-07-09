@@ -382,13 +382,13 @@
       });
     }, { threshold: 0.12 });
 
-    document.querySelectorAll('.card, section, [class*="plan"], [class*="service"]')
+    document.querySelectorAll('.card, section, .cliente-panel, [class*="plan"], [class*="service"]')
       .forEach(el => {
         el.classList.add('fade-up');
         fadeObserver.observe(el);
       });
 
-    document.querySelectorAll('.cards-grid > *, .plans-grid > *')
+    document.querySelectorAll('.gold-grid > *, .clientes-grid > *')
       .forEach((el, i) => {
         el.style.transitionDelay = (i * 80) + 'ms';
       });
