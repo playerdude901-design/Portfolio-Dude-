@@ -274,110 +274,116 @@
     // Clone for infinite loop
     originalPanels.slice(-CLONE_COUNT).reverse().forEach(p => track.prepend(p.cloneNode(true)));
     originalPanels.slice(0, CLONE_COUNT).forEach(p => track.append(p.cloneNode(true)));
-
     const allPanels = track.querySelectorAll('.cliente-panel');
 
-    function getPanelSpan() {
-        const p = allPanels[0];
-        if (!p) return 320;
-        const gap = parseFloat(getComputedStyle(track).gap) || 20;
-        return p.offsetWidth + gap;
-    }
-
-    // Init after layout is computed
-    requestAnimationFrame(() => {
-        track.scrollLeft = CLONE_COUNT * getPanelSpan();
-        updatePanelClasses();
-    });
-
-    function getCenterIndex() {
+    // Utilities
+    function getCenterPanel() {
         const cr = carousel.getBoundingClientRect();
         const cx = cr.left + cr.width / 2;
-        let best = 0, bestDist = Infinity;
-        allPanels.forEach((p, i) => {
+        let best = null, bestDist = Infinity;
+        allPanels.forEach(p => {
             const r = p.getBoundingClientRect();
             const d = Math.abs(r.left + r.width / 2 - cx);
-            if (d < bestDist) { bestDist = d; best = i; }
+            if (d < bestDist) { bestDist = d; best = p; }
         });
         return best;
     }
 
     function updatePanelClasses() {
-        const centerIdx = getCenterIndex();
-        allPanels.forEach((p, i) => {
-            const diff = Math.abs(i - centerIdx);
-            p.classList.toggle('cliente-panel-center', diff === 0);
-            p.classList.toggle('cliente-panel-adjacent', diff === 1);
-            p.classList.toggle('cliente-panel-far', diff >= 2);
+        const center = getCenterPanel();
+        allPanels.forEach(p => {
+            if (p === center) {
+                p.classList.add('cliente-panel-center');
+                p.classList.remove('cliente-panel-adjacent', 'cliente-panel-far');
+            } else {
+                const index = Array.from(allPanels).indexOf(p);
+                const centerIdx = Array.from(allPanels).indexOf(center);
+                const diff = Math.abs(index - centerIdx);
+                p.classList.toggle('cliente-panel-adjacent', diff === 1);
+                p.classList.toggle('cliente-panel-far', diff >= 2);
+                p.classList.remove('cliente-panel-center');
+            }
         });
     }
 
-    function scrollToIndex(idx) {
-        const span = getPanelSpan();
-        track.scrollTo({ left: idx * span, behavior: 'smooth' });
+    function centerPanel(panel) {
+        panel.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
 
-    function handleInfiniteScroll() {
-        const span = getPanelSpan();
-        const minScroll = CLONE_COUNT * span;
-        const maxScroll = (CLONE_COUNT + panelCount) * span;
-        const sl = track.scrollLeft;
-
-        if (sl <= minScroll) {
-            track.style.scrollBehavior = 'auto';
-            track.scrollLeft += panelCount * span;
-            requestAnimationFrame(() => track.style.scrollBehavior = 'smooth');
-        } else if (sl >= maxScroll) {
-            track.style.scrollBehavior = 'auto';
-            track.scrollLeft -= panelCount * span;
-            requestAnimationFrame(() => track.style.scrollBehavior = 'smooth');
+    let jumping = false;
+    function checkInfiniteJump() {
+        if (jumping) return;
+        const center = getCenterPanel();
+        if (!center) return;
+        const all = Array.from(allPanels);
+        const ci = all.indexOf(center);
+        if (ci < CLONE_COUNT) {
+            jumping = true;
+            const realIdx = ci + panelCount;
+            track.scrollLeft += all[realIdx].offsetLeft - all[ci].offsetLeft;
+            requestAnimationFrame(() => { jumping = false; updatePanelClasses(); });
+        } else if (ci >= CLONE_COUNT + panelCount) {
+            jumping = true;
+            const realIdx = ci - panelCount;
+            track.scrollLeft += all[realIdx].offsetLeft - all[ci].offsetLeft;
+            requestAnimationFrame(() => { jumping = false; updatePanelClasses(); });
         }
     }
+
+    // Init — jump to first real panel (no animation)
+    requestAnimationFrame(() => {
+        const firstReal = allPanels[CLONE_COUNT];
+        if (firstReal) {
+            track.scrollLeft = firstReal.offsetLeft - (track.clientWidth - firstReal.offsetWidth) / 2;
+            updatePanelClasses();
+        }
+    });
 
     if (track && prevBtn && nextBtn) {
         prevBtn.addEventListener('click', () => {
-            const cur = getCenterIndex();
-            if (cur > 0) scrollToIndex(cur - 1);
+            const cur = getCenterPanel();
+            const prev = cur ? cur.previousElementSibling : null;
+            if (prev) centerPanel(prev);
         });
         nextBtn.addEventListener('click', () => {
-            const cur = getCenterIndex();
-            if (cur < allPanels.length - 1) scrollToIndex(cur + 1);
+            const cur = getCenterPanel();
+            const next = cur ? cur.nextElementSibling : null;
+            if (next) centerPanel(next);
         });
 
-        let rafId = null;
-        function onScroll() {
-            handleInfiniteScroll();
-            updatePanelClasses();
-            rafId = null;
-        }
+        // Update classes on scroll (debounced) + check infinite jump
+        let ticking = false;
         track.addEventListener('scroll', () => {
-            if (rafId === null) rafId = requestAnimationFrame(onScroll);
+            if (!ticking) {
+                ticking = true;
+                requestAnimationFrame(() => {
+                    updatePanelClasses();
+                    checkInfiniteJump();
+                    ticking = false;
+                });
+            }
         });
         updatePanelClasses();
 
-        // Panel click/key: center → open gallery, adjacent → scroll to center
-        function bindPanelInteractions() {
-            track.querySelectorAll('.cliente-panel').forEach(panel => {
-                panel.addEventListener('click', () => {
+        // Panel click: center → open gallery, adjacent → scroll to center
+        allPanels.forEach(panel => {
+            panel.addEventListener('click', () => {
+                if (panel.classList.contains('cliente-panel-center')) {
+                    openGallery(panel.dataset.client);
+                } else {
+                    centerPanel(panel);
+                }
+            });
+            panel.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
                     if (panel.classList.contains('cliente-panel-center')) {
                         openGallery(panel.dataset.client);
                     } else {
-                        scrollToIndex(Array.from(track.querySelectorAll('.cliente-panel')).indexOf(panel));
+                        centerPanel(panel);
                     }
-                });
-                panel.addEventListener('keydown', e => {
-                    if (e.key === 'Enter') {
-                        if (panel.classList.contains('cliente-panel-center')) {
-                            openGallery(panel.dataset.client);
-                        } else {
-                            scrollToIndex(Array.from(track.querySelectorAll('.cliente-panel')).indexOf(panel));
-                        }
-                    }
-                });
+                }
             });
-        }
-        bindPanelInteractions();
-
+        });
     }
 
     /* ── Gallery Modal (Clientes) ── */

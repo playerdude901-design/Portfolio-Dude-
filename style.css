@@ -540,8 +540,6 @@ section { padding: 6rem 0; }
   display: flex;
   gap: 1.25rem;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   padding: 1.5rem 0;
   transform-style: preserve-3d;
@@ -582,7 +580,6 @@ section { padding: 6rem 0; }
   overflow: hidden;
   aspect-ratio: 2/3;
   cursor: pointer;
-  scroll-snap-align: center;
   background: var(--bg-alt);
   /* far state (default) */
   transform: scale(0.7) translateZ(-120px);
