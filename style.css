@@ -109,11 +109,11 @@ section { padding: 6rem 0; }
 
 .site-header {
   position: sticky;
-  top: 1.2rem;
+  top: 0;
   z-index: 200;
   display: flex;
   justify-content: center;
-  padding: 0 1rem;
+  padding: 0.5rem 1rem 0;
   pointer-events: none;
 }
 
@@ -230,6 +230,7 @@ section { padding: 6rem 0; }
   align-items: center;
   justify-content: center;
   background: #000;
+  padding: 0;
 }
 
 .hero-video {
