@@ -108,12 +108,13 @@ section { padding: 6rem 0; }
 /* ══════════ HEADER / NAV ══════════ */
 
 .site-header {
-  position: sticky;
-  top: 0;
+  position: fixed;
+  top: 0.8rem;
+  left: 0; right: 0;
   z-index: 200;
   display: flex;
   justify-content: center;
-  padding: 0.5rem 1rem 0;
+  padding: 0 1rem;
   pointer-events: none;
 }
 
