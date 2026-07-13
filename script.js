@@ -149,7 +149,6 @@
     const grid = document.getElementById('portfolio-grid');
 
     CATEGORIES.forEach(cat => {
-        const cover = cat.images[0] || '';
         const count = cat.images.length;
 
         const article = document.createElement('article');
@@ -157,9 +156,13 @@
         article.tabIndex  = 0;
         article.setAttribute('aria-label', `Abrir galería ${cat.title}`);
 
+        const thumbs = cat.images.map(src =>
+            `<img class="card-cover" src="${src}" alt="" loading="lazy" onerror="this.style.display='none'">`
+        ).join('');
+
         article.innerHTML = `
-            <div class="card-thumb ${cat.cls}">
-                <img class="card-cover" src="${cover}" alt="Portada ${cat.title}" loading="lazy" onerror="this.style.display='none'">
+            <div class="card-thumb ${cat.cls}" data-rotate="${cat.key}">
+                <div class="card-thumb-images">${thumbs}</div>
                 <span class="card-thumb-label">${cat.title}</span>
             </div>
             <div class="card-body">
@@ -174,6 +177,19 @@
         article.addEventListener('keydown', e => { if (e.key === 'Enter') open(); });
 
         grid.appendChild(article);
+    });
+
+    /* ── Rotate preview images ── */
+    document.querySelectorAll('.card-thumb-images').forEach(wrap => {
+        const imgs = wrap.querySelectorAll('.card-cover');
+        if (imgs.length < 2) return;
+        let idx = 0;
+        imgs[0].classList.add('card-cover-active');
+        setInterval(() => {
+            imgs[idx].classList.remove('card-cover-active');
+            idx = (idx + 1) % imgs.length;
+            imgs[idx].classList.add('card-cover-active');
+        }, 3000);
     });
 
     /* ── Lightbox ── */
