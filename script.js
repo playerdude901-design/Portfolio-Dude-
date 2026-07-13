@@ -267,19 +267,28 @@
     const prevBtn = document.getElementById('carousel-prev');
     const nextBtn = document.getElementById('carousel-next');
 
-    const CLONE_COUNT = 3; // panels to clone on each side
+    const CLONE_COUNT = 3;
     const originalPanels = Array.from(track.querySelectorAll('.cliente-panel'));
+    const panelCount = originalPanels.length;
 
     // Clone for infinite loop
     originalPanels.slice(-CLONE_COUNT).reverse().forEach(p => track.prepend(p.cloneNode(true)));
     originalPanels.slice(0, CLONE_COUNT).forEach(p => track.append(p.cloneNode(true)));
 
     const allPanels = track.querySelectorAll('.cliente-panel');
-    const panelCount = originalPanels.length;
-    const panelWidth = () => allPanels[0].offsetWidth + 20; // width + gap
 
-    // Initial scroll to first real panel
-    track.scrollLeft = CLONE_COUNT * panelWidth();
+    function getPanelSpan() {
+        const p = allPanels[0];
+        if (!p) return 320;
+        const gap = parseFloat(getComputedStyle(track).gap) || 20;
+        return p.offsetWidth + gap;
+    }
+
+    // Init after layout is computed
+    requestAnimationFrame(() => {
+        track.scrollLeft = CLONE_COUNT * getPanelSpan();
+        updatePanelClasses();
+    });
 
     function getCenterIndex() {
         const cr = carousel.getBoundingClientRect();
@@ -303,19 +312,25 @@
         });
     }
 
-    function scrollToIndex(idx, smooth = true) {
-        track.scrollTo({ left: idx * panelWidth(), behavior: smooth ? 'smooth' : 'auto' });
+    function scrollToIndex(idx) {
+        const span = getPanelSpan();
+        track.scrollTo({ left: idx * span, behavior: 'smooth' });
     }
 
     function handleInfiniteScroll() {
-        const maxRealStart = CLONE_COUNT * panelWidth();
-        const maxRealEnd = (CLONE_COUNT + panelCount) * panelWidth();
+        const span = getPanelSpan();
+        const minScroll = CLONE_COUNT * span;
+        const maxScroll = (CLONE_COUNT + panelCount) * span;
         const sl = track.scrollLeft;
 
-        if (sl <= maxRealStart) {
-            track.scrollLeft += panelCount * panelWidth();
-        } else if (sl >= maxRealEnd) {
-            track.scrollLeft -= panelCount * panelWidth();
+        if (sl <= minScroll) {
+            track.style.scrollBehavior = 'auto';
+            track.scrollLeft += panelCount * span;
+            requestAnimationFrame(() => track.style.scrollBehavior = 'smooth');
+        } else if (sl >= maxScroll) {
+            track.style.scrollBehavior = 'auto';
+            track.scrollLeft -= panelCount * span;
+            requestAnimationFrame(() => track.style.scrollBehavior = 'smooth');
         }
     }
 
@@ -363,14 +378,7 @@
         }
         bindPanelInteractions();
 
-        // Re-bind after infinite scroll jumps
-        let lastCount = track.querySelectorAll('.cliente-panel').length;
-        const origHandleInfinite = handleInfiniteScroll;
-        handleInfiniteScroll = function() {
-            origHandleInfinite();
-            const newCount = track.querySelectorAll('.cliente-panel').length;
-            if (newCount !== lastCount) { lastCount = newCount; bindPanelInteractions(); }
-        };
+    }
 
     /* ── Gallery Modal (Clientes) ── */
     const clientes = {
@@ -487,25 +495,6 @@
         document.body.style.overflow = '';
     }
 
-    document.querySelectorAll('.cliente-panel').forEach(panel => {
-        panel.addEventListener('click', () => {
-            if (panel.classList.contains('cliente-panel-center')) {
-                openGallery(panel.dataset.client);
-            } else {
-                scrollToPanel(panel);
-            }
-        });
-        panel.addEventListener('keydown', e => {
-            if (e.key === 'Enter') {
-                if (panel.classList.contains('cliente-panel-center')) {
-                    openGallery(panel.dataset.client);
-                } else {
-                    scrollToPanel(panel);
-                }
-            }
-        });
-    });
-
     galleryClose.addEventListener('click', closeGallery);
     galleryBack.addEventListener('click', showGallery);
     galleryModal.addEventListener('click', e => { if (e.target === galleryModal) closeGallery(); });
@@ -523,13 +512,13 @@
       });
     }, { threshold: 0.12 });
 
-    document.querySelectorAll('.card, section, .cliente-panel, [class*="plan"], [class*="service"]')
+    document.querySelectorAll('.card, section, [class*="plan"], [class*="service"]')
       .forEach(el => {
         el.classList.add('fade-up');
         fadeObserver.observe(el);
       });
 
-    document.querySelectorAll('.gold-grid > *, .clientes-panels-row > *')
+    document.querySelectorAll('.gold-grid > *, .clientes-track > *')
       .forEach((el, i) => {
         el.style.transitionDelay = (i * 80) + 'ms';
       });
