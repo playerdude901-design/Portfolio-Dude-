@@ -261,52 +261,116 @@
         });
     });
 
-    /* ── Clientes carousel arrows ── */
+    /* ── Clientes carousel (coverflow + infinite) ── */
     const carousel = document.getElementById('clientes-carousel');
     const track = document.getElementById('clientes-track');
     const prevBtn = document.getElementById('carousel-prev');
     const nextBtn = document.getElementById('carousel-next');
 
-    function getCenterPanel() {
+    const CLONE_COUNT = 3; // panels to clone on each side
+    const originalPanels = Array.from(track.querySelectorAll('.cliente-panel'));
+
+    // Clone for infinite loop
+    originalPanels.slice(-CLONE_COUNT).reverse().forEach(p => track.prepend(p.cloneNode(true)));
+    originalPanels.slice(0, CLONE_COUNT).forEach(p => track.append(p.cloneNode(true)));
+
+    const allPanels = track.querySelectorAll('.cliente-panel');
+    const panelCount = originalPanels.length;
+    const panelWidth = () => allPanels[0].offsetWidth + 20; // width + gap
+
+    // Initial scroll to first real panel
+    track.scrollLeft = CLONE_COUNT * panelWidth();
+
+    function getCenterIndex() {
         const cr = carousel.getBoundingClientRect();
         const cx = cr.left + cr.width / 2;
-        let best = null, bestDist = Infinity;
-        track.querySelectorAll('.cliente-panel').forEach(p => {
+        let best = 0, bestDist = Infinity;
+        allPanels.forEach((p, i) => {
             const r = p.getBoundingClientRect();
             const d = Math.abs(r.left + r.width / 2 - cx);
-            if (d < bestDist) { bestDist = d; best = p; }
+            if (d < bestDist) { bestDist = d; best = i; }
         });
         return best;
     }
 
-    function updateCenterPanel() {
-        const center = getCenterPanel();
-        track.querySelectorAll('.cliente-panel').forEach(p => {
-            p.classList.toggle('cliente-panel-center', p === center);
+    function updatePanelClasses() {
+        const centerIdx = getCenterIndex();
+        allPanels.forEach((p, i) => {
+            const diff = Math.abs(i - centerIdx);
+            p.classList.toggle('cliente-panel-center', diff === 0);
+            p.classList.toggle('cliente-panel-adjacent', diff === 1);
+            p.classList.toggle('cliente-panel-far', diff >= 2);
         });
     }
 
-    function scrollToPanel(panel) {
-        const cr = carousel.getBoundingClientRect();
-        const pr = panel.getBoundingClientRect();
-        const offset = pr.left + pr.width / 2 - cr.left - cr.width / 2;
-        track.scrollBy({ left: offset, behavior: 'smooth' });
+    function scrollToIndex(idx, smooth = true) {
+        track.scrollTo({ left: idx * panelWidth(), behavior: smooth ? 'smooth' : 'auto' });
+    }
+
+    function handleInfiniteScroll() {
+        const maxRealStart = CLONE_COUNT * panelWidth();
+        const maxRealEnd = (CLONE_COUNT + panelCount) * panelWidth();
+        const sl = track.scrollLeft;
+
+        if (sl <= maxRealStart) {
+            track.scrollLeft += panelCount * panelWidth();
+        } else if (sl >= maxRealEnd) {
+            track.scrollLeft -= panelCount * panelWidth();
+        }
     }
 
     if (track && prevBtn && nextBtn) {
         prevBtn.addEventListener('click', () => {
-            const cur = getCenterPanel();
-            const prev = cur ? cur.previousElementSibling : null;
-            if (prev) scrollToPanel(prev);
+            const cur = getCenterIndex();
+            if (cur > 0) scrollToIndex(cur - 1);
         });
         nextBtn.addEventListener('click', () => {
-            const cur = getCenterPanel();
-            const next = cur ? cur.nextElementSibling : null;
-            if (next) scrollToPanel(next);
+            const cur = getCenterIndex();
+            if (cur < allPanels.length - 1) scrollToIndex(cur + 1);
         });
-        track.addEventListener('scroll', updateCenterPanel);
-        updateCenterPanel();
-    }
+
+        let rafId = null;
+        function onScroll() {
+            handleInfiniteScroll();
+            updatePanelClasses();
+            rafId = null;
+        }
+        track.addEventListener('scroll', () => {
+            if (rafId === null) rafId = requestAnimationFrame(onScroll);
+        });
+        updatePanelClasses();
+
+        // Panel click/key: center → open gallery, adjacent → scroll to center
+        function bindPanelInteractions() {
+            track.querySelectorAll('.cliente-panel').forEach(panel => {
+                panel.addEventListener('click', () => {
+                    if (panel.classList.contains('cliente-panel-center')) {
+                        openGallery(panel.dataset.client);
+                    } else {
+                        scrollToIndex(Array.from(track.querySelectorAll('.cliente-panel')).indexOf(panel));
+                    }
+                });
+                panel.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') {
+                        if (panel.classList.contains('cliente-panel-center')) {
+                            openGallery(panel.dataset.client);
+                        } else {
+                            scrollToIndex(Array.from(track.querySelectorAll('.cliente-panel')).indexOf(panel));
+                        }
+                    }
+                });
+            });
+        }
+        bindPanelInteractions();
+
+        // Re-bind after infinite scroll jumps
+        let lastCount = track.querySelectorAll('.cliente-panel').length;
+        const origHandleInfinite = handleInfiniteScroll;
+        handleInfiniteScroll = function() {
+            origHandleInfinite();
+            const newCount = track.querySelectorAll('.cliente-panel').length;
+            if (newCount !== lastCount) { lastCount = newCount; bindPanelInteractions(); }
+        };
 
     /* ── Gallery Modal (Clientes) ── */
     const clientes = {
