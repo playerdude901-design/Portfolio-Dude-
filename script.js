@@ -261,6 +261,20 @@
         });
     });
 
+    /* ── Clientes carousel arrows ── */
+    const track = document.getElementById('clientes-track');
+    const prevBtn = document.getElementById('carousel-prev');
+    const nextBtn = document.getElementById('carousel-next');
+
+    if (track && prevBtn && nextBtn) {
+        const scrollAmount = () => {
+            const panel = track.querySelector('.cliente-panel');
+            return panel ? panel.offsetWidth + 20 : 320;
+        };
+        prevBtn.addEventListener('click', () => track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' }));
+        nextBtn.addEventListener('click', () => track.scrollBy({ left: scrollAmount(), behavior: 'smooth' }));
+    }
+
     /* ── Gallery Modal (Clientes) ── */
     const clientes = {
         galaxito: {
