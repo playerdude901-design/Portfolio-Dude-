@@ -262,17 +262,50 @@
     });
 
     /* ── Clientes carousel arrows ── */
+    const carousel = document.getElementById('clientes-carousel');
     const track = document.getElementById('clientes-track');
     const prevBtn = document.getElementById('carousel-prev');
     const nextBtn = document.getElementById('carousel-next');
 
+    function getCenterPanel() {
+        const cr = carousel.getBoundingClientRect();
+        const cx = cr.left + cr.width / 2;
+        let best = null, bestDist = Infinity;
+        track.querySelectorAll('.cliente-panel').forEach(p => {
+            const r = p.getBoundingClientRect();
+            const d = Math.abs(r.left + r.width / 2 - cx);
+            if (d < bestDist) { bestDist = d; best = p; }
+        });
+        return best;
+    }
+
+    function updateCenterPanel() {
+        const center = getCenterPanel();
+        track.querySelectorAll('.cliente-panel').forEach(p => {
+            p.classList.toggle('cliente-panel-center', p === center);
+        });
+    }
+
+    function scrollToPanel(panel) {
+        const cr = carousel.getBoundingClientRect();
+        const pr = panel.getBoundingClientRect();
+        const offset = pr.left + pr.width / 2 - cr.left - cr.width / 2;
+        track.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+
     if (track && prevBtn && nextBtn) {
-        const scrollAmount = () => {
-            const panel = track.querySelector('.cliente-panel');
-            return panel ? panel.offsetWidth + 20 : 320;
-        };
-        prevBtn.addEventListener('click', () => track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' }));
-        nextBtn.addEventListener('click', () => track.scrollBy({ left: scrollAmount(), behavior: 'smooth' }));
+        prevBtn.addEventListener('click', () => {
+            const cur = getCenterPanel();
+            const prev = cur ? cur.previousElementSibling : null;
+            if (prev) scrollToPanel(prev);
+        });
+        nextBtn.addEventListener('click', () => {
+            const cur = getCenterPanel();
+            const next = cur ? cur.nextElementSibling : null;
+            if (next) scrollToPanel(next);
+        });
+        track.addEventListener('scroll', updateCenterPanel);
+        updateCenterPanel();
     }
 
     /* ── Gallery Modal (Clientes) ── */
@@ -391,8 +424,22 @@
     }
 
     document.querySelectorAll('.cliente-panel').forEach(panel => {
-        panel.addEventListener('click', () => openGallery(panel.dataset.client));
-        panel.addEventListener('keydown', e => { if (e.key === 'Enter') openGallery(panel.dataset.client); });
+        panel.addEventListener('click', () => {
+            if (panel.classList.contains('cliente-panel-center')) {
+                openGallery(panel.dataset.client);
+            } else {
+                scrollToPanel(panel);
+            }
+        });
+        panel.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                if (panel.classList.contains('cliente-panel-center')) {
+                    openGallery(panel.dataset.client);
+                } else {
+                    scrollToPanel(panel);
+                }
+            }
+        });
     });
 
     galleryClose.addEventListener('click', closeGallery);
