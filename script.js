@@ -1,5 +1,64 @@
 (function () {
 
+    /* ── Hero video (mute on scroll, unmute at top) ── */
+    const heroVideo = document.querySelector('.hero-video');
+    const muteBtn = document.getElementById('hero-mute-btn');
+
+    if (heroVideo) {
+        let unlocked = false;
+
+        // Unlock audio on first user interaction
+        function unlockAudio() {
+            if (unlocked) return;
+            heroVideo.muted = false;
+            heroVideo.volume = 1;
+            heroVideo.play();
+            unlocked = true;
+            updateMuteBtn();
+            document.removeEventListener('click', unlockAudio);
+            document.removeEventListener('touchstart', unlockAudio);
+            document.removeEventListener('keydown', unlockAudio);
+        }
+        document.addEventListener('click', unlockAudio);
+        document.addEventListener('touchstart', unlockAudio);
+        document.addEventListener('keydown', unlockAudio);
+
+        function updateMuteBtn() {
+            if (!muteBtn) return;
+            muteBtn.textContent = heroVideo.muted ? '🔇' : '🔊';
+            muteBtn.setAttribute('aria-label', heroVideo.muted ? 'Activar sonido' : 'Silenciar video');
+        }
+
+        // Scroll-based mute/unmute
+        function onScroll() {
+            if (!unlocked) return;
+            const atTop = window.scrollY < 100;
+            if (atTop && heroVideo.muted) {
+                heroVideo.muted = false;
+                heroVideo.volume = 1;
+                heroVideo.play();
+                updateMuteBtn();
+            } else if (!atTop && !heroVideo.muted) {
+                heroVideo.muted = true;
+                updateMuteBtn();
+            }
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        updateMuteBtn();
+
+        // Toggle mute on button click
+        if (muteBtn) {
+            muteBtn.addEventListener('click', () => {
+                heroVideo.muted = !heroVideo.muted;
+                if (!heroVideo.muted) {
+                    heroVideo.volume = 1;
+                    heroVideo.play();
+                }
+                updateMuteBtn();
+            });
+        }
+    }
+
     /* ── Category / image data (relative paths — works on GitHub Pages) ── */
     const CATEGORIES = [
         {

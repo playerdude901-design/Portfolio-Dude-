@@ -89,22 +89,8 @@
         </header>
 
         <section class="hero" id="inicio" aria-label="Presentación">
-            <div class="hero-content">
-                <p class="hero-kicker">Portfolio creativo</p>
-                <h1 class="hero-word" aria-label="DUDE!">
-                    <span>D</span><span>U</span><span>D</span><span>E</span><span>!</span>
-                </h1>
-                <p class="hero-subtitle">Edicion de video, diseno grafico y miniaturas con direccion visual limpia, precisa y hecha para destacar.</p>
-                <div class="hero-actions">
-                    <a href="#portfolio" class="hero-primary">Ver trabajos</a>
-                    <a href="proyecto.html" class="hero-secondary">Cotizar proyecto</a>
-                </div>
-                <div class="hero-stats" aria-label="Especialidades">
-                    <span>Video</span>
-                    <span>Thumbnails</span>
-                    <span>Branding</span>
-                </div>
-            </div>
+            <video class="hero-video" src="./assets/VIDEO_DUDE/video_principal.mp4" autoplay muted loop playsinline></video>
+            <button class="hero-mute-btn" id="hero-mute-btn" aria-label="Silenciar video">🔊</button>
         </section>
 
         <section class="presentation-section" id="presentacion" aria-label="Presentación de Dude">
@@ -322,46 +308,5 @@
     </div>
 
     <script src="./script.js"></script>
-    <script>
-        (function(){
-            const btn = document.getElementById('hero-mute');
-            if (!btn) return;
-            const video = document.getElementById('hero-video');
-            if (!video) return;
-            const offIcon = btn.querySelector('.mute-off');
-            const onIcon = btn.querySelector('.mute-on');
-
-            video.muted = true;
-            offIcon.style.display = 'none';
-            onIcon.style.display = 'block';
-            btn.setAttribute('aria-label', 'Activar sonido');
-            video.play().catch(function(){});
-
-            btn.addEventListener('click', function(){
-                if (video.muted) {
-                    video.muted = false;
-                    offIcon.style.display = 'block';
-                    onIcon.style.display = 'none';
-                    btn.setAttribute('aria-label', 'Silenciar video');
-                } else {
-                    video.muted = true;
-                    offIcon.style.display = 'none';
-                    onIcon.style.display = 'block';
-                    btn.setAttribute('aria-label', 'Activar sonido');
-                }
-            });
-
-            window.addEventListener('scroll', function(){
-                if (window.scrollY > window.innerHeight * 0.8) {
-                    if (!video.muted) {
-                        video.muted = true;
-                        offIcon.style.display = 'none';
-                        onIcon.style.display = 'block';
-                        btn.setAttribute('aria-label', 'Activar sonido');
-                    }
-                }
-            });
-        })();
-    </script>
 </body>
 </html>
