@@ -363,7 +363,8 @@
         masfax: {
             name: 'MasFax',
             videos: [
-                { id: 'UyJcdiXQcF8',  img: './assets/clientes/masfax/MasFax_1.jpg', start: 1,  end: 30,  link: 'https://youtu.be/UyJcdiXQcF8' }
+                { id: 'UyJcdiXQcF8',  img: './assets/clientes/masfax/MasFax_1.jpg', start: 1,  end: 30,  link: 'https://youtu.be/UyJcdiXQcF8' },
+                { id: 'bY-joy5Lc6k', img: './assets/clientes/masfax/MasFax_2.jpg', start: 1,  end: 30,  link: 'https://youtu.be/bY-joy5Lc6k' }
             ]
         },
         megazote: {
