@@ -403,6 +403,8 @@ section { padding: 6rem 0; }
   overflow: hidden;
   cursor: pointer;
   background: var(--bg-alt);
+  width: 100%;
+  align-self: start;
   transition: transform 0.4s cubic-bezier(0.22,1,0.36,1),
               box-shadow 0.4s cubic-bezier(0.22,1,0.36,1);
   box-shadow: var(--shadow-sm);
