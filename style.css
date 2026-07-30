@@ -646,6 +646,7 @@ section { padding: 6rem 0; }
 .card-thumb.mc-client-bg    { background: linear-gradient(135deg, #eaf0ed, #d5e5da); }
 .card-thumb.mc2-bg          { background: linear-gradient(135deg, #eaf0eb, #d5e4d6); }
 .card-thumb.putin-bg        { background: linear-gradient(135deg, #f5eaea, #ead5d5); }
+.card-thumb.roblox-bg       { background: linear-gradient(135deg, #f5eeea, #e8ddd5); }
 
 .card-thumb-images {
   position: absolute; inset: 0;

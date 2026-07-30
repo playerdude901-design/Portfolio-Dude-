@@ -201,6 +201,18 @@
                 './assets/putin/variante_2.jpg',
                 './assets/putin/variante_3.jpg'
             ]
+        },
+        {
+            key:   'roblox',
+            title: 'MINIATURAS ROBLOX',
+            cls:   'roblox-bg',
+            label: 'ROBLOX',
+            desc:  'Thumbnails diseñadas para contenido de Roblox',
+            images: [
+                './assets/Miniatura_Roblox/variante_1.jpg',
+                './assets/Miniatura_Roblox/variante_2.jpg',
+                './assets/Miniatura_Roblox/variante_3.jpg'
+            ]
         }
     ];
 
