@@ -377,97 +377,51 @@ section { padding: 6rem 0; }
 
 .clientes-section .section-title { color: var(--text-primary); }
 
-.clientes-carousel {
-  position: relative;
+.clientes-bento {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 3.5rem;
-  perspective: 1600px;
-}
-
-.clientes-track {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "galaxito   galaxito   playerdude playerdude"
+    "masfax     megazote   maog       strike";
   gap: 1.25rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 1.5rem 0;
-  transform-style: preserve-3d;
-  scroll-snap-type: x mandatory;
 }
-.clientes-track::-webkit-scrollbar { display: none; }
-.cliente-panel { scroll-snap-align: center; }
 
-.carousel-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  width: 48px; height: 48px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(0,0,0,0.45);
-  color: #fff;
-  font-size: 1.6rem;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s, opacity 0.2s, transform 0.2s;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-.carousel-arrow:hover { background: rgba(0,0,0,0.7); transform: translateY(-50%) scale(1.06); }
-.carousel-arrow:active { transform: translateY(-50%) scale(0.96); }
-.carousel-arrow-left  { left: 0.5rem; }
-.carousel-arrow-right { right: 0.5rem; }
+.clientes-bento > .cliente-panel[data-client="galaxito"]   { grid-area: galaxito; }
+.clientes-bento > .cliente-panel[data-client="playerdude"] { grid-area: playerdude; }
+.clientes-bento > .cliente-panel[data-client="masfax"]     { grid-area: masfax; }
+.clientes-bento > .cliente-panel[data-client="megazote"]   { grid-area: megazote; }
+.clientes-bento > .cliente-panel[data-client="maog"]       { grid-area: maog; }
+.clientes-bento > .cliente-panel[data-client="strike"]     { grid-area: strike; }
 
 .cliente-panel {
   position: relative;
-  flex: 0 0 auto;
-  width: calc((100% - 2.5rem) / 3);
   border-radius: var(--radius-md);
   overflow: hidden;
-  aspect-ratio: 2/3;
   cursor: pointer;
   background: var(--bg-alt);
-  /* far state (default) */
-  transform: scale(0.7) translateZ(-120px);
-  filter: blur(4px) saturate(0.4);
-  opacity: 0.55;
-  transition: transform 0.6s cubic-bezier(0.22,1,0.36,1),
-              filter 0.6s cubic-bezier(0.22,1,0.36,1),
-              opacity 0.6s cubic-bezier(0.22,1,0.36,1),
-              box-shadow 0.6s cubic-bezier(0.22,1,0.36,1);
-  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.4s cubic-bezier(0.22,1,0.36,1);
   box-shadow: var(--shadow-sm);
 }
-.cliente-panel.cliente-panel-far {
-  transform: scale(0.7) translateZ(-120px);
-  filter: blur(4px) saturate(0.4);
-  opacity: 0.55;
-  z-index: 1;
-}
-.cliente-panel.cliente-panel-adjacent {
-  transform: scale(0.85) translateZ(-40px);
-  filter: blur(1.5px) saturate(0.7);
-  opacity: 0.8;
-  z-index: 2;
-  box-shadow: var(--shadow-md);
-}
-.cliente-panel.cliente-panel-center {
-  transform: scale(1) translateZ(0);
-  filter: none;
-  opacity: 1;
-  z-index: 10;
-  box-shadow: var(--shadow-xl);
-}
-.cliente-panel.cliente-panel-center:hover {
-  transform: scale(1.02) translateZ(0) translateY(-6px);
-  box-shadow: 0 40px 100px rgba(0,0,0,0.25);
+
+.cliente-panel[data-featured="true"] {
+  aspect-ratio: 2 / 1;
 }
 
-/* ── Play icon overlay (visible on center hover) ── */
+.cliente-panel:not([data-featured="true"]) {
+  aspect-ratio: 2 / 3;
+}
+
+.cliente-panel:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* ── Play icon overlay ── */
 .cliente-panel-play {
   position: absolute;
   inset: 0;
@@ -486,10 +440,10 @@ section { padding: 6rem 0; }
   filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
   transition: transform 0.3s var(--ease-out);
 }
-.cliente-panel.cliente-panel-center:hover .cliente-panel-play {
+.cliente-panel:hover .cliente-panel-play {
   opacity: 1;
 }
-.cliente-panel.cliente-panel-center:hover .cliente-panel-play svg {
+.cliente-panel:hover .cliente-panel-play svg {
   transform: scale(1.08);
 }
 
@@ -503,7 +457,7 @@ section { padding: 6rem 0; }
   object-fit: cover;
   transition: transform 0.5s var(--ease-out);
 }
-.cliente-panel.cliente-panel-center:hover .panel-bg-img { transform: scale(1.08); }
+.cliente-panel:hover .panel-bg-img { transform: scale(1.08); }
 
 .cliente-panel-overlay {
   position: absolute; bottom: 0; left: 0; right: 0;
@@ -515,7 +469,7 @@ section { padding: 6rem 0; }
   transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
   z-index: 1;
 }
-.cliente-panel.cliente-panel-center:hover .cliente-panel-overlay {
+.cliente-panel:hover .cliente-panel-overlay {
   opacity: 1;
   transform: translateY(0);
 }
@@ -1134,7 +1088,14 @@ footer {
 }
 
 @media (max-width: 900px) {
-  .cliente-panel { width: calc((100% - 1.25rem) / 2); }
+  .clientes-bento {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "galaxito   galaxito"
+      "playerdude playerdude"
+      "masfax     megazote"
+      "maog       strike";
+  }
   .presentation-inner {
     grid-template-columns: 1fr;
     gap: 2.5rem;
@@ -1175,21 +1136,28 @@ footer {
   .portfolio-grid { grid-template-columns: 1fr; }
   .lb-btn { width: 36px; height: 36px; font-size: 1.3rem; }
   .gallery-grid { grid-template-columns: repeat(2, 1fr); }
-  .clientes-carousel { padding: 0 2.5rem; }
-  .cliente-panel { width: calc((100% - 1.25rem) / 2); }
+  .clientes-bento { padding: 0 2.5rem; }
   .section-title { font-size: 1.8rem; margin-bottom: 36px; }
 
   .skills-row { padding-bottom: 4rem; }
 }
 
 @media (max-width: 640px) {
-  .clientes-carousel { padding: 0 1.5rem; }
-  .cliente-panel { width: calc(100% - 2rem); }
+  .clientes-bento {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "galaxito"
+      "playerdude"
+      "masfax"
+      "megazote"
+      "maog"
+      "strike";
+    padding: 0 1.5rem;
+  }
   .cliente-panel-play svg { width: 36px; height: 36px; }
 }
 
 @media (max-width: 480px) {
-  .carousel-arrow { width: 34px; height: 34px; font-size: 1.3rem; }
   .cliente-panel-play svg { width: 32px; height: 32px; }
   .panel-client-role { font-size: 0.65rem; padding: 2px 8px; }
   .gallery-grid { grid-template-columns: 1fr; }
