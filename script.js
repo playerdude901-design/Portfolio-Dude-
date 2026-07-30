@@ -523,11 +523,14 @@
         if (!data) return;
         currentClient = clientKey;
         currentVideos = data.videos;
-        galleryTitle.textContent = data.name.toUpperCase() + ' · VIDEOS';
+        const panel = document.querySelector(`.cliente-panel[data-client="${clientKey}"]`);
+        const role = panel ? panel.dataset.role : '';
+        galleryTitle.textContent = data.name + (role ? ` · ${role}` : '');
         galleryGrid.innerHTML = '';
         data.videos.forEach((v, i) => {
             const div = document.createElement('div');
             div.className = 'gallery-thumb';
+            div.style.transitionDelay = (i * 60) + 'ms';
             div.innerHTML = `
                 <img src="${v.img}" alt="Video ${i + 1}" loading="lazy">
                 <div class="thumb-play"><span>▶</span></div>
