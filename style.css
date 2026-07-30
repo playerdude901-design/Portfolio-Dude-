@@ -275,8 +275,7 @@ section { padding: 6rem 0; }
 }
 
 .presentation-inner {
-  max-width: 1120px;
-  margin: 0 auto;
+  width: 100%;
   padding: 0 clamp(1.5rem, 4vw, 2.5rem);
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.75fr);
@@ -1092,12 +1091,14 @@ footer {
 @media (max-width: 900px) {
   .clientes-bento {
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto auto;
     grid-template-areas:
       "galaxito   galaxito"
       "playerdude playerdude"
       "masfax     megazote"
       "maog       strike";
   }
+  .cliente-panel[data-featured="true"] { aspect-ratio: 3 / 2; }
   .presentation-inner {
     grid-template-columns: 1fr;
     gap: 2.5rem;
@@ -1147,6 +1148,7 @@ footer {
 @media (max-width: 640px) {
   .clientes-bento {
     grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto auto auto;
     grid-template-areas:
       "galaxito"
       "playerdude"
@@ -1156,6 +1158,7 @@ footer {
       "strike";
     padding: 0 1.5rem;
   }
+  .cliente-panel[data-featured="true"] { aspect-ratio: 16 / 9; }
   .cliente-panel-play svg { width: 36px; height: 36px; }
 }
 
