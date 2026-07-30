@@ -274,19 +274,24 @@ section { padding: 6rem 0; }
   padding: 100px 0 80px;
 }
 
+/* FIX: max-width + margin:auto para centrar correctamente en pantallas anchas */
 .presentation-inner {
+  max-width: 1280px;
+  margin: 0 auto;
   width: 100%;
   padding: 0 clamp(1.5rem, 4vw, 2.5rem);
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.75fr);
   gap: 4rem;
   align-items: center;
+  overflow: hidden;
 }
 
 .presentation-copy {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  min-width: 0;
 }
 
 .presentation-kicker {
@@ -304,8 +309,10 @@ section { padding: 6rem 0; }
   letter-spacing: 0;
 }
 
+/* FIX: width:100% para que ocupe correctamente la columna, sin desbordarse a la derecha */
 .presentation-lead {
-  max-width: 720px;
+  width: 100%;
+  max-width: 620px;
   font-size: 19px;
   font-weight: 300;
   line-height: 1.7;
@@ -382,11 +389,13 @@ section { padding: 6rem 0; }
   padding: 0 3.5rem;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto auto;
+  grid-template-rows: 1fr 1.6fr;
   grid-template-areas:
     "galaxito   galaxito   playerdude playerdude"
     "masfax     megazote   maog       strike";
   gap: 1.25rem;
+  height: min(60vh, 520px);
+  min-height: 300px;
 }
 
 .clientes-bento > .cliente-panel[data-client="galaxito"]   { grid-area: galaxito; }
@@ -402,25 +411,27 @@ section { padding: 6rem 0; }
   overflow: hidden;
   cursor: pointer;
   background: var(--bg-alt);
-  width: 100%;
-  align-self: start;
   transition: transform 0.4s cubic-bezier(0.22,1,0.36,1),
               box-shadow 0.4s cubic-bezier(0.22,1,0.36,1);
   box-shadow: var(--shadow-sm);
+  min-height: 0;
 }
-
-.cliente-panel[data-featured="true"] {
-  aspect-ratio: 2 / 1;
-}
-
-.cliente-panel:not([data-featured="true"]) {
-  aspect-ratio: 2 / 3;
-}
-
 .cliente-panel:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-xl);
 }
+
+.cliente-panel-bg {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none; overflow: hidden;
+}
+
+.panel-bg-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease-out);
+}
+.cliente-panel:hover .panel-bg-img { transform: scale(1.08); }
 
 /* ── Play icon overlay ── */
 .cliente-panel-play {
@@ -447,18 +458,6 @@ section { padding: 6rem 0; }
 .cliente-panel:hover .cliente-panel-play svg {
   transform: scale(1.08);
 }
-
-.cliente-panel-bg {
-  position: absolute; inset: 0; z-index: 0;
-  pointer-events: none; overflow: hidden;
-}
-
-.panel-bg-img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s var(--ease-out);
-}
-.cliente-panel:hover .panel-bg-img { transform: scale(1.08); }
 
 .cliente-panel-overlay {
   position: absolute; bottom: 0; left: 0; right: 0;
@@ -943,6 +942,7 @@ section { padding: 6rem 0; }
 .gallery-modal.open .gallery-modal-inner {
   transform: scale(1) translateY(0);
 }
+
 .gallery-modal-header {
   display: flex; align-items: center;
   justify-content: space-between;
@@ -965,6 +965,12 @@ section { padding: 6rem 0; }
   transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out);
 }
 .gallery-modal-close:hover { background: rgba(255,255,255,0.18); color: #fff; }
+
+/* FIX: Transición suave para la vista de galería */
+.gallery-view {
+  width: 100%;
+  transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+}
 
 .gallery-grid {
   display: grid;
@@ -1008,7 +1014,11 @@ section { padding: 6rem 0; }
   filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
 }
 
-.player-view { width: 100%; }
+/* FIX: Transición suave para la vista del reproductor */
+.player-view {
+  width: 100%;
+  transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+}
 
 .player-wrapper {
   position: relative; width: 100%;
@@ -1091,14 +1101,14 @@ footer {
 @media (max-width: 900px) {
   .clientes-bento {
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto auto;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
     grid-template-areas:
       "galaxito   galaxito"
       "playerdude playerdude"
       "masfax     megazote"
       "maog       strike";
+    height: min(80vh, 680px);
   }
-  .cliente-panel[data-featured="true"] { aspect-ratio: 3 / 2; }
   .presentation-inner {
     grid-template-columns: 1fr;
     gap: 2.5rem;
@@ -1148,7 +1158,7 @@ footer {
 @media (max-width: 640px) {
   .clientes-bento {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto auto auto auto;
+    grid-template-rows: auto;
     grid-template-areas:
       "galaxito"
       "playerdude"
@@ -1156,9 +1166,13 @@ footer {
       "megazote"
       "maog"
       "strike";
+    height: auto;
+    min-height: auto;
     padding: 0 1.5rem;
   }
+  .cliente-panel { width: 100%; align-self: start; }
   .cliente-panel[data-featured="true"] { aspect-ratio: 16 / 9; }
+  .cliente-panel:not([data-featured="true"]) { aspect-ratio: 2 / 3; }
   .cliente-panel-play svg { width: 36px; height: 36px; }
 }
 

@@ -401,6 +401,19 @@
     let currentClient = null;
     let currentVideos = [];
 
+    /* ── Reset gallery to initial state (synchronous, no animation) ── */
+    function resetGalleryState() {
+        playerIframe.src = '';
+        playerView.style.display = 'none';
+        playerView.style.opacity = '';
+        playerView.style.transform = '';
+        galleryView.style.display = 'block';
+        galleryView.style.opacity = '';
+        galleryView.style.transform = '';
+        galleryBack.style.display = 'none';
+        galleryYt.style.display = 'none';
+    }
+
     function buildGallery(clientKey) {
         const data = clientes[clientKey];
         if (!data) return;
@@ -421,7 +434,7 @@
             div.addEventListener('click', () => openPlayer(i));
             galleryGrid.appendChild(div);
         });
-        showGallery();
+        resetGalleryState();
     }
 
     function openPlayer(idx) {
@@ -430,20 +443,62 @@
         let src = `https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0&showinfo=0`;
         if (v.start) src += `&start=${v.start}`;
         if (v.end)   src += `&end=${v.end}`;
-        playerIframe.src = src;
-        galleryYt.href = v.link;
-        galleryView.style.display = 'none';
-        playerView.style.display = 'block';
-        galleryBack.style.display = 'inline-block';
-        galleryYt.style.display = 'inline-flex';
+
+        /* Apple-style smooth transition: fade-out gallery → fade-in player */
+        galleryView.style.opacity = '0';
+        galleryView.style.transform = 'translateY(-6px) scale(0.97)';
+
+        setTimeout(() => {
+            galleryView.style.display = 'none';
+            galleryView.style.opacity = '';
+            galleryView.style.transform = '';
+
+            playerIframe.src = src;
+            galleryYt.href = v.link;
+            galleryBack.style.display = 'inline-block';
+            galleryYt.style.display = 'inline-flex';
+
+            /* Snap player to transparent, then animate in */
+            playerView.style.transition = 'none';
+            playerView.style.display = 'block';
+            playerView.style.opacity = '0';
+            playerView.style.transform = 'translateY(8px) scale(0.98)';
+            playerView.getBoundingClientRect(); /* Force reflow */
+            playerView.style.transition = '';
+            playerView.style.opacity = '1';
+            playerView.style.transform = 'translateY(0) scale(1)';
+        }, 320);
     }
 
     function showGallery() {
-        playerIframe.src = '';
-        playerView.style.display = 'none';
-        galleryView.style.display = 'block';
-        galleryBack.style.display = 'none';
-        galleryYt.style.display = 'none';
+        /* If player is not visible, just reset state (no animation needed) */
+        if (playerView.style.display !== 'block') {
+            resetGalleryState();
+            return;
+        }
+        /* Apple-style smooth transition: fade-out player → fade-in gallery */
+        playerView.style.opacity = '0';
+        playerView.style.transform = 'translateY(8px) scale(0.97)';
+
+        setTimeout(() => {
+            playerIframe.src = '';
+            playerView.style.display = 'none';
+            playerView.style.opacity = '';
+            playerView.style.transform = '';
+
+            galleryBack.style.display = 'none';
+            galleryYt.style.display = 'none';
+
+            /* Snap gallery to transparent, then animate in */
+            galleryView.style.transition = 'none';
+            galleryView.style.display = 'block';
+            galleryView.style.opacity = '0';
+            galleryView.style.transform = 'translateY(-6px) scale(0.98)';
+            galleryView.getBoundingClientRect(); /* Force reflow */
+            galleryView.style.transition = '';
+            galleryView.style.opacity = '1';
+            galleryView.style.transform = 'translateY(0) scale(1)';
+        }, 320);
     }
 
     function openGallery(clientKey) {
@@ -454,8 +509,8 @@
 
     function closeGallery() {
         galleryModal.classList.remove('open');
-        showGallery();
         document.body.style.overflow = '';
+        setTimeout(resetGalleryState, 380); /* Reset after modal fade-out completes */
     }
 
     galleryClose.addEventListener('click', closeGallery);
