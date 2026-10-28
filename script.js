@@ -757,4 +757,21 @@
       fadeObserver.observe(el);
     });
 
+    /* Fox3D viewport: cursor-reactive depth */
+    const foxVisual = document.querySelector('.fox3d-visual');
+    const foxObject = document.getElementById('fox3d-object');
+    if (foxVisual && foxObject && window.matchMedia('(pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        foxVisual.addEventListener('pointermove', (event) => {
+            const rect = foxVisual.getBoundingClientRect();
+            const x = (event.clientX - rect.left) / rect.width - 0.5;
+            const y = (event.clientY - rect.top) / rect.height - 0.5;
+            foxObject.style.setProperty('--ry', `${x * 28}deg`);
+            foxObject.style.setProperty('--rx', `${y * -22}deg`);
+        });
+        foxVisual.addEventListener('pointerleave', () => {
+            foxObject.style.setProperty('--ry', '-18deg');
+            foxObject.style.setProperty('--rx', '-8deg');
+        });
+    }
+
 })();
