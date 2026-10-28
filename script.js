@@ -59,6 +59,73 @@
         }
     }
 
+    /* Subtle portrait parallax for the about section */
+    const presentation = document.querySelector('.presentation-inner');
+    if (presentation && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        presentation.addEventListener('pointermove', e => {
+            const rect = presentation.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width;
+            const y = (e.clientY - rect.top) / rect.height;
+            presentation.style.setProperty('--about-x', `${x * 100}%`);
+            presentation.style.setProperty('--about-y', `${y * 100}%`);
+            presentation.style.setProperty('--portrait-shift-x', `${(x - .5) * 14}px`);
+            presentation.style.setProperty('--portrait-shift-y', `${(y - .5) * 10}px`);
+        });
+        presentation.addEventListener('pointerleave', () => {
+            presentation.style.setProperty('--portrait-shift-x', '0px');
+            presentation.style.setProperty('--portrait-shift-y', '0px');
+        });
+    }
+
+    /* Discord profile drawer and copy actions */
+    const discordOpen = document.getElementById('discord-profile-open');
+    const discordDrawer = document.getElementById('discord-drawer');
+    const discordClose = document.getElementById('discord-drawer-close');
+    const discordStatus = document.getElementById('discord-copy-status');
+
+    function openDiscordDrawer() {
+        discordDrawer.classList.add('open');
+        discordDrawer.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => discordClose.focus(), 300);
+    }
+    function closeDiscordDrawer() {
+        discordDrawer.classList.remove('open');
+        discordDrawer.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        discordStatus.textContent = '';
+    }
+    async function copyDiscordValue(button) {
+        const value = button.dataset.copy;
+        try {
+            await navigator.clipboard.writeText(value);
+        } catch (_) {
+            const helper = document.createElement('textarea');
+            helper.value = value;
+            helper.style.position = 'fixed';
+            helper.style.opacity = '0';
+            document.body.appendChild(helper);
+            helper.select();
+            document.execCommand('copy');
+            helper.remove();
+        }
+        document.querySelectorAll('.discord-copy-row button').forEach(item => {
+            item.classList.remove('copied');
+            item.textContent = 'Copiar';
+        });
+        button.classList.add('copied');
+        button.textContent = 'Copiado';
+        discordStatus.textContent = `${value} copiado al portapapeles`;
+    }
+
+    discordOpen?.addEventListener('click', openDiscordDrawer);
+    discordClose?.addEventListener('click', closeDiscordDrawer);
+    discordDrawer?.addEventListener('click', e => { if (e.target === discordDrawer) closeDiscordDrawer(); });
+    document.querySelectorAll('.discord-copy-row button').forEach(button => button.addEventListener('click', () => copyDiscordValue(button)));
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && discordDrawer?.classList.contains('open')) closeDiscordDrawer();
+    });
+
     /* ── Category / image data (relative paths — works on GitHub Pages) ── */
     const CATEGORIES = [
         {
@@ -219,11 +286,12 @@
     /* ── Build portfolio cards ── */
     const grid = document.getElementById('portfolio-grid');
 
-    CATEGORIES.forEach(cat => {
+    CATEGORIES.forEach((cat, index) => {
         const count = cat.images.length;
 
         const article = document.createElement('article');
         article.className = 'portfolio-card';
+        article.style.setProperty('--card-order', index);
         article.tabIndex  = 0;
         article.setAttribute('aria-label', `Abrir galería ${cat.title}`);
 
@@ -234,21 +302,39 @@
         article.innerHTML = `
             <div class="card-thumb ${cat.cls}" data-rotate="${cat.key}">
                 <div class="card-thumb-images">${thumbs}</div>
-                <span class="card-thumb-label">${cat.title}</span>
+                <div class="card-scrim"></div>
+                <span class="card-index">${String(index + 1).padStart(2, '0')}</span>
+                <span class="card-gallery-action" aria-hidden="true">
+                    Explorar
+                    <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h11M11 6l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
             </div>
             <div class="card-body">
-                <p class="card-category">${cat.label}</p>
-                <p class="card-title">${cat.desc}</p>
-                <p class="card-count">${count} imagen${count !== 1 ? 'es' : ''} &middot; Ver galería</p>
+                <div class="card-copy">
+                    <p class="card-category">${cat.label}</p>
+                    <p class="card-title">${cat.desc}</p>
+                </div>
+                <p class="card-count">${count} imagen${count !== 1 ? 'es' : ''}</p>
             </div>
         `;
 
-        const open = () => openLightbox(cat.images, cat.title);
+        const open = () => openLightbox(cat);
         article.addEventListener('click',   open);
         article.addEventListener('keydown', e => { if (e.key === 'Enter') open(); });
 
         grid.appendChild(article);
     });
+
+    /* Subtle depth that follows the pointer without affecting touch devices */
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        document.querySelectorAll('.portfolio-card').forEach(card => {
+            card.addEventListener('pointermove', e => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--pointer-x', `${((e.clientX - rect.left) / rect.width) * 100}%`);
+                card.style.setProperty('--pointer-y', `${((e.clientY - rect.top) / rect.height) * 100}%`);
+            });
+        });
+    }
 
     /* ── Rotate preview images ── */
     document.querySelectorAll('.card-thumb-images').forEach(wrap => {
@@ -268,14 +354,19 @@
     const lbImg     = document.getElementById('lb-img');
     const lbTitle   = document.getElementById('lb-title');
     const lbStrip   = document.getElementById('lb-strip');
-    const lbCounter = document.getElementById('lb-counter');
+    const lbCurrent = document.getElementById('lb-current');
+    const lbTotal   = document.getElementById('lb-total');
+    const lbDescription = document.getElementById('lb-description');
+    const lbProgress = document.getElementById('lb-progress-bar');
 
     let curImages = [], curIndex = 0;
 
-    function openLightbox(images, title) {
-        curImages = images;
+    function openLightbox(category) {
+        curImages = category.images;
         curIndex  = 0;
-        lbTitle.textContent = title;
+        lbTitle.textContent = category.label;
+        lbDescription.textContent = category.desc;
+        lbTotal.textContent = String(curImages.length).padStart(2, '0');
         buildStrip();
         showImage(0);
         lb.classList.add('open');
@@ -285,17 +376,27 @@
     function closeLightbox() {
         lb.classList.remove('open');
         document.body.style.overflow = '';
+        setTimeout(() => lbImg.removeAttribute('src'), 450);
     }
 
     function showImage(idx) {
         curIndex = (idx + curImages.length) % curImages.length;
-        lbImg.src = curImages[curIndex];
+        lbImg.classList.remove('is-visible');
+        const nextSrc = curImages[curIndex];
+        const reveal = () => requestAnimationFrame(() => lbImg.classList.add('is-visible'));
+        if (lbImg.src.endsWith(nextSrc.replace('./', '/'))) {
+            reveal();
+        } else {
+            lbImg.onload = reveal;
+            lbImg.src = nextSrc;
+        }
         // Adición para depuración y resiliencia
         lbImg.onerror = function() {
             console.error("No se pudo cargar la imagen:", lbImg.src);
             // Mostrar un fallback visual opcional si lo deseas
         };
-        lbCounter.textContent = `${curIndex + 1} / ${curImages.length}`;
+        lbCurrent.textContent = String(curIndex + 1).padStart(2, '0');
+        lbProgress.style.width = `${((curIndex + 1) / curImages.length) * 100}%`;
         document.querySelectorAll('.lb-thumb').forEach((t, i) => t.classList.toggle('active', i === curIndex));
         const active = lbStrip.children[curIndex];
         if (active) active.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
@@ -316,6 +417,13 @@
     document.getElementById('lb-prev').addEventListener('click',  () => showImage(curIndex - 1));
     document.getElementById('lb-next').addEventListener('click',  () => showImage(curIndex + 1));
     lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+    let lbTouchStartX = 0;
+    lb.addEventListener('touchstart', e => { lbTouchStartX = e.changedTouches[0].clientX; }, { passive: true });
+    lb.addEventListener('touchend', e => {
+        const distance = e.changedTouches[0].clientX - lbTouchStartX;
+        if (Math.abs(distance) < 55) return;
+        showImage(curIndex + (distance < 0 ? 1 : -1));
+    }, { passive: true });
     document.addEventListener('keydown', e => {
         if (!lb.classList.contains('open')) return;
         if (e.key === 'ArrowRight') showImage(curIndex + 1);
@@ -332,18 +440,17 @@
         });
     });
 
-    /* ── Clientes bento (click → open gallery) ── */
-    document.querySelectorAll('.cliente-panel').forEach(panel => {
-        panel.addEventListener('click', () => openGallery(panel.dataset.client));
-        panel.addEventListener('keydown', e => {
-            if (e.key === 'Enter') openGallery(panel.dataset.client);
-        });
-    });
-
     /* ── Gallery Modal (Clientes) ── */
     const clientes = {
         galaxito: {
             name: 'Galaxito',
+            role: 'Streamer',
+            subs: '228 mil suscriptores',
+            description: 'Aventuras, gameplays y momentos épicos para disfrutar junto a su comunidad.',
+            channel: 'https://www.youtube.com/@GalaxitoYT',
+            logo: './assets/clientes/galaxito/Galaxito_Logo.jpg',
+            verified: true,
+            stats: [['País', 'México'], ['En YouTube desde', '1 dic 2017'], ['Suscriptores', '228 mil'], ['Videos publicados', '293'], ['Vistas del canal', '15,237,768']],
             videos: [
                 { id: 'JN1Z9Az-mR4',  img: './assets/clientes/galaxito/Galaxito_1.jpg', start: 30,  end: 60,  link: 'https://youtu.be/JN1Z9Az-mR4' },
                 { id: 'AltqrOFb8Mo',  img: './assets/clientes/galaxito/Galaxito_2.jpg', start: 60,  end: 90,  link: 'https://youtu.be/AltqrOFb8Mo' },
@@ -352,7 +459,14 @@
             ]
         },
         playerdude: {
-            name: 'PlayerDude',
+            name: 'PlayerDude!',
+            role: 'Gamer',
+            subs: '1.46 mil suscriptores',
+            description: 'Trolleos, humor y situaciones inesperadas dentro y fuera de los videojuegos.',
+            channel: 'https://www.youtube.com/@PlayerDude0',
+            logo: './assets/clientes/playerdude/PlayerDude_Logo.jpg',
+            verified: false,
+            stats: [['País', 'México'], ['En YouTube desde', '22 abr 2019'], ['Suscriptores', '1.46 mil'], ['Videos publicados', '248'], ['Vistas del canal', '179,639']],
             videos: [
                 { id: 'AfgMdjbW0Uk',  img: './assets/clientes/playerdude/PlayerDude_1.jpg', start: 30,  end: 60,  link: 'https://youtu.be/AfgMdjbW0Uk' },
                 { id: 'CUAsdgZRwt8',  img: './assets/clientes/playerdude/PlayerDude_2.jpg', start: 60,  end: 90,  link: 'https://youtu.be/CUAsdgZRwt8' },
@@ -361,7 +475,14 @@
             ]
         },
         masfax: {
-            name: 'MasFax',
+            name: 'El MasFax',
+            role: 'Creador',
+            subs: '673 suscriptores',
+            description: 'Diversión, aventuras y creatividad a través de mundos, construcciones y desafíos.',
+            channel: 'https://www.youtube.com/@ElMasFax',
+            logo: './assets/clientes/masfax/MasFax_Logo.jpg',
+            verified: false,
+            stats: [['País', 'Colombia'], ['En YouTube desde', '31 jul 2023'], ['Suscriptores', '673'], ['Videos publicados', '41'], ['Vistas del canal', '79,284']],
             videos: [
                 { id: 'UyJcdiXQcF8',  img: './assets/clientes/masfax/MasFax_1.jpg', start: 1,  end: 30,  link: 'https://youtu.be/UyJcdiXQcF8' },
                 { id: 'bY-joy5Lc6k', img: './assets/clientes/masfax/MasFax_2.jpg', start: 1,  end: 30,  link: 'https://youtu.be/bY-joy5Lc6k' }
@@ -369,25 +490,88 @@
         },
         megazote: {
             name: 'Megazote',
+            role: 'Streamer',
+            subs: '332 mil suscriptores',
+            description: 'Contenido de entretenimiento, gaming y retos creado para una comunidad activa.',
+            channel: 'https://www.youtube.com/@Megazote',
+            logo: './assets/clientes/megazote/Megazote_Logo.jpg',
+            verified: true,
+            stats: [['País', 'México'], ['En YouTube desde', '15 ago 2019'], ['Suscriptores', '332 mil'], ['Videos publicados', '429'], ['Vistas del canal', '195,143,123']],
             videos: [
                 { id: 'IMTOh9M_Tso',  img: './assets/clientes/megazote/Megazote_1.jpg', start: 1,  end: 30,  link: 'https://youtu.be/IMTOh9M_Tso' }
             ]
         },
         maog: {
             name: 'Maog',
+            role: 'Streamer',
+            subs: '31.4 mil suscriptores',
+            description: 'Gameplays y contenido variado pensado para entretener, descubrir y compartir.',
+            channel: 'https://www.youtube.com/@Maog_05',
+            logo: './assets/clientes/maog/Maog_Logo.jpg',
+            verified: true,
+            stats: [['País', 'México'], ['En YouTube desde', '22 feb 2017'], ['Suscriptores', '31.4 mil'], ['Videos publicados', '627']],
             videos: [
                 { id: 'lLNxqnnoQNY',  img: './assets/clientes/maog/Maog_1.jpg', start: 1,  end: 30,  link: 'https://youtu.be/lLNxqnnoQNY' }
             ]
         },
         strike: {
             name: 'ElStrike',
+            role: 'Gamer',
+            subs: '102 mil suscriptores',
+            description: 'Historias, curiosidades y entretenimiento en formato breve para audiencias de gaming.',
+            channel: 'https://www.youtube.com/@ElStrikew',
+            logo: './assets/clientes/strike/Strike_Logo.jpg',
+            verified: true,
+            stats: [['País', 'Perú'], ['En YouTube desde', '20 feb 2024'], ['Suscriptores', '102 mil'], ['Videos publicados', '30'], ['Vistas del canal', '28,169,313']],
             videos: [
                 { id: 'AXGRtZ2Fg-w',  img: './assets/clientes/strike/Strike_1.jpg', start: 1,  end: 30,  link: 'https://www.youtube.com/shorts/AXGRtZ2Fg-w' },
-                { id: 'Sl6Y1KfInkA',  img: './assets/clientes/strike/Strike_2.jpg', start: 1,  end: 30,  link: 'https://www.youtube.com/shorts/Sl6Y1KfInkA' },
-                { id: 'rZdb8zQMidE',  img: './assets/clientes/strike/Strike_3.jpg', start: 1,  end: 30,  link: 'https://www.youtube.com/shorts/rZdb8zQMidE' }
+                { id: 'Sl6Y1KfInkA',  img: './assets/clientes/strike/Strike_2.jpg', start: 1,  end: 30,  link: 'https://www.youtube.com/shorts/Sl6Y1KfInkA', restricted: true },
+                { id: 'rZdb8zQMidE',  img: './assets/clientes/strike/Strike_3.jpg', start: 1,  end: 30,  link: 'https://www.youtube.com/shorts/rZdb8zQMidE', restricted: true }
             ]
         }
     };
+
+    /* Build editorial client profiles from the verified channel data */
+    document.querySelectorAll('.cliente-panel').forEach((panel, panelIndex) => {
+        const key = panel.dataset.client;
+        const data = clientes[key];
+        if (!data) return;
+        const statIcons = ['◎', '◷', '◉', '▶', '↗'];
+        const stats = data.stats.map((stat, i) => `
+            <li><span class="client-stat-icon">${statIcons[i] || '•'}</span><span>${stat[0]}</span><strong>${stat[1]}</strong></li>
+        `).join('');
+        const work = data.videos.map((video, i) => `
+            <button class="client-work-thumb" type="button" data-video-index="${i}" aria-label="Ver video editado ${i + 1}">
+                <img src="${video.img}" alt="" loading="lazy">
+                <span>${String(i + 1).padStart(2, '0')}</span>
+            </button>
+        `).join('');
+        panel.classList.add('client-showcase');
+        panel.removeAttribute('data-featured');
+        panel.innerHTML = `
+            <div class="client-showcase-visual">
+                <img src="${data.logo}" alt="Foto de perfil de ${data.name}" loading="lazy">
+                <span class="client-showcase-number">${String(panelIndex + 1).padStart(2, '0')}</span>
+            </div>
+            <div class="client-showcase-copy">
+                <div class="client-showcase-topline"><span>${data.role}</span><span>${data.videos.length} trabajo${data.videos.length !== 1 ? 's' : ''} editado${data.videos.length !== 1 ? 's' : ''}</span></div>
+                <h3>${data.name}${data.verified ? '<img src="./assets/verified/verified.png" alt="Canal verificado">' : ''}</h3>
+                <p>${data.description}</p>
+                <ul class="client-stats">${stats}</ul>
+                <div class="client-work-heading"><span>Videos editados</span><button type="button" class="open-client-gallery">Ver todos <i>→</i></button></div>
+                <div class="client-work-strip">${work}</div>
+            </div>
+        `;
+        panel.setAttribute('aria-label', `Ver trabajos editados para ${data.name}`);
+        panel.addEventListener('click', e => {
+            const videoButton = e.target.closest('.client-work-thumb');
+            buildGallery(key);
+            galleryModal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            if (videoButton) openPlayer(Number(videoButton.dataset.videoIndex));
+        });
+        panel.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target === panel) openGallery(key); });
+    });
 
     const galleryModal = document.getElementById('gallery-modal');
     const galleryGrid  = document.getElementById('gallery-grid');
@@ -398,6 +582,13 @@
     const playerIframe = document.getElementById('player-iframe');
     const galleryBack  = document.getElementById('gallery-back');
     const galleryYt    = document.getElementById('gallery-youtube');
+    const playerRestricted = document.getElementById('player-restricted');
+    const profileRole = document.getElementById('client-profile-role');
+    const profileSubs = document.getElementById('client-profile-subs');
+    const profileName = document.getElementById('client-profile-name');
+    const profileDescription = document.getElementById('client-profile-description');
+    const profileChannel = document.getElementById('client-profile-channel');
+    const profileWork = document.getElementById('client-profile-work');
 
     let currentClient = null;
     let currentVideos = [];
@@ -405,6 +596,8 @@
     /* ── Reset gallery to initial state (synchronous, no animation) ── */
     function resetGalleryState() {
         playerIframe.src = '';
+        playerIframe.style.display = 'block';
+        playerRestricted.style.display = 'none';
         playerView.style.display = 'none';
         playerView.style.opacity = '';
         playerView.style.transform = '';
@@ -420,9 +613,13 @@
         if (!data) return;
         currentClient = clientKey;
         currentVideos = data.videos;
-        const panel = document.querySelector(`.cliente-panel[data-client="${clientKey}"]`);
-        const role = panel ? panel.dataset.role : '';
-        galleryTitle.textContent = data.name + (role ? ` · ${role}` : '');
+        galleryTitle.textContent = 'Trabajo seleccionado';
+        profileRole.textContent = data.role;
+        profileSubs.textContent = data.subs;
+        profileName.textContent = data.name;
+        profileDescription.textContent = data.description;
+        profileChannel.href = data.channel;
+        profileWork.textContent = `${data.videos.length} pieza${data.videos.length !== 1 ? 's' : ''} editada${data.videos.length !== 1 ? 's' : ''}`;
         galleryGrid.innerHTML = '';
         data.videos.forEach((v, i) => {
             const div = document.createElement('div');
@@ -430,7 +627,9 @@
             div.style.transitionDelay = (i * 60) + 'ms';
             div.innerHTML = `
                 <img src="${v.img}" alt="Video ${i + 1}" loading="lazy">
-                <div class="thumb-play"><span>▶</span></div>
+                <span class="gallery-thumb-index">${String(i + 1).padStart(2, '0')}</span>
+                ${v.restricted ? '<span class="gallery-thumb-note">Ver en YouTube</span>' : ''}
+                <div class="thumb-play"><span>${v.restricted ? '↗' : '▶'}</span></div>
             `;
             div.addEventListener('click', () => openPlayer(i));
             galleryGrid.appendChild(div);
@@ -441,7 +640,8 @@
     function openPlayer(idx) {
         const v = currentVideos[idx];
         if (!v) return;
-        let src = `https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0&showinfo=0`;
+        const origin = encodeURIComponent(window.location.origin);
+        let src = `https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0&playsinline=1&origin=${origin}`;
         if (v.start) src += `&start=${v.start}`;
         if (v.end)   src += `&end=${v.end}`;
 
@@ -454,7 +654,16 @@
             galleryView.style.opacity = '';
             galleryView.style.transform = '';
 
-            playerIframe.src = src;
+            if (v.restricted) {
+                playerIframe.src = '';
+                playerIframe.style.display = 'none';
+                playerRestricted.style.display = 'flex';
+            } else {
+                playerRestricted.style.display = 'none';
+                playerIframe.style.display = 'block';
+                playerIframe.src = src;
+                playerIframe.title = `Vista previa de ${clientes[currentClient].name}`;
+            }
             galleryYt.href = v.link;
             galleryBack.style.display = 'inline-block';
             galleryYt.style.display = 'inline-flex';
@@ -541,5 +750,11 @@
       .forEach((el, i) => {
         el.style.transitionDelay = (i * 80) + 'ms';
       });
+
+    document.querySelectorAll('.portfolio-card').forEach((el, i) => {
+      el.style.transitionDelay = `${Math.min(i * 55, 330)}ms`;
+      el.classList.add('fade-up');
+      fadeObserver.observe(el);
+    });
 
 })();
