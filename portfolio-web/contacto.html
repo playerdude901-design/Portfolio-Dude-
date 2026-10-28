@@ -3,262 +3,748 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Contacto - Dude 3D">
-    <title>Contacto · Dude 3D</title>
+    <meta name="description" content="Contacto — Dude! Portfolio. Cuéntame tu proyecto de diseño gráfico, edición de video o miniaturas.">
+    <title>Contacto · Dude!</title>
+
+    <meta property="og:title" content="Contacto · Dude!">
+    <meta property="og:description" content="Cuéntame tu proyecto y te responderé a la brevedad.">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --bg:            #FFFFFF;
+            --bg-alt:        #F5F5F7;
+            --bg-card:       rgba(255,255,255,0.88);
+            --text-primary:  #1D1D1F;
+            --text-secondary:#6E6E73;
+            --text-tertiary: #86868B;
+            --border:        #D2D2D7;
+            --border-light:  #E8E8ED;
+            --accent:        #0071E3;
+            --accent-hover:  #0077ED;
+            --ease:          cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --ease-spring:   cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { height: 100%; }
+
         body {
-            background: var(--dark);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                         "SF Pro Text", "Helvetica Neue", "Inter", Arial, sans-serif;
+            background: var(--bg-alt);
+            background-image:
+                radial-gradient(ellipse 80% 50% at 20% -10%, rgba(0,113,227,0.07), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 110%, rgba(88,86,214,0.05), transparent);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 2rem 1rem;
+            padding: 5rem 1.5rem 3rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── BACK BUTTON ── */
+        .back-btn {
+            position: fixed;
+            top: 1.25rem;
+            left: 1.25rem;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.84rem;
+            font-weight: 500;
+            color: var(--accent);
+            text-decoration: none;
+            padding: 0.45rem 0.95rem 0.45rem 0.65rem;
+            border-radius: 980px;
+            background: rgba(255,255,255,0.82);
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: background 0.2s var(--ease), box-shadow 0.2s var(--ease), transform 0.2s var(--ease);
+        }
+        .back-btn:hover {
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+            transform: translateX(-2px);
+        }
+        .back-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+        /* ── LAYOUT ── */
+        .page-wrapper {
+            width: 100%;
+            max-width: 960px;
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        /* ── LEFT PANEL ── */
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: sticky;
+            top: 2rem;
+        }
+
+        /* Profile Hero Card */
+        .profile-hero {
+            background: var(--bg);
+            border: 1px solid var(--border-light);
+            border-radius: 22px;
+            padding: 2rem 1.75rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05), 0 16px 40px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.25rem;
+            overflow: hidden;
             position: relative;
         }
-        body::before {
+        .profile-hero::before {
             content: '';
-            position: fixed;
-            inset: 0;
-            background: url('./assets/contacto/fondo_1.png') center/cover no-repeat;
-            filter: blur(3px);
-            z-index: -1;
+            position: absolute;
+            top: -40%;
+            right: -20%;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(0,113,227,0.07) 0%, transparent 70%);
+            pointer-events: none;
         }
-        .contact-page {
+
+        /* Photo */
+        .profile-photo-wrap {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+        }
+        .profile-photo-wrap::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #0071E3 0deg 120deg,
+                #5856D6 120deg 240deg,
+                #34C759 240deg 360deg
+            );
+            z-index: 0;
+            animation: spin-ring 8s linear infinite;
+            opacity: 0.6;
+        }
+        @keyframes spin-ring {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+        .profile-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #fff;
+            position: relative;
+            z-index: 1;
+            display: block;
+        }
+
+        /* DUDE! Animated Name */
+        .profile-name-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .dude-name {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            color: var(--text-primary);
+            display: flex;
+            gap: 0;
+        }
+        .dude-name span {
+            display: inline-block;
+            animation: letterFloat 3s var(--ease-spring) infinite;
+        }
+        .dude-name span:nth-child(1) { animation-delay: 0.00s; }
+        .dude-name span:nth-child(2) { animation-delay: 0.08s; }
+        .dude-name span:nth-child(3) { animation-delay: 0.16s; }
+        .dude-name span:nth-child(4) { animation-delay: 0.24s; }
+        .dude-name span:nth-child(5) { animation-delay: 0.32s; color: var(--accent); }
+
+        @keyframes letterFloat {
+            0%, 70%, 100% { transform: translateY(0); }
+            35%            { transform: translateY(-5px); }
+        }
+
+        .profile-tagline {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            line-height: 1.4;
+            margin-top: 0.25rem;
+        }
+
+        /* Status pill */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #1E7E34;
+            background: #EAF8EC;
+            border: 1px solid rgba(52,199,89,0.2);
+            padding: 0.3rem 0.75rem;
+            border-radius: 980px;
+        }
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #34C759;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 3px rgba(52,199,89,0.2);
+            animation: pulse-dot 2s ease infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { box-shadow: 0 0 0 2px rgba(52,199,89,0.18); }
+            50%       { box-shadow: 0 0 0 5px rgba(52,199,89,0.06); }
+        }
+
+        /* Specialties chips */
+        .chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+        }
+        .chip {
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: var(--bg-alt);
+            border: 1px solid var(--border-light);
+            padding: 0.3rem 0.65rem;
+            border-radius: 980px;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .chip:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Divider in card */
+        .panel-divider {
             width: 100%;
-            max-width: 560px;
-            background: rgba(18,18,18,.92);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            border: 1px solid rgba(44,186,178,.25);
-            border-radius: 16px;
-            padding: 2.5rem 2rem;
-            box-shadow: 0 8px 40px rgba(0,0,0,.5);
+            height: 1px;
+            background: var(--border-light);
         }
-        .contact-page h1 {
-            font-family: var(--bebas);
-            font-size: 2.8rem;
-            letter-spacing: 3px;
-            color: var(--teal);
-            text-align: center;
-            margin-bottom: .3rem;
+
+        /* Contact info links */
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            width: 100%;
         }
-        .contact-page .sub {
+        .contact-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.55rem 0.75rem;
+            border-radius: 10px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .contact-link:hover { background: var(--bg-alt); color: var(--text-primary); }
+        .contact-link:hover .link-icon { background: rgba(0,113,227,0.08); color: var(--accent); }
+        .link-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: var(--bg-alt);
+            border: 1px solid var(--border-light);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+            transition: background 0.2s, color 0.2s;
+        }
+        .link-icon svg { width: 15px; height: 15px; }
+        .link-label { font-weight: 500; }
+
+        /* Quote CTA */
+        .quote-cta {
+            display: block;
+            width: 100%;
             text-align: center;
-            color: var(--gray);
-            font-size: .95rem;
+            padding: 0.75rem;
+            border-radius: 12px;
+            background: var(--text-primary);
+            color: #fff;
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-decoration: none;
+            letter-spacing: -0.01em;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .quote-cta:hover { opacity: 0.82; transform: translateY(-1px); }
+
+        /* ── RIGHT PANEL — FORM ── */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-card {
+            background: var(--bg);
+            border: 1px solid var(--border-light);
+            border-radius: 22px;
+            padding: 2.5rem 2.25rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04), 0 20px 50px rgba(0,0,0,0.05);
+        }
+
+        .form-card-header {
             margin-bottom: 2rem;
         }
+        .form-kicker {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .form-kicker::before {
+            content: '';
+            width: 18px; height: 2px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        .form-title {
+            font-size: 1.85rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+        .form-title .accent { color: var(--accent); }
+        .form-sub {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* Row layout for name+email */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+        }
+
         .form-group {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
         }
         .form-group label {
             display: block;
-            font-family: var(--bebas);
-            font-size: 1rem;
-            letter-spacing: 1.5px;
-            color: var(--white);
-            margin-bottom: .4rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.01em;
         }
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: .75rem 1rem;
-            background: rgba(10,10,10,.8);
-            border: 1px solid rgba(255,255,255,.1);
-            border-radius: 8px;
-            color: var(--white);
-            font-family: var(--inter);
-            font-size: .95rem;
-            transition: border-color .2s;
-            box-sizing: border-box;
+            padding: 0.72rem 0.9rem;
+            background: var(--bg-alt);
+            border: 1.5px solid var(--border-light);
+            border-radius: 11px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.93rem;
+            transition: border-color 0.2s var(--ease),
+                        box-shadow 0.2s var(--ease),
+                        background 0.2s var(--ease);
+            outline: none;
+            -webkit-appearance: none;
         }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: #aeaeb2; }
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            outline: none;
-            border-color: var(--teal);
+            border-color: var(--accent);
+            background: var(--bg);
+            box-shadow: 0 0 0 4px rgba(0,113,227,0.10);
         }
         .form-group select {
             cursor: pointer;
-        }
-        .form-group select option {
-            background: #1a1a1a;
-            color: var(--white);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236E6E73' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.9rem center;
+            padding-right: 2.2rem;
         }
         .form-group textarea {
             resize: vertical;
-            min-height: 120px;
+            min-height: 115px;
+            line-height: 1.6;
+        }
+
+        /* Character count */
+        .char-count {
+            display: flex;
+            justify-content: flex-end;
+            font-size: 0.72rem;
+            color: var(--text-tertiary);
+            margin-top: 0.3rem;
+        }
+
+        /* Submit */
+        .form-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+            align-items: center;
         }
         .form-submit {
-            display: block;
-            width: 100%;
-            font-family: var(--bebas);
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            color: var(--dark);
-            background: var(--teal);
-            padding: .85rem;
+            flex: 1;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: #fff;
+            background: var(--accent);
+            padding: 0.82rem 1rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: transform .2s, box-shadow .2s;
-            margin-top: .5rem;
+            transition: transform 0.2s var(--ease),
+                        box-shadow 0.2s var(--ease),
+                        background 0.2s var(--ease);
         }
         .form-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(44,186,178,.35);
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(0,113,227,0.28);
         }
-        .back-link {
-            display: block;
+        .form-submit:active { transform: scale(0.99); }
+        .form-submit.loading { pointer-events: none; opacity: 0.65; }
+
+        .form-disclaimer {
+            font-size: 0.72rem;
+            color: var(--text-tertiary);
+            line-height: 1.45;
+            max-width: 200px;
+        }
+
+        /* Error msg */
+        .error-msg {
+            display: none;
+            color: #c00;
+            font-size: 0.84rem;
             text-align: center;
-            margin-top: 1.5rem;
-            font-family: var(--bebas);
-            font-size: 1rem;
-            letter-spacing: 1.5px;
-            color: var(--gray);
-            transition: color .2s;
+            margin-top: 0.75rem;
+            padding: 0.6rem 1rem;
+            border: 1px solid rgba(200,0,0,0.18);
+            border-radius: 10px;
+            background: rgba(200,0,0,0.04);
+            line-height: 1.5;
         }
-        .back-link:hover {
-            color: var(--teal);
-        }
+        .error-msg.show { display: block; }
+
+        /* Success */
         .success-msg {
             display: none;
             text-align: center;
-            padding: 1.5rem 0;
+            padding: 3rem 2rem;
         }
-        .success-msg .check {
-            font-size: 3rem;
-            color: var(--teal);
-            margin-bottom: .5rem;
+        .success-icon {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(0,113,227,0.1), rgba(88,86,214,0.08));
+            border: 1px solid rgba(0,113,227,0.12);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem;
+            animation: successPop 0.5s var(--ease-spring);
         }
+        @keyframes successPop {
+            from { transform: scale(0.5); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+        .success-icon svg { width: 28px; height: 28px; color: var(--accent); }
         .success-msg h2 {
-            font-family: var(--bebas);
-            font-size: 2rem;
-            letter-spacing: 2px;
-            color: var(--white);
-            margin-bottom: .3rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
         }
         .success-msg p {
-            color: var(--gray);
-            font-size: .95rem;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
-        .success-msg .back-link {
-            margin-top: 1.2rem;
+        .success-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 1.75rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--accent);
+            text-decoration: none;
+            padding: 0.55rem 1.1rem;
+            border: 1px solid rgba(0,113,227,0.2);
+            border-radius: 980px;
+            transition: background 0.2s;
         }
+        .success-back:hover { background: rgba(0,113,227,0.06); }
+
         .form-wrap { display: block; }
         .success-msg.show { display: block; }
         .form-wrap.hidden { display: none; }
-        .error-msg {
-            display: none;
-            color: #ef4444;
-            font-size: .9rem;
-            text-align: center;
-            margin-top: .8rem;
-            padding: .6rem;
-            border: 1px solid rgba(239,68,68,.3);
-            border-radius: 8px;
-            background: rgba(239,68,68,.08);
+
+        /* ── ANIMATIONS ON LOAD ── */
+        .anim-in {
+            animation: fadeSlideUp 0.6s var(--ease-spring) both;
         }
-        .error-msg.show { display: block; }
-        .form-submit.loading { pointer-events: none; opacity: .6; }
+        .anim-in:nth-child(1) { animation-delay: 0s; }
+        .anim-in:nth-child(2) { animation-delay: 0.08s; }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 760px) {
+            body { padding: 4.5rem 1rem 2.5rem; }
+            .page-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+                max-width: 500px;
+            }
+            .left-panel { position: static; }
+            .form-row { grid-template-columns: 1fr; }
+            .form-card { padding: 1.75rem 1.4rem; border-radius: 18px; }
+            .form-title { font-size: 1.55rem; }
+            .form-actions { flex-direction: column; }
+            .form-disclaimer { max-width: 100%; text-align: center; }
+            .profile-hero { padding: 1.5rem; }
+            .dude-name { font-size: 2rem; }
+            .back-btn { top: 0.75rem; left: 0.75rem; }
+        }
     </style>
 </head>
 <body>
-    <div class="contact-page">
-        <h1>TRABAJEMOS!</h1>
-        <p class="sub">Cuéntame tu proyecto y te responderé a la brevedad</p>
 
-        <div class="success-msg" id="success-msg">
-            <div class="check">✓</div>
-            <h2>Mensaje enviado</h2>
-            <p>Gracias por contactarme. Te responderé lo antes posible.</p>
-            <a href="index.html" class="back-link">← Volver al portfolio</a>
-        </div>
+    <a href="index.html" class="back-btn" id="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Volver
+    </a>
 
-        <div class="form-wrap" id="form-wrap">
-            <form id="contact-form">
-                <div class="form-group">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
-                </div>
-                <div class="form-group">
-                    <label for="email">Correo electrónico</label>
-                    <input type="email" id="email" name="email" required placeholder="tu@correo.com">
-                </div>
-                <div class="form-group">
-                    <label for="servicio">Servicio que necesitas</label>
-                    <select id="servicio" name="servicio">
-                        <option value="">Selecciona una opción</option>
-                        <option value="Miniatura">Miniatura / Thumbnail</option>
-                        <option value="Edicion de video">Edición de video</option>
-                        <option value="Identidad visual">Identidad visual / Branding</option>
-                        <option value="Plugin PresetGold">Plugin PresetGold</option>
-                        <option value="Otro">Otro</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="mensaje">Mensaje</label>
-                    <textarea id="mensaje" name="mensaje" required placeholder="Describe tu proyecto..."></textarea>
-                </div>
-                <div class="error-msg" id="error-msg"></div>
-                <button type="submit" class="form-submit" id="submit-btn">ENVIAR MENSAJE</button>
-            </form>
-        </div>
+    <div class="page-wrapper">
 
-        <a href="index.html" class="back-link" id="back-link">← Volver al portfolio</a>
+        <!-- ── LEFT PANEL ── -->
+        <aside class="left-panel anim-in">
+            <!-- Profile Hero -->
+            <div class="profile-hero">
+                <div class="profile-photo-wrap">
+                    <img
+                        class="profile-photo"
+                        src="./assets/perfil/imagen_de_perfil.jpeg"
+                        alt="Foto de perfil de Christian — Dude!"
+                        loading="eager"
+                    >
+                </div>
+
+                <div class="profile-name-block">
+                    <div class="dude-name" aria-label="DUDE!">
+                        <span>D</span><span>U</span><span>D</span><span>E</span><span>!</span>
+                    </div>
+                    <p class="profile-tagline">Editor de video &amp; Diseñador gráfico<br>Miniaturas · Branding · Motion</p>
+                </div>
+
+                <div class="status-pill">
+                    <span class="status-dot"></span>
+                    Disponible para proyectos
+                </div>
+
+                <div class="chip-row">
+                    <span class="chip">Video Editing</span>
+                    <span class="chip">Thumbnails</span>
+                    <span class="chip">Branding</span>
+                    <span class="chip">Motion</span>
+                </div>
+
+                <div class="panel-divider"></div>
+
+                <div class="contact-links">
+                    <a href="mailto:playerdude901@gmail.com" class="contact-link">
+                        <span class="link-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                <path d="M22 7l-10 7L2 7"/>
+                            </svg>
+                        </span>
+                        <span class="link-label">playerdude901@gmail.com</span>
+                    </a>
+                    <a href="https://www.youtube.com/@Dude-10" target="_blank" rel="noopener" class="contact-link">
+                        <span class="link-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                                <path d="M22.54 6.42A2.78 2.78 0 0 0 20.6 4.46C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+                                <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/>
+                            </svg>
+                        </span>
+                        <span class="link-label">@Dude-10 en YouTube</span>
+                    </a>
+                </div>
+
+                <a href="proyecto.html" class="quote-cta">
+                    Ver Cotizador de Proyectos →
+                </a>
+            </div>
+        </aside>
+
+        <!-- ── RIGHT PANEL ── -->
+        <main class="right-panel anim-in">
+            <div class="form-card">
+
+                <div class="form-card-header">
+                    <p class="form-kicker">Trabajemos juntos</p>
+                    <h1 class="form-title">Cuéntame tu<br><span class="accent">proyecto.</span></h1>
+                    <p class="form-sub">Rellena el formulario y te responderé en menos de 24 horas.</p>
+                </div>
+
+                <!-- SUCCESS STATE -->
+                <div class="success-msg" id="success-msg">
+                    <div class="success-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <h2>Mensaje enviado ✓</h2>
+                    <p>Gracias por escribirme.<br>Te responderé lo antes posible.</p>
+                    <a href="index.html" class="success-back">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                        Volver al portfolio
+                    </a>
+                </div>
+
+                <!-- FORM -->
+                <div class="form-wrap" id="form-wrap">
+                    <form id="contact-form" novalidate>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nombre">Nombre</label>
+                                <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Correo electrónico</label>
+                                <input type="email" id="email" name="email" required placeholder="tu@correo.com">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="servicio">Servicio que necesitas</label>
+                            <select id="servicio" name="servicio">
+                                <option value="">Selecciona una opción</option>
+                                <option value="Miniatura">Miniatura / Thumbnail</option>
+                                <option value="Edicion de video">Edición de video</option>
+                                <option value="Identidad visual">Identidad visual / Branding</option>
+                                <option value="Plugin PresetGold">Plugin PresetGold</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mensaje">Mensaje</label>
+                            <textarea id="mensaje" name="mensaje" required placeholder="Describe tu proyecto, referencias, fechas y presupuesto aproximado..." maxlength="1000"></textarea>
+                            <div class="char-count"><span id="char-num">0</span>/1000</div>
+                        </div>
+
+                        <div class="error-msg" id="error-msg"></div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="form-submit" id="submit-btn">Enviar mensaje</button>
+                            <p class="form-disclaimer">Tu información está segura y nunca será compartida.</p>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </main>
+
     </div>
 
     <script>
-        /* ── CAMBIA ESTA URL por la de tu Google Apps Script desplegado ── */
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLQh4AxX78pllKyYzF8diVolsbEjpYARnTqm-XokBWcfMkpder2xkhUZj7HFOn5Vwn_Q/exec';
 
-        const form = document.getElementById('contact-form');
-        const submitBtn = document.getElementById('submit-btn');
-        const formWrap = document.getElementById('form-wrap');
+        const form       = document.getElementById('contact-form');
+        const submitBtn  = document.getElementById('submit-btn');
+        const formWrap   = document.getElementById('form-wrap');
         const successMsg = document.getElementById('success-msg');
-        const errorMsg = document.getElementById('error-msg');
-        const backLink = document.getElementById('back-link');
+        const errorMsg   = document.getElementById('error-msg');
+        const msgTextarea = document.getElementById('mensaje');
+        const charNum    = document.getElementById('char-num');
 
-        /* ── Pre-fill desde Project Builder ── */
+        /* Pre-fill desde Project Builder */
         const workflow = localStorage.getItem('dude_workflow');
         if (workflow) {
-            const msgField = document.getElementById('mensaje');
-            if (msgField) msgField.value = workflow;
+            if (msgTextarea) msgTextarea.value = workflow;
             localStorage.removeItem('dude_workflow');
         }
+
+        /* Character counter */
+        msgTextarea?.addEventListener('input', () => {
+            charNum.textContent = msgTextarea.value.length;
+        });
 
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
             errorMsg.classList.remove('show');
             submitBtn.classList.add('loading');
-            submitBtn.textContent = 'ENVIANDO...';
+            submitBtn.textContent = 'Enviando...';
 
             const fd = new URLSearchParams(new FormData(form));
 
             try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: fd });
+                const res  = await fetch(SCRIPT_URL, { method: 'POST', body: fd });
                 const json = await res.json();
 
                 if (json.success) {
                     formWrap.classList.add('hidden');
                     successMsg.classList.add('show');
-                    backLink.style.display = 'none';
                 } else {
                     throw new Error(json.error || 'Error al enviar');
                 }
             } catch (err) {
-                errorMsg.textContent = 'Hubo un error al enviar. Intenta de nuevo o escríbeme directamente a playerdude901@gmail.com';
+                errorMsg.textContent = 'Hubo un error al enviar. Intenta de nuevo o escríbeme a playerdude901@gmail.com';
                 errorMsg.classList.add('show');
                 submitBtn.classList.remove('loading');
-                submitBtn.textContent = 'ENVIAR MENSAJE';
+                submitBtn.textContent = 'Enviar mensaje';
             }
         });
     </script>
+
 </body>
 </html>
